@@ -1,0 +1,17 @@
+*.pyc
+*~
+.idea/
+.vscode/
+.DS_Store
+*.swp
+*.db
+*key
+*.log*
+google_signin_client_id
+db_url*
+schema.sql
+*screenlog*
+db_backup*
+front-end/videos/
+front-end/event/
+back-end/www/reload
