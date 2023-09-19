@@ -1,8 +1,28 @@
 """Utility functions"""
 
 from flask import jsonify
+from flask import has_request_context
+from flask import request
 import jwt
 import traceback
+import os
+import logging
+import os
+
+
+class RequestFormatter(logging.Formatter):
+    """The formatter for logging."""
+    def format(self, record):
+        if has_request_context():
+            record.url = request.url
+            record.method = request.method
+            record.agent = request.user_agent.string
+            record.data = request.get_data()
+            if request.headers.getlist("X-Forwarded-For"):
+                record.ip = request.headers.getlist("X-Forwarded-For")[0]
+            else:
+                record.ip = request.remote_addr
+        return super().format(record)
 
 
 class InvalidUsage(Exception):
@@ -18,6 +38,32 @@ class InvalidUsage(Exception):
         rv = dict(self.payload or ())
         rv["message"] = self.message
         return rv
+
+
+def set_logger(app_log_path, logger_name):
+    """
+    Set up the logger for custom logging.
+
+    Parameters
+    ----------
+    app_log_path : str
+        The path to save the log files.
+    logger_name : str
+        A customized name of the logger.
+    """
+    dir_name = os.path.dirname(app_log_path)
+    if dir_name != "" and not os.path.exists(dir_name):
+        # Create directory if it does not exist
+        os.makedirs(dir_name)
+    handler = logging.handlers.RotatingFileHandler(app_log_path, mode="a", maxBytes=100000000, backupCount=200)
+    formatter = RequestFormatter("[%(asctime)s] [%(ip)s] [%(url)s] [%(agent)s] [%(method)s] [%(data)s] %(levelname)s:\n\n\t%(message)s\n")
+    handler.setFormatter(formatter)
+    logger = logging.getLogger(logger_name)
+    logger.setLevel(logging.INFO)
+    for hdlr in logger.handlers[:]:
+        # Remove old handlers
+        logger.removeHandler(hdlr)
+    logger.addHandler(handler)
 
 
 def handle_invalid_usage(error):
