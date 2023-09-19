@@ -286,7 +286,7 @@ Run server in the conda environment for development purpose.
 ```sh
 sh development.sh
 ```
-You can test the application using [http://localhost:8888/](http://localhost:5000/) or the following curl command.
+You can test the application using [http://localhost:8888/](http://localhost:8888/) or the following curl command.
 ```sh
 curl http://localhost:8888/
 ```
