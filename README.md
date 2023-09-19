@@ -9,6 +9,7 @@
 - [Setup development environment](#setup-dev-env)
 - [Manipulate database](#manipulate-database)
 - [Test cases](#test-cases)
+- [Deploy back-end using uwsgi (administrator only)](#deploy-back-end-using-uwsgi)
 
 # <a name="coding-standards"></a>Coding standards
 
@@ -201,7 +202,7 @@ Create conda environment and install packages. It is important to install pip fi
 ```sh
 conda create -n ijmond-camera-monitor
 conda activate ijmond-camera-monitor
-conda install python=3.11
+conda install python=3.10
 conda install pip
 which pip # make sure this is the pip inside the conda environment
 sh ijmond-camera-monitor/back-end/install_packages.sh
@@ -318,4 +319,82 @@ cd ijmond-camera-monitor/back-end/www/tests
 python run_all_tests.py
 # Run one test
 python user_tests.py
+```
+
+# <a name="deploy-back-end-using-uwsgi"></a>Deploy back-end using uwsgi (administrator only)
+> WARNING: this section is only for system administrators, not developers.
+
+Install [uwsgi](https://uwsgi-docs.readthedocs.io/en/latest/) using conda.
+```sh
+conda activate ijmond-camera-monitor
+conda install -c conda-forge uwsgi=2.0.21
+```
+Create a folder for server logging.
+```sh
+mkdir ijmond-camera-monitor/back-end/log/
+```
+Run the uwsgi production server and check if it works.
+```sh
+cd ijmond-camera-monitor/back-end/www/
+sh deploy_production.sh
+```
+Check if the uwsgi production server works.
+```sh
+curl localhost:8081
+```
+The production server log is stored in the "back-end/log/uwsgi_production.log" file. Refer to the "back-end/www/uwsgi_production.ini" file for details. The documentation is on the [uwsgi website](https://uwsgi-docs.readthedocs.io/en/latest/Configuration.html). A custom log is stored in the "back-end/log/app.log" file.
+```sh
+# Keep printing the log files when updated
+tail -f ../log/uwsgi_production.log
+tail -f ../log/app.log
+```
+Create a service on Ubuntu, so that the uwsgi server will start automatically after rebooting the system. Replace [PATH] with the path to the cloned repository. Replace [USERNAME] with your user name on Ubuntu.
+```sh
+sudo vim /etc/systemd/system/ijmond-camera-monitor-production.service
+# Add the following line to this file
+[Unit]
+Description=uWSGI instance to serve ijmond-camera-monitor
+After=network.target
+
+[Service]
+User=[USERNAME]
+Group=www-data
+WorkingDirectory=/[PATH]/ijmond-camera-monitor/back-end/www
+Environment="PATH=/home/[USERNAME]/.conda/envs/ijmond-camera-monitor/bin"
+ExecStart=/home/[USERNAME]/.conda/envs/ijmond-camera-monitor/bin/uwsgi --ini uwsgi_production.ini
+
+[Install]
+WantedBy=multi-user.target
+```
+Register the uwsgi staging server as a service on Ubuntu.
+```sh
+sudo systemctl enable ijmond-camera-monitor-production
+sudo systemctl start ijmond-camera-monitor-production
+
+# Check the status of the service
+sudo systemctl status ijmond-camera-monitor-production
+
+# Restart the service
+sudo systemctl restart ijmond-camera-monitor-production
+
+# Stop and disable the service
+sudo systemctl stop ijmond-camera-monitor-production
+sudo systemctl disable ijmond-camera-monitor-production
+```
+Check if the service work.
+```sh
+curl localhost:8081
+```
+The procedure of deploying the staging server is the same as deploying the production server (with differences in replacing the "production" text with "staging"). When the back-end code repository on the staging or production server is updated, run the following to restart the deployed service.
+```sh
+# Restart the uwsgi service
+sudo systemctl restart ijmond-camera-monitor-staging
+sudo systemctl restart ijmond-camera-monitor-production
+
+# If error happend, check the uwsgi log files
+tail -100 ijmond-camera-monitor/back-end/log/uwsgi_staging.log
+tail -100 ijmond-camera-monitor/back-end/log/uwsgi_production.log
+
+# Restart the apache service
+sudo systemctl restart apache2
 ```
