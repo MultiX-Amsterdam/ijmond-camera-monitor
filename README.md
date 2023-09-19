@@ -11,7 +11,6 @@
 - [Test cases](#test-cases)
 
 # <a name="coding-standards"></a>Coding standards
-(To the repository manager: this section provides an example of the coding standards. Please feel free to reuse or modify the guidelines to fit your needs.)
 
 When contributing code to this repository, please follow the guidelines below:
 ### Language
@@ -159,6 +158,20 @@ DROP DATABASE ijmond_camera_monitor_staging;
 
 # Delete the project user
 DROP USER ijmond_camera_monitor;
+```
+Also some useful commands in the psql shell.
+```sh
+# Connect to a database
+\c ijmond_camera_monitor_staging
+
+# Show tables in the connected database
+\dt
+
+# Show columns in the user table
+\d user
+
+# Select all data in the user table
+SELECT * FROM "user";
 ```
 
 # <a name="install-conda"></a>Setup the conda environment (administrator only)
