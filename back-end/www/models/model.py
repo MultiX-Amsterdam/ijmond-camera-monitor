@@ -102,8 +102,8 @@ class Video(db.Model):
         The top position of the clip, relative to the original panorama video.
     bottom : int
         The bottom position of the clip, relative to the original panorama video.
-    source_url : str
-        The source URL of the panorama video that contains the video clip.
+    url_part : str
+        The URL part of the panorama video that contains the video clip.
     label_state : int
         The state of the label, contributed by normal users (client type 1).
         Also enable database indexing on this column for fast lookup.
@@ -122,7 +122,7 @@ class Video(db.Model):
     file_name = db.Column(db.String(255), unique=True, nullable=False)
     start_time = db.Column(db.Integer, nullable=False)
     end_time = db.Column(db.Integer, nullable=False)
-    source_url = db.Column(db.String(768), unique=True, nullable=False)
+    url_part = db.Column(db.String(768), unique=True, nullable=False)
     left = db.Column(db.Integer, nullable=False)
     right = db.Column(db.Integer, nullable=False)
     top = db.Column(db.Integer, nullable=False)

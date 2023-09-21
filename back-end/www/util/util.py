@@ -1,28 +1,7 @@
 """Utility functions"""
 
-from flask import jsonify
-from flask import has_request_context
-from flask import request
 import jwt
 import traceback
-import os
-import logging
-import os
-
-
-class RequestFormatter(logging.Formatter):
-    """The formatter for logging."""
-    def format(self, record):
-        if has_request_context():
-            record.url = request.url
-            record.method = request.method
-            record.agent = request.user_agent.string
-            record.data = request.get_data()
-            if request.headers.getlist("X-Forwarded-For"):
-                record.ip = request.headers.getlist("X-Forwarded-For")[0]
-            else:
-                record.ip = request.remote_addr
-        return super().format(record)
 
 
 class InvalidUsage(Exception):
@@ -39,50 +18,8 @@ class InvalidUsage(Exception):
         rv["message"] = self.message
         return rv
 
-
-def set_logger(app_log_path, logger_name):
-    """
-    Set up the logger for custom logging.
-
-    Parameters
-    ----------
-    app_log_path : str
-        The path to save the log files.
-    logger_name : str
-        A customized name of the logger.
-    """
-    dir_name = os.path.dirname(app_log_path)
-    if dir_name != "" and not os.path.exists(dir_name):
-        # Create directory if it does not exist
-        os.makedirs(dir_name)
-    handler = logging.handlers.RotatingFileHandler(app_log_path, mode="a", maxBytes=100000000, backupCount=200)
-    formatter = RequestFormatter("[%(asctime)s] [%(ip)s] [%(url)s] [%(agent)s] [%(method)s] [%(data)s] %(levelname)s:\n\n\t%(message)s\n")
-    handler.setFormatter(formatter)
-    logger = logging.getLogger(logger_name)
-    logger.setLevel(logging.INFO)
-    for hdlr in logger.handlers[:]:
-        # Remove old handlers
-        logger.removeHandler(hdlr)
-    logger.addHandler(handler)
-
-
-def handle_invalid_usage(error):
-    """
-    Handle the error message of the InvalidUsage class.
-
-    Parameters
-    ----------
-    error : InvalidUsage
-        An InvalidUsage object.
-
-    Returns
-    -------
-    dict
-        A response that can be returned to the front-end client.
-    """
-    response = jsonify(error.to_dict())
-    response.status_code = error.status_code
-    return response
+    def __str__(self):
+        return "<InvalidUsage status_code=%r message='%s'>" % (self.status_code, self.message)
 
 
 def encode_jwt(payload, private_key):
@@ -128,7 +65,7 @@ def decode_jwt(token, private_key):
 
 def decode_user_token(request_json, private_key, check_if_admin=True):
     """
-    Decode the user token.
+    Decode a user JWT token.
 
     Parameters
     ----------
@@ -150,26 +87,21 @@ def decode_user_token(request_json, private_key, check_if_admin=True):
     """
     # Check if there is content and user_token
     if request_json is None:
-        e = InvalidUsage("Missing POST request content.", status_code=400)
-        return (handle_invalid_usage(e), None)
+        raise InvalidUsage("Missing POST request content.", status_code=400)
     if "user_token" not in request_json:
-        e = InvalidUsage("Missing field: user_token.", status_code=400)
-        return (handle_invalid_usage(e), None)
+        raise InvalidUsage("Missing field: user_token.", status_code=400)
     # Decode user token
     try:
         user_json = decode_jwt(request_json["user_token"], private_key)
     except jwt.InvalidSignatureError as ex:
-        e = InvalidUsage(ex.args[0], status_code=401)
-        return (handle_invalid_usage(e), None)
+        raise InvalidUsage(ex.args[0], status_code=401)
     except Exception as ex:
-        e = InvalidUsage(ex.args[0], status_code=401)
-        return (handle_invalid_usage(e), None)
+        raise InvalidUsage(ex.args[0], status_code=401)
     # Check if the user has the admin permission
     if check_if_admin:
         is_admin = True if user_json["client_type"] == 0 else False
         if not is_admin:
-            e = InvalidUsage("Permission denied.", status_code=403)
-            return (handle_invalid_usage(e), None)
+            raise InvalidUsage("Permission denied.", status_code=403)
     # Return None and the user data when passing the check
     return (None, user_json)
 
@@ -182,8 +114,7 @@ def try_wrap_response(func, status_code=400):
         except Exception as ex:
             traceback.print_exc()
             if len(list(ex.args)) > 1:
-                e = InvalidUsage(ex.args[0], status_code=status_code)
+                raise InvalidUsage(ex.args[0], status_code=status_code)
             else:
-                e = InvalidUsage(traceback.format_exc(), status_code=status_code)
-            return handle_invalid_usage(e)
+                raise InvalidUsage(traceback.format_exc(), status_code=status_code)
     return inner_function

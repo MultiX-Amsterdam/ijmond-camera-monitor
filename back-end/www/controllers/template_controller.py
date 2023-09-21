@@ -1,11 +1,10 @@
-"""The controller for https://[PATH]/template/"""
+"""The controller template."""
 
 from flask import Blueprint
 from flask import request
 from flask import jsonify
 from flask import make_response
 from util.util import InvalidUsage
-from util.util import handle_invalid_usage
 from util.util import decode_user_token
 from util.util import try_wrap_response
 from config.config import config
@@ -48,14 +47,12 @@ def template():
         xxx = rj.get("xxx")
         return try_create_xxx(xxx)
     elif request.method == "PATCH":
-        e = InvalidUsage("Test bad request.", status_code=400)
-        return handle_invalid_usage(e)
+        raise InvalidUsage("Test bad request.", status_code=400)
     elif request.method == "DELETE":
         return try_delete_xxx()
     else:
         # Wrong methods
-        e = InvalidUsage("Method not allowed.", status_code=405)
-        return handle_invalid_usage(e)
+        raise InvalidUsage("Method not allowed.", status_code=405)
 
 
 @try_wrap_response
