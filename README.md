@@ -9,7 +9,9 @@
 - [Setup development environment](#setup-dev-env)
 - [Manipulate database](#manipulate-database)
 - [Test cases](#test-cases)
+- [Setup the Google Identity API (administrator only)](#setup-google-identity)
 - [Deploy back-end using uwsgi (administrator only)](#deploy-back-end-using-uwsgi)
+- [Setup the apache server with https (administrator only)](#setup-apache)
 
 # <a name="coding-standards"></a>Coding standards
 
@@ -97,12 +99,12 @@ sudo -u postgres psql postgres
 # For Mac OS
 psql postgres
 ```
-In the psql shell, create a project user, create a database for the user with a password, and check if the user and database exist. Replace the [DATABASE_PASSWORD] with the project's database password. IMPORTANT: do not forget the semicolon and the end of the commands.
+In the psql shell, create a project user, create a database for the user with a password, and check if the user and database exist. Replace the "DATABASE_PASSWORD" with the project's database password. IMPORTANT: do not forget the semicolon and the end of the commands.
 ```sh
 # Set the password encryption method
 SET password_encryption = 'scram-sha-256';
 # Give the project user with a password
-CREATE USER ijmond_camera_monitor PASSWORD '[DATABASE_PASSWORD]';
+CREATE USER ijmond_camera_monitor PASSWORD 'DATABASE_PASSWORD';
 
 # Create databases for the project user
 # For the staging server
@@ -235,9 +237,8 @@ sudo addgroup ijmond-camera-monitor-dev
 
 # Add yourself and collaborators to the group
 sudo usermod -a -G ijmond-camera-monitor-dev $USER
-sudo usermod -a -G ijmond-camera-monitor-dev [USER_NAME]
 
-# Check the groups of a user
+# Check the groups of yourself
 groups $USER
 
 # Check the group list
@@ -248,14 +249,14 @@ sudo chown -R root ijmond-camera-monitor/
 sudo chmod -R 775 ijmond-camera-monitor/
 sudo chgrp -R ijmond-camera-monitor-dev ijmond-camera-monitor/
 ```
-Create three text files to store the database urls in the "back-end/secret/" directory for the staging, production, and testing environments. For the url format, refer to [the flask-sqlalchemy documentation](http://flask-sqlalchemy.pocoo.org/2.3/config/#connection-uri-format). Replace [DATABASE_PASSWORD] with the database password.
+Create three text files to store the database urls in the "back-end/secret/" directory for the staging, production, and testing environments. For the url format, refer to [the flask-sqlalchemy documentation](http://flask-sqlalchemy.pocoo.org/2.3/config/#connection-uri-format). Replace "DATABASE_PASSWORD" with your database password.
 ```sh
 cd ijmond-camera-monitor/back-end/
 mkdir secret
 cd secret/
-echo "postgresql://ijmond_camera_monitor:[DATABASE_PASSWORD]@localhost/ijmond_camera_monitor_staging" > db_url_staging
-echo "postgresql://ijmond_camera_monitor:[DATABASE_PASSWORD]@localhost/ijmond_camera_monitor_production" > db_url_production
-echo "postgresql://ijmond_camera_monitor:[DATABASE_PASSWORD]@localhost/ijmond_camera_monitor_testing" > db_url_testing
+echo "postgresql://ijmond_camera_monitor:DATABASE_PASSWORD@localhost/ijmond_camera_monitor_staging" > db_url_staging
+echo "postgresql://ijmond_camera_monitor:DATABASE_PASSWORD@localhost/ijmond_camera_monitor_production" > db_url_production
+echo "postgresql://ijmond_camera_monitor:DATABASE_PASSWORD@localhost/ijmond_camera_monitor_testing" > db_url_testing
 ```
 > IMPORTANT: never push the database urls to the repository.
 Create a private key for the server to encode the JSON Web Tokens for user login:
@@ -298,7 +299,7 @@ We use [flask-migrate](https://flask-migrate.readthedocs.io/en/latest/) to manag
 cd ijmond-camera-monitor/back-end/www/
 
 # Generate the migration script
-sh db.sh migrate "[YOUR_MIGRATION_COMMIT_MESSAGE]"
+sh db.sh migrate "YOUR_MIGRATION_COMMIT_MESSAGE"
 ```
 Then, a new migration script will be generated under the "back-end/www/migrations/versions" folder. Make sure that you open the file and check if the code make sense. After that, run the following to upgrade the database to the latest migration:
 ```sh
@@ -320,6 +321,32 @@ python run_all_tests.py
 # Run one test
 python user_tests.py
 ```
+
+# <a name="setup-google-identity"></a>Setup the Google Identity API (administrator only)
+We will use the [Google Identity API](https://developers.google.com/identity) to handle user login and authentication.
+Then, [go to this page](https://developers.google.com/identity/oauth2/web/guides/get-google-api-clientid) to get the Google API client ID.
+The page will help you create a project on the [Google Cloud Console](https://console.cloud.google.com/apis/dashboard).
+When you are asked to select the application types, select "Web Browser" and enter your server domain name (or IP address).
+For example, in this repository, we use https://ijmondcam.multix.io as the domain name for the front-end.
+At the end, you will get the client ID and client secret.
+The client ID looks like "XXXXXXXX.apps.googleusercontent.com".
+
+If you forgot to copy them, you can find them later on [the Credentials page of the Google Cloud Console](https://console.cloud.google.com/apis/credentials).
+Now, copy the client ID and create a text file with name "google_signin_client_id" in the "back-end/secure/" directory to store it.
+Replace "GOOGLE_SIGNIN_API_CLIENT_ID" with the copied client ID.
+```sh
+cd ijmond-camera-monitor/back-end/secret/
+echo "GOOGLE_SIGNIN_API_CLIENT_ID" > google_signin_client_id
+```
+
+If you later change the domain name, remember to go to the Credentials page and change the domain name (or IP address) to the "Authorized JavaScript origins" in your OAuth client.
+This makes it possible for the front-end to call the Google Identity API to get Google user tokens when users sign in.
+
+Also, we use a different domain name http://api.ijmondcam.multix.io for the back-end
+So we will need to go to the Credentials page and add the domain name to the "Authorised redirect URIs" in the OAuth client.
+This makes it possible for the back-end to call the Google Identity API to validate the Google user tokens.
+
+Also notice that you need to go to the [GoogleAccountDialog.js](front-end/js/GoogleAccountDialog.js) and change the "CLIENT_ID" variable to your copied Google client ID.
 
 # <a name="deploy-back-end-using-uwsgi"></a>Deploy back-end using uwsgi (administrator only)
 > WARNING: this section is only for system administrators, not developers.
@@ -348,7 +375,7 @@ The production server log is stored in the "back-end/log/uwsgi_production.log" f
 tail -f ../log/uwsgi_production.log
 tail -f ../log/app.log
 ```
-Create a service on Ubuntu, so that the uwsgi server will start automatically after rebooting the system. Replace [PATH] with the path to the cloned repository. Replace [USERNAME] with your user name on Ubuntu.
+Create a service on Ubuntu, so that the uwsgi server will start automatically after rebooting the system. Replace [PATH] with the path to the cloned repository. Replace "USERNAME" with your user name on Ubuntu.
 ```sh
 sudo vim /etc/systemd/system/ijmond-camera-monitor-production.service
 # Add the following line to this file
@@ -357,16 +384,16 @@ Description=uWSGI instance to serve ijmond-camera-monitor
 After=network.target
 
 [Service]
-User=[USERNAME]
+User=USERNAME
 Group=www-data
 WorkingDirectory=/[PATH]/ijmond-camera-monitor/back-end/www
-Environment="PATH=/home/[USERNAME]/.conda/envs/ijmond-camera-monitor/bin"
-ExecStart=/home/[USERNAME]/.conda/envs/ijmond-camera-monitor/bin/uwsgi --ini uwsgi_production.ini
+Environment="PATH=/home/USERNAME/.conda/envs/ijmond-camera-monitor/bin"
+ExecStart=/home/USERNAME/.conda/envs/ijmond-camera-monitor/bin/uwsgi --ini uwsgi_production.ini
 
 [Install]
 WantedBy=multi-user.target
 ```
-Register the uwsgi staging server as a service on Ubuntu.
+Register the uwsgi production server as a service on Ubuntu.
 ```sh
 sudo systemctl enable ijmond-camera-monitor-production
 sudo systemctl start ijmond-camera-monitor-production
@@ -388,13 +415,143 @@ curl localhost:8081
 The procedure of deploying the staging server is the same as deploying the production server (with differences in replacing the "production" text with "staging"). When the back-end code repository on the staging or production server is updated, run the following to restart the deployed service.
 ```sh
 # Restart the uwsgi service
-sudo systemctl restart ijmond-camera-monitor-staging
 sudo systemctl restart ijmond-camera-monitor-production
 
 # If error happend, check the uwsgi log files
-tail -100 ijmond-camera-monitor/back-end/log/uwsgi_staging.log
 tail -100 ijmond-camera-monitor/back-end/log/uwsgi_production.log
+```
 
-# Restart the apache service
+# <a name="setup-apache"></a>Setup the apache server with https (administrator only)
+> WARNING: this section is only for system administrators, not developers.
+
+Now we need to install the apache server for deploying the front-end and back-end.
+Run the following to install apache2 and enable mods.
+```sh
+sudo apt-get install apache2
+sudo apt-get install apache2-dev
+
+sudo a2enmod headers
+sudo a2enmod rewrite
+sudo a2enmod ssl
+sudo a2enmod proxy
+sudo a2enmod proxy_http
+sudo a2enmod proxy_balancer
+sudo a2enmod lbmethod_byrequests
+```
+Next, we need to get an SSL certificate to enable https (instead of using the http, which is not secure).
+Go to https://certbot.eff.org/ and follow the instructions to install Certbot on the Ubuntu server.
+Then, run the Certbot to get the SSL certificate.
+```sh
+sudo certbot --apache certonly
+```
+Copy the directories that point to the SSL certificate and the SSL certificate key in the terminal provided by the certbot.
+We will need to use the directories later when configuring apache.
+For example:
+```sh
+/etc/letsencrypt/live/[...]/fullchain.pem
+/etc/letsencrypt/live/[...]/privkey.pem
+```
+You can use either the IP address or a domain name to set up the server.
+Domain names can be purchased from providers such as [Google Domains](https://domains.google/), [Namecheap](https://www.namecheap.com/), [GoDaddy](https://www.godaddy.com/), [TransIP](https://www.transip.eu/), etc.
+Make sure you have the DNS record configured correctly that can point these domain names to the domain (or IP address) of your Ubuntu machine.
+For example, in our case, we want to use "https://ijmondcam.multix.io/" as the front-end root.
+This means that our sub-domain is "ijmondcam", so we create an "A" type record (not "CNAME") with name "ijmondcam" and value "XXX.YYY.ZZZ.QQQ", where the value part points to the IP address of our machine.
+Then, we want to use "https://api.ijmondcam.multix.io/" as the back-end root.
+This means that our sub-domain is "api.ijmondcam", so we create an "A" type record (not "CNAME") with name "api.ijmondcam" and value "XXX.YYY.ZZZ.QQQ", where the value part points to the IP address of our machine.
+
+
+### For the front-end
+For the front-end, create an apache virtual host under "/etc/apache2/sites-available/".
+Replace FRONT_END_DOMAIN with your domain name for the front-end.
+For example, we use "ijmondcam.multix.io" as the front-end domain.
+We put the front-end under "/var/www/ijmond-camera-monitor/front-end", but you may need to change the path.
+Note the "https" before the FRONT_END_DOMAIN (not "http").
+Remember to use your copied directories when getting the SSL certificate for "SSLCertificateFile" and "SSLCertificateKeyFile".
+```sh
+sudo vim /etc/apache2/sites-available/FRONT_END_DOMAIN.conf
+# Add the following lines to this file
+<VirtualHost *:443>
+  ServerName FRONT_END_DOMAIN
+  DocumentRoot /var/www/ijmond-camera-monitor/front-end
+  # Enable https ssl support
+  SSLEngine On
+  # The following line enables cors
+  Header always set Access-Control-Allow-Origin "*"
+  # The following line forces the browser to break the cache
+  Header set Cache-Control "max-age=5, public, must-revalidate"
+  <Directory "/var/www/ijmond-camera-monitor/front-end">
+    Options FollowSymLinks
+    AllowOverride None
+    Require all granted
+  </Directory>
+  # APACHE_LOG_DIR is /var/log/apache2/
+  ErrorLog ${APACHE_LOG_DIR}/FRONT_END_DOMAIN.error.log
+  CustomLog ${APACHE_LOG_DIR}/FRONT_END_DOMAIN.access.log combined
+  # Add ssl
+  SSLCertificateFile /etc/letsencrypt/live/[...]/fullchain.pem
+  SSLCertificateKeyFile /etc/letsencrypt/live/[...]/privkey.pem
+  Include /etc/letsencrypt/options-ssl-apache.conf
+</VirtualHost>
+
+<VirtualHost *:80>
+  ServerName FRONT_END_DOMAIN
+  # Enable the url rewriting
+  RewriteEngine on
+  # Redirect http to https
+  RewriteRule ^ https://%{SERVER_NAME}%{REQUEST_URI} [END,NE,R=permanent]
+</VirtualHost>
+```
+Then, create a symlink of the virtual host under "/etc/apache2/sites-enabled/" and restart the apache server.
+```sh
+cd /etc/apache2/sites-enabled/
+sudo ln -s ../sites-available/FRONT_END_DOMAIN.conf
+sudo systemctl restart apache2
+```
+
+### For the back-end
+For the back-end, create an apache virtual host under "/etc/apache2/sites-available/".
+The virtual host uses reverse proxy for the uwsgi server.
+Replace BACK_END_DOMAIN and FRONT_END_DOMAIN with your domain name for the back-end and the front-end respectively.
+For example, we use "api.ijmondcam.multix.io" as the back-end domain, and "ijmondcam.multix.io" as the front-end domain.
+```sh
+sudo vim /etc/apache2/sites-available/BACK_END_DOMAIN.conf
+# Add the following lines to this file
+<VirtualHost *:443>
+  ServerName BACK_END_DOMAIN
+  # Enable https ssl support
+  SSLEngine On
+  # The following line enables cors for the front-end
+  Header always set Access-Control-Allow-Origin "https://FRONT_END_DOMAIN"
+  Header set Access-Control-Allow-Methods "POST, GET, PUT, DELETE, PATCH, OPTIONS"
+  Header set Access-Control-Allow-Headers "Content-Type"
+  # The following line forces the browser to break the cache
+  Header set Cache-Control "max-age=5, public, must-revalidate"
+  # Reverse proxy to the uwsgi server
+  ProxyPreserveHost On
+  ProxyRequests Off
+  ProxyVia Off
+  ProxyPass / http://127.0.0.1:8081/
+  ProxyPassReverse / http://127.0.0.1:8081/
+  # APACHE_LOG_DIR is /var/log/apache2/
+  ErrorLog ${APACHE_LOG_DIR}/BACK_END_DOMAIN.error.log
+  CustomLog ${APACHE_LOG_DIR}/BACK_END_DOMAIN.access.log combined
+  # Add ssl
+  SSLCertificateFile /etc/letsencrypt/live/[...]/fullchain.pem
+  SSLCertificateKeyFile /etc/letsencrypt/live/[...]/privkey.pem
+  Include /etc/letsencrypt/options-ssl-apache.conf
+</VirtualHost>
+
+<VirtualHost *:80>
+  ServerName BACK_END_DOMAIN
+  # Enable the url rewriting
+  RewriteEngine on
+  # Redirect http to https
+  RewriteRule ^ https://%{SERVER_NAME}%{REQUEST_URI} [END,NE,R=permanent]
+</VirtualHost>
+```
+Then, create a symlink of the virtual host under "/etc/apache2/sites-enabled/" and restart the apache server.
+```sh
+cd /etc/apache2/sites-enabled/
+sudo ln -s ../sites-available/BACK_END_DOMAIN.conf
 sudo systemctl restart apache2
 ```
