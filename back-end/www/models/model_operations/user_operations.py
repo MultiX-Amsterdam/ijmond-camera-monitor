@@ -16,20 +16,17 @@ def create_user(client_id):
 
 def get_user_by_id(user_id):
     """Get a user by its ID."""
-    user = User.query.filter_by(id=user_id).first()
-    return user
+    return User.query.filter_by(id=user_id).first()
 
 
 def get_user_by_client_id(client_id):
     """Get a user by its client ID."""
-    user = User.query.filter_by(client_id=client_id).first()
-    return user
+    return User.query.filter_by(client_id=client_id).first()
 
 
 def get_all_users():
     """Get all users."""
-    users = User.query.all()
-    return users
+    return User.query.all()
 
 
 def update_client_type_by_user_id(user_id, client_type):

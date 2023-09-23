@@ -138,12 +138,12 @@ class Video(db.Model):
 
     def __repr__(self):
         return (
-            "<Video id=%r file_name=%r start_time=%r end_time=%r source_url=%r "
+            "<Video id=%r file_name=%r start_time=%r end_time=%r url_part=%r "
             "left=%r right=%r top=%r bottom=%r, label_state=%r, label_state_admin=%r "
             "label_state=%r, label_state_admin=%r, label_update_time=%r view_id=%r "
             "camera_id=%r>"
         ) % (
-            self.id, self.file_name, self.start_time, self.end_time, self.source_url,
+            self.id, self.file_name, self.start_time, self.end_time, self.url_part,
             self.left, self.right, self.top, self.bottom, self.label_state, self.label_state_admin,
             self.label_state, self.label_state_admin, self.label_update_time, self.view_id,
             self.camera_id

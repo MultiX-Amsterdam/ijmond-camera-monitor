@@ -2,6 +2,7 @@
 
 import jwt
 import traceback
+import time
 
 
 class InvalidUsage(Exception):
@@ -118,3 +119,8 @@ def try_wrap_response(func, status_code=400):
             else:
                 raise InvalidUsage(traceback.format_exc(), status_code=status_code)
     return inner_function
+
+
+def get_current_time():
+    """Return the current epochtime in seconds."""
+    return round(time.time())

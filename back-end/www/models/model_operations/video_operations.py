@@ -3,6 +3,7 @@
 import numpy as np
 from sqlalchemy import func
 from sqlalchemy import and_
+from sqlalchemy import or_
 from random import shuffle
 from models.model import db
 from models.model import Video
@@ -39,6 +40,11 @@ def remove_video(video_id):
         raise Exception("No video found in the database to delete.")
     db.session.delete(video)
     db.session.commit()
+
+
+def get_all_videos():
+    """Get all videos."""
+    return Video.query.all()
 
 
 def get_video_ids_labeled_by_user(user_id):
@@ -96,3 +102,77 @@ def query_video_batch(user_id, use_admin_label_state=False):
             videos = gold_pos + gold_neg + not_labeled + partially_labeled
             shuffle(videos)
             return videos
+
+
+def get_video_query(labels, page_number, page_size, use_admin_label_state=False):
+    """
+    Get video query from the database by the type of labels
+
+    Parameters
+    ----------
+    labels : list of raw label states, or str
+        This can be a list of the raw label state (defined in the label_state_machine function).
+        This can also be a string ("pos" or "neg", which means positive or negative labels).
+    page_number : int
+        The page number that the front-end requested.
+    page_size : int
+        The page size that the front-end requested.
+    use_admin_label_state : bool
+        Use the admin label state or not.
+        In the video table, there are two types of label states.
+        One is for the normal user (label_state).
+        And another one is for the researcher (label_state_admin).
+        See the definition of the "label_state_admin" column in the video table.
+
+    Returns
+    -------
+    The query object of the video table.
+    """
+    page_size = config.MAX_PAGE_SIZE if page_size > config.MAX_PAGE_SIZE else page_size
+    q = None
+    gold_labels = [0b101111, 0b100000]
+    pos_labels = [0b10111, 0b1111, 0b10011]
+    neg_labels = [0b10000, 0b1100, 0b10100]
+    bad_labels = [-2]
+    if type(labels) == list:
+        if len(labels) > 1:
+            if use_admin_label_state:
+                q = Video.query.filter(Video.label_state_admin.in_(labels))
+            else:
+                # Exclude gold standards and bad labels for normal request
+                q = Video.query.filter(and_(
+                    Video.label_state.in_(labels),
+                    Video.label_state_admin.notin_(gold_labels + bad_labels)))
+        elif len(labels) == 1:
+            if use_admin_label_state:
+                q = Video.query.filter(Video.label_state_admin==labels[0])
+            else:
+                # Exclude gold standards and bad labels for normal request
+                q = Video.query.filter(and_(
+                    Video.label_state==labels[0],
+                    Video.label_state_admin.notin_(gold_labels + bad_labels)))
+    elif type(labels) == str:
+        # Aggregate citizen and researcher labels
+        # Researcher labels override citizen labels
+        if labels == "pos":
+            # Exclude gold standards and bad labels for normal request
+            q = Video.query.filter(and_(
+                Video.label_state_admin.notin_(gold_labels + bad_labels),
+                or_(
+                    Video.label_state_admin.in_(pos_labels),
+                    and_(
+                        Video.label_state_admin.notin_(pos_labels + neg_labels),
+                        Video.label_state.in_(pos_labels)))))
+        elif labels == "neg":
+            # Exclude gold standards and bad labels for normal request
+            q = Video.query.filter(and_(
+                Video.label_state_admin.notin_(gold_labels + bad_labels),
+                or_(
+                    Video.label_state_admin.in_(neg_labels),
+                    and_(
+                        Video.label_state_admin.notin_(pos_labels + neg_labels),
+                        Video.label_state.in_(neg_labels)))))
+    q = q.order_by(desc(Video.label_update_time))
+    if page_number is not None and page_size is not None:
+        q = q.paginate(page_number, page_size, False)
+    return q

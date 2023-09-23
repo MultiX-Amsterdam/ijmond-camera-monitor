@@ -34,6 +34,9 @@ class Config(object):
     # And we want 20% of the videos to be unlabeled
     PARTIAL_LABEL_RATIO = 1
 
+    # The max page size allowed for getting videos
+    MAX_PAGE_SIZE = 1000
+
     # Set the path for logs
     APP_LOG_PATH = "../log/app.log"
 
