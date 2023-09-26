@@ -4,12 +4,14 @@ import numpy as np
 from sqlalchemy import func
 from sqlalchemy import and_
 from sqlalchemy import or_
+from sqlalchemy import desc
 from random import shuffle
 from models.model import db
 from models.model import Video
 from models.model import Label
 from app.app import app
 from config.config import config
+import models.model as m
 
 
 def create_video(fn, st, et, up, l, r, t, b, vid, cid):
@@ -106,7 +108,7 @@ def query_video_batch(user_id, use_admin_label_state=False):
 
 def get_video_query(labels, page_number, page_size, use_admin_label_state=False):
     """
-    Get video query from the database by the type of labels
+    Get video query from the database by the type of labels.
 
     Parameters
     ----------
@@ -130,10 +132,6 @@ def get_video_query(labels, page_number, page_size, use_admin_label_state=False)
     """
     page_size = config.MAX_PAGE_SIZE if page_size > config.MAX_PAGE_SIZE else page_size
     q = None
-    gold_labels = [0b101111, 0b100000]
-    pos_labels = [0b10111, 0b1111, 0b10011]
-    neg_labels = [0b10000, 0b1100, 0b10100]
-    bad_labels = [-2]
     if type(labels) == list:
         if len(labels) > 1:
             if use_admin_label_state:
@@ -142,7 +140,7 @@ def get_video_query(labels, page_number, page_size, use_admin_label_state=False)
                 # Exclude gold standards and bad labels for normal request
                 q = Video.query.filter(and_(
                     Video.label_state.in_(labels),
-                    Video.label_state_admin.notin_(gold_labels + bad_labels)))
+                    Video.label_state_admin.notin_(m.gold_labels + m.bad_labels)))
         elif len(labels) == 1:
             if use_admin_label_state:
                 q = Video.query.filter(Video.label_state_admin==labels[0])
@@ -150,29 +148,94 @@ def get_video_query(labels, page_number, page_size, use_admin_label_state=False)
                 # Exclude gold standards and bad labels for normal request
                 q = Video.query.filter(and_(
                     Video.label_state==labels[0],
-                    Video.label_state_admin.notin_(gold_labels + bad_labels)))
+                    Video.label_state_admin.notin_(m.gold_labels + m.bad_labels)))
     elif type(labels) == str:
         # Aggregate citizen and researcher labels
         # Researcher labels override citizen labels
         if labels == "pos":
             # Exclude gold standards and bad labels for normal request
             q = Video.query.filter(and_(
-                Video.label_state_admin.notin_(gold_labels + bad_labels),
+                Video.label_state_admin.notin_(m.gold_labels + m.bad_labels),
                 or_(
-                    Video.label_state_admin.in_(pos_labels),
+                    Video.label_state_admin.in_(m.pos_labels),
                     and_(
-                        Video.label_state_admin.notin_(pos_labels + neg_labels),
-                        Video.label_state.in_(pos_labels)))))
+                        Video.label_state_admin.notin_(m.pos_labels + m.neg_labels),
+                        Video.label_state.in_(m.pos_labels)))))
         elif labels == "neg":
             # Exclude gold standards and bad labels for normal request
             q = Video.query.filter(and_(
-                Video.label_state_admin.notin_(gold_labels + bad_labels),
+                Video.label_state_admin.notin_(m.gold_labels + m.bad_labels),
                 or_(
-                    Video.label_state_admin.in_(neg_labels),
+                    Video.label_state_admin.in_(m.neg_labels),
                     and_(
-                        Video.label_state_admin.notin_(pos_labels + neg_labels),
-                        Video.label_state.in_(neg_labels)))))
+                        Video.label_state_admin.notin_(m.pos_labels + m.neg_labels),
+                        Video.label_state.in_(m.neg_labels)))))
     q = q.order_by(desc(Video.label_update_time))
     if page_number is not None and page_size is not None:
         q = q.paginate(page_number, page_size, False)
     return q
+
+
+def get_pos_video_query_by_user_id(user_id, page_number, page_size, is_researcher):
+    """
+    Get video query (with positive labels) from the database by user id (exclude gold standards).
+
+    Notice that this function only returns videos with positive labels (i.e. videos having smoke).
+    The returned videos are paginated, and the front-end needs to specify page number and size.
+
+    Parameters
+    ----------
+    user_id : int
+        The user id (defined in the user table).
+    page_number : int
+        The page number that the front-end requested.
+    page_size : int
+        The page size that the front-end requested.
+    is_researcher : bool
+        If the client type is researcher or not.
+
+    Returns
+    -------
+    The query object of the video table.
+    """
+    page_size = config.MAX_PAGE_SIZE if page_size > config.MAX_PAGE_SIZE else page_size
+    if is_researcher: # researcher
+        q = Label.query.filter(and_(Label.user_id==user_id, Label.label.in_([1, 0b10111, 0b1111, 0b10011])))
+    else:
+        q = Label.query.filter(and_(Label.user_id==user_id, Label.label==1))
+    # Exclude gold standards
+    q = q.from_self(Video).join(Video).distinct().filter(Video.label_state_admin!=0b101111)
+    q = q.order_by(desc(Video.label_update_time))
+    if page_number is not None and page_size is not None:
+        q = q.paginate(page_number, page_size, False)
+    return q
+
+
+def get_all_url_part():
+    """Get all the url_part in the video table."""
+    return Video.query.with_entities(Video.url_part).all()
+
+
+def get_statistics():
+    """Get statistics of the video labels."""
+    full = m.pos_labels + m.neg_labels
+    gold = m.pos_gold_labels + m.neg_gold_labels
+    partial = m.maybe_pos_labels + m.maybe_neg_labels + m.discorded_labels
+    q = Video.query
+    num_all_videos = q.filter(Video.label_state_admin.notin_(m.bad_labels + gold)).count()
+    num_fully_labeled = q.filter(
+        and_(
+            Video.label_state_admin.notin_(m.bad_labels + gold),
+            or_(
+                Video.label_state_admin.in_(full),
+                Video.label_state.in_(full)
+            )
+        )
+    ).count()
+    num_partially_labeled = q.filter(Video.label_state.in_(partial)).count()
+    return_json = {
+        "num_all_videos": num_all_videos,
+        "num_fully_labeled": num_fully_labeled,
+        "num_partially_labeled": num_partially_labeled
+    }
+    return return_json

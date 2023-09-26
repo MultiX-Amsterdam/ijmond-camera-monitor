@@ -36,7 +36,7 @@ def remove_label(label_id):
 
 def update_labels(labels, user_id, connection_id, batch_id, client_type):
     """
-    Update the Video table when a new label is added, return the score of the batch
+    Update the Video table when a new label is added, return the score of the batch.
 
     Parameters
     ----------
@@ -116,7 +116,7 @@ def update_labels(labels, user_id, connection_id, batch_id, client_type):
 
 def label_state_machine(s, label, client_type):
     """
-    A finite state machine to infer the new label state based on current label state and some inputs
+    A finite state machine to infer the new label state based on current label state and some inputs.
 
     Parameters
     ----------
@@ -202,7 +202,7 @@ def label_state_machine(s, label, client_type):
 
 def compute_video_batch_score(video_batch_hashed, labels):
     """
-    Compute the score of a video batch
+    Compute the score of a video batch.
 
     Parameters
     ----------

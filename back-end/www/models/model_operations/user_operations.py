@@ -30,20 +30,32 @@ def get_all_users():
 
 
 def update_client_type_by_user_id(user_id, client_type):
-    """Update client type by user ID."""
-    user = User.query.filter_by(id=user_id).first()
+    """Update client_type by user ID."""
+    user = get_user_by_id(user_id)
     if user is None:
         raise Exception("No user found in the database to update.")
     user.client_type = client_type
+    app.logger.info("Update user: %r" % user)
     db.session.commit()
     return user
 
 
 def remove_user(user_id):
     """Remove a user."""
-    user = User.query.filter_by(id=user_id).first()
+    user = get_user_by_id(user_id)
     app.logger.info("Remove user: %r" % user)
     if user is None:
         raise Exception("No user found in the database to delete.")
     db.session.delete(user)
     db.session.commit()
+
+
+def update_best_tutorial_action_by_user_id(user_id, best_tutorial_action):
+    """Update best_tutorial_action by user ID."""
+    user = get_user_by_id(user_id)
+    if user is None:
+        raise Exception("No user found in the database to update.")
+    user.best_tutorial_action = best_tutorial_action
+    app.logger.info("Update user: %r" % user)
+    db.session.commit()
+    return user

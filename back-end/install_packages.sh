@@ -17,3 +17,9 @@ pip install --upgrade psycopg2-binary==2.9.7
 
 # JSON Web Token
 pip install --upgrade pyjwt==2.8.0
+
+# Google login API
+pip install --upgrade google-api-python-client==2.101.0
+
+# Math
+pip install --upgrade numpy==1.26.0

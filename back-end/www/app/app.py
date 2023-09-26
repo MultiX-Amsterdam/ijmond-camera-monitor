@@ -103,3 +103,10 @@ db.init_app(app)
 
 # Initialize app with schema
 ma.init_app(app)
+
+
+@app.after_request
+def after_request(response):
+    """Log the HTTP response after each request."""
+    app.logger.info(response)
+    return response

@@ -1,7 +1,6 @@
 """Schema for object serialization and deserialization."""
 
 from flask_marshmallow import Marshmallow
-from models.model import User
 from models.model import Video
 
 
