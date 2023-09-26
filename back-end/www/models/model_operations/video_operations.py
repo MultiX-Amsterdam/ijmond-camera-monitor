@@ -5,6 +5,7 @@ from sqlalchemy import func
 from sqlalchemy import and_
 from sqlalchemy import or_
 from sqlalchemy import desc
+from sqlalchemy.orm import load_only
 from random import shuffle
 from models.model import db
 from models.model import Video
@@ -51,9 +52,11 @@ def get_all_videos():
 
 def get_video_ids_labeled_by_user(user_id):
     """Get a list of video IDs labeled by the user before."""
-    labels = Label.query.filter(Label.user_id==user_id)
-    v_ids = labels.from_self(Video).join(Video).distinct().with_entities(Video.id).all()
-    return v_ids
+    labels = Label.query.filter(Label.user_id==user_id).all()
+    v_ids = set()
+    for label in labels:
+        v_ids.add(label.video_id)
+    return list(v_ids)
 
 
 def query_video_batch(user_id, use_admin_label_state=False):
@@ -73,8 +76,7 @@ def query_video_batch(user_id, use_admin_label_state=False):
         The video object is defined in the Video model.
     """
     # Get the video IDs labeled by the user before
-    v_ids = get_video_ids_labeled_by_user(user_id)
-    labeled_video_ids = [v[0] for v in v_ids]
+    labeled_video_ids = get_video_ids_labeled_by_user(user_id)
     if use_admin_label_state:
         # For admin researcher, do not add gold standards
         # Exclude the videos that were labeled by the same user
@@ -91,6 +93,7 @@ def query_video_batch(user_id, use_admin_label_state=False):
         # (We do not want citizens to do the double work to confirm reseacher labeled videos)
         excluded_labels = (0b101111, 0b100000, 0b10111, 0b10000, 0b10011, 0b10100, 0b1111, 0b1100, -2)
         excluded_v_ids = Video.query.filter(Video.label_state_admin.in_(excluded_labels)).with_entities(Video.id).all()
+        excluded_v_ids = [v[0] for v in excluded_v_ids]
         q = Video.query.filter(Video.id.notin_(labeled_video_ids + excluded_v_ids))
         # Try to include some partially labeled videos in this batch
         num_unlabeled = config.BATCH_SIZE - config.GOLD_STANDARD_IN_BATCH
@@ -172,7 +175,7 @@ def get_video_query(labels, page_number, page_size, use_admin_label_state=False)
                         Video.label_state.in_(m.neg_labels)))))
     q = q.order_by(desc(Video.label_update_time))
     if page_number is not None and page_size is not None:
-        q = q.paginate(page_number, page_size, False)
+        q = q.paginate(page=page_number, per_page=page_size, max_per_page=100)
     return q
 
 
@@ -200,14 +203,20 @@ def get_pos_video_query_by_user_id(user_id, page_number, page_size, is_researche
     """
     page_size = config.MAX_PAGE_SIZE if page_size > config.MAX_PAGE_SIZE else page_size
     if is_researcher: # researcher
-        q = Label.query.filter(and_(Label.user_id==user_id, Label.label.in_([1, 0b10111, 0b1111, 0b10011])))
+        q = Label.query.filter(and_(Label.user_id==user_id, Label.label.in_([1, 0b10111, 0b1111, 0b10011]))).subquery()
     else:
-        q = Label.query.filter(and_(Label.user_id==user_id, Label.label==1))
+        q = Label.query.filter(and_(Label.user_id==user_id, Label.label==1)).subquery()
     # Exclude gold standards
-    q = q.from_self(Video).join(Video).distinct().filter(Video.label_state_admin!=0b101111)
-    q = q.order_by(desc(Video.label_update_time))
+    #q = q.from_self(Video).join(Video).distinct().filter(Video.label_state_admin!=0b101111)
+    q = (
+        Video.query
+        .join(q, Video.id == q.c.video_id)
+        .distinct()
+        .filter(Video.label_state_admin != 0b101111)
+        .order_by(desc(Video.label_update_time))
+    )
     if page_number is not None and page_size is not None:
-        q = q.paginate(page_number, page_size, False)
+        q = q.paginate(page=page_number, per_page=page_size, max_per_page=100)
     return q
 
 

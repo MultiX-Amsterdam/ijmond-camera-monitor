@@ -166,7 +166,7 @@ def get_batch():
         raise InvalidUsage("Missing field: user_token", status_code=400)
     # Decode user jwt
     try:
-        user_jwt = decode_jwt(request_json["user_token"])
+        user_jwt = decode_jwt(request_json["user_token"], config.JWT_PRIVATE_KEY)
     except jwt.InvalidSignatureError as ex:
         raise InvalidUsage(ex.args[0], status_code=401)
     except Exception as ex:
@@ -233,9 +233,6 @@ def jsonify_videos(videos, sign=False, batch_id=None, total=None, is_admin=False
         video_id_list = []
     for i in range(len(videos_json)):
         videos_json[i]["url_root"] = config.VIDEO_URL_ROOT
-        fn = videos_json[i]["file_name"]
-        fns = fn.split("-")
-        videos_json[i]["url_part"] = "%s-%s-%s/%s-%s/%s.mp4" % (fns[2], fns[3], fns[4], fns[0], fns[1], fn)
         if sign:
             video_id_list.append(videos_json[i]["id"])
     return_json = {"data": videos_json}
@@ -255,7 +252,7 @@ def encode_video_jwt(**kwargs):
     payload["jti"] = uuid.uuid4().hex
     for k in kwargs:
         payload[k] = kwargs[k]
-    return encode_jwt(payload=payload)
+    return encode_jwt(payload, config.JWT_PRIVATE_KEY)
 
 
 @bp.route("/send_batch", methods=["POST"])
@@ -272,8 +269,8 @@ def send_batch():
         raise InvalidUsage("Missing field: video_token", status_code=400)
     # Decode user and video jwt
     try:
-        video_jwt = decode_jwt(request_json["video_token"])
-        user_jwt = decode_jwt(request_json["user_token"])
+        video_jwt = decode_jwt(request_json["video_token"], config.JWT_PRIVATE_KEY)
+        user_jwt = decode_jwt(request_json["user_token"], config.JWT_PRIVATE_KEY)
     except jwt.InvalidSignatureError as ex:
         raise InvalidUsage(ex.args[0], status_code=401)
     except Exception as ex:
@@ -308,7 +305,7 @@ def set_label_state():
         raise InvalidUsage("Missing field: user_token", status_code=400)
     # Decode user jwt
     try:
-        user_jwt = decode_jwt(request_json["user_token"])
+        user_jwt = decode_jwt(request_json["user_token"], config.JWT_PRIVATE_KEY)
     except jwt.InvalidSignatureError as ex:
         raise InvalidUsage(ex.args[0], status_code=401)
     except Exception as ex:
@@ -476,7 +473,7 @@ def get_video_labels(labels, allow_user_id=False, only_admin=False, use_admin_la
         if "user_token" in qs:
             # Decode user jwt
             try:
-                user_jwt = decode_jwt(qs["user_token"][0])
+                user_jwt = decode_jwt(qs["user_token"][0], config.JWT_PRIVATE_KEY)
             except jwt.InvalidSignatureError as ex:
                 raise InvalidUsage(ex.args[0], status_code=401)
             except Exception as ex:
@@ -530,7 +527,7 @@ def add_tutorial_record():
         raise InvalidUsage("Missing field: user_token", status_code=400)
     # Decode user jwt
     try:
-        user_jwt = decode_jwt(request_json["user_token"])
+        user_jwt = decode_jwt(request_json["user_token"], config.JWT_PRIVATE_KEY)
     except jwt.InvalidSignatureError as ex:
         raise InvalidUsage(ex.args[0], status_code=401)
     except Exception as ex:

@@ -8,31 +8,34 @@ from models.model import Video
 ma = Marshmallow()
 
 
-class VideoSchema(ma.ModelSchema):
+class VideoSchema(ma.SQLAlchemyAutoSchema):
     """
     The schema for the video table, used for jsonify (for normal users in label mode).
     """
     class Meta:
         model = Video # the class for the model
-        fields = ("id", "file_name") # fields to expose
+        load_instance = True
+        fields = ("id", "file_name", "view_id", "camera_id", "url_part") # fields to expose
 videos_schema = VideoSchema(many=True)
 
 
-class VideoSchemaWithDetail(ma.ModelSchema):
+class VideoSchemaWithDetail(ma.SQLAlchemyAutoSchema):
     """
     The schema for the video table, used for jsonify (for normal users in gallery mode).
     """
     class Meta:
         model = Video # the class for the model
-        fields = ("id", "start_time", "view_id", "camera_id", "file_name")
+        load_instance = True
+        fields = ("id", "start_time", "view_id", "camera_id", "file_name", "url_part")
 videos_schema_with_detail = VideoSchemaWithDetail(many=True)
 
 
-class VideoSchemaIsAdmin(ma.ModelSchema):
+class VideoSchemaIsAdmin(ma.SQLAlchemyAutoSchema):
     """
     The schema for the video table, used for jsonify (for admin users).
     """
     class Meta:
         model = Video # the class for the model
-        fields = ("id", "label_state", "label_state_admin", "start_time", "file_name", "view_id", "camera_id")
+        load_instance = True
+        fields = ("id", "label_state", "label_state_admin", "start_time", "file_name", "url_part", "view_id", "camera_id")
 videos_schema_is_admin = VideoSchemaIsAdmin(many=True)

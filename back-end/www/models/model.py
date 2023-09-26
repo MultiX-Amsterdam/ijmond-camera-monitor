@@ -1,8 +1,8 @@
 """Database model for the application."""
 
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy.sql import func
 from sqlalchemy import MetaData
+from util.util import get_current_time
 
 
 # Set the naming convention for database columns
@@ -70,7 +70,7 @@ class User(db.Model):
         4 => passed the last batch (16 videos) in the tutorial during the first try.
     """
     id = db.Column(db.Integer, primary_key=True)
-    register_time = db.Column(db.DateTime, server_default=func.now())
+    register_time = db.Column(db.Integer, default=get_current_time())
     client_id = db.Column(db.String(255), unique=True, nullable=False)
     client_type = db.Column(db.Integer, nullable=False, default=3)
     score = db.Column(db.Integer, nullable=False, default=0)
@@ -133,7 +133,7 @@ class Video(db.Model):
     file_name = db.Column(db.String(255), unique=True, nullable=False)
     start_time = db.Column(db.Integer, nullable=False)
     end_time = db.Column(db.Integer, nullable=False)
-    url_part = db.Column(db.String(768), unique=True, nullable=False)
+    url_part = db.Column(db.String(768), nullable=False)
     left = db.Column(db.Integer, nullable=False)
     right = db.Column(db.Integer, nullable=False)
     top = db.Column(db.Integer, nullable=False)
@@ -185,7 +185,7 @@ class Label(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     video_id = db.Column(db.Integer, db.ForeignKey("video.id"), nullable=False)
     label = db.Column(db.Integer, nullable=False)
-    time = db.Column(db.Integer, nullable=False, server_default=func.now())
+    time = db.Column(db.Integer, nullable=False, default=get_current_time())
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False, index=True)
     batch_id = db.Column(db.Integer, db.ForeignKey("batch.id"))
 
@@ -215,7 +215,7 @@ class Connection(db.Model):
         This indicates the user who connected to the server.
     """
     id = db.Column(db.Integer, primary_key=True)
-    time = db.Column(db.Integer, nullable=False, server_default=func.now())
+    time = db.Column(db.Integer, nullable=False, default=get_current_time())
     client_type = db.Column(db.Integer, nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
     # Relationships
@@ -257,7 +257,7 @@ class Batch(db.Model):
         Current raw score of the user (User.raw_score).
     """
     id = db.Column(db.Integer, primary_key=True)
-    request_time = db.Column(db.Integer, nullable=False, server_default=func.now())
+    request_time = db.Column(db.Integer, nullable=False, default=get_current_time())
     return_time = db.Column(db.Integer)
     connection_id = db.Column(db.Integer, db.ForeignKey("connection.id"))
     score = db.Column(db.Integer)
@@ -303,7 +303,7 @@ class View(db.Model):
     connection_id = db.Column(db.Integer, db.ForeignKey("connection.id"), nullable=False)
     video_id = db.Column(db.Integer, db.ForeignKey("video.id"), nullable=False)
     query_type = db.Column(db.Integer, nullable=False)
-    time = db.Column(db.Integer, server_default=func.now())
+    time = db.Column(db.Integer, default=get_current_time())
 
     def __repr__(self):
         return (
@@ -343,7 +343,7 @@ class Tutorial(db.Model):
     connection_id = db.Column(db.Integer, db.ForeignKey("connection.id"), nullable=False)
     action_type = db.Column(db.Integer, nullable=False)
     query_type = db.Column(db.Integer, nullable=False)
-    time = db.Column(db.Integer, server_default=func.now())
+    time = db.Column(db.Integer, default=get_current_time())
 
     def __repr__(self):
         return (

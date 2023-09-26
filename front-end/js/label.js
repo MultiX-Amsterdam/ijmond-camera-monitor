@@ -200,17 +200,17 @@
     //  video_labeling_tool: video_labeling_tool
     //});
     ga_tracker = new edaplotjs.GoogleAnalyticsTracker({
-      ready: function (client_id) {
+      ready: function (ga_obj) {
         google_account_dialog.isAuthenticatedWithGoogle({
           success: function (is_signed_in) {
             // If signed in, will be handled by the callback function of initGoogleSignIn() in the GoogleAccountDialog object
             if (!is_signed_in) {
-              onUserNotSignedIn(client_id);
+              onUserNotSignedIn(ga_obj.getClientId());
             }
           },
           error: function (error) {
             console.error("Error with Google sign-in: ", error);
-            onUserNotSignedIn(client_id);
+            onUserNotSignedIn(ga_obj.getClientId());
           }
         });
       }

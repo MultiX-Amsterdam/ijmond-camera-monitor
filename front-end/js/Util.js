@@ -67,7 +67,7 @@
       var is_staging = url_hostname.indexOf("staging");
       var is_testing = url_hostname.indexOf("192.168");
       if (is_localhost >= 0 || is_testing >= 0) {
-        root_url = "http://" + url_hostname + ":5000/api/v1/";
+        root_url = "http://" + url_hostname + ":8888/api/v1/";
       } else {
         if (is_staging >= 0) {
           root_url = "https://staging.api.ijmondcam.multix.io/api/v1/";
@@ -135,6 +135,20 @@
     //
     // Public methods
     //
+
+    // Build the original video panarama URL
+    this.buildVideoPanoramaURL = function(v) {
+      var src_url = "https://www.youtube.com/watch?v=" + v["url_part"];
+      return src_url;
+    };
+
+    // Build the video URL from server returned data
+    // Example: https://ijmondcam.multix.io/videos/hoogovens/bu7USw70eXs/bu7USw70eXs-0.mp4
+    this.buildVideoURL = function(v) {
+      var camera_names = ["hoogovens", "kooksfabriek_1", "kooksfabriek_2"];
+      var src_url = v["url_root"] + camera_names[v["camera_id"]] + "/" +  v["url_part"] + "/" + v["file_name"] + ".mp4";
+      return src_url;
+    };
 
     // Post JSON
     this.postJSON = function (url, data, callback) {
@@ -330,13 +344,6 @@
       if (isAndroidDevice) {
         return parseFloat(matchAndroidVersionString[1]);
       }
-    };
-
-    // Replace thumbnail width
-    // From Android 9, videos having small resolutions can have weird artifacts at the edge
-    // So we need to use higher resolutions
-    this.replaceThumbnailWidth = function (url) {
-      return url.replace("/180/", "/320/").replace("-180-180-", "-320-320-").replace("width=180", "width=320").replace("height=180", "height=320");
     };
 
     // Is mobile device

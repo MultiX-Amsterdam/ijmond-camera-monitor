@@ -19,8 +19,8 @@ class Config(object):
 
     # Set the URL root for getting the videos
     # For example, "https://smoke.createlab.org/videos/180/"
-    VIDEO_URL_ROOT = ""
-    assert VIDEO_URL_ROOT is not "", ("need to specify VIDEO_URL_ROOT in config.py")
+    VIDEO_URL_ROOT = "https://ijmondcam.multix.io/videos/"
+    assert VIDEO_URL_ROOT != "", ("need to specify VIDEO_URL_ROOT in config.py")
 
     # Set the number of videos for each batch
     BATCH_SIZE = 16

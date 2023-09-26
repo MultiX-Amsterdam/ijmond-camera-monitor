@@ -186,7 +186,7 @@
 
   function updateItem($item, v) {
     // Update date and time information
-    var src_url = v["url_root"] + v["url_part"];
+    var src_url = util.buildVideoURL(v);
     var fns = v["file_name"].split("-");
     var $i = $item.children(".label-control").find("i").removeClass();
     var date_str = (new Date(parseInt(fns[12]) * 1000)).toLocaleString("en-US", {
@@ -207,17 +207,8 @@
         $($i.get(2)).text("Scientist: " + label_researcher).addClass("custom-text-info-dark-theme");
         var label_citizen = safeGet(label_state_map[v["label_state"]], "Undefined");
         $($i.get(3)).text("Citizen: " + label_citizen).addClass("custom-text-info-dark-theme");
-        // Update link
-        var b = fns[5] + "," + fns[6] + "," + fns[7] + "," + fns[8] // bounds
-        var fps = 12 // frames per second when generating these video clips
-        var t = parseInt(fns[11]) / fps; // starting time
-        t = Math.round(t * 1000) / 1000
-        var camera_id_to_name = ["clairton1", "braddock1", "westmifflin1"]
-        var s = camera_id_to_name[fns[0]] // camera name
-        var d = fns[2] + "-" + fns[3] + "-" + fns[4]; // date
-        var href = "http://mon.createlab.org/#v=" + b + ",pts&t=" + t + "&ps=25&d=" + d + "&s=" + s;
         $item.find("a").removeClass();
-        $($i.get(4)).html("<a target='_blank' href='" + href + "'>Link to Viewer</a>");
+        $($i.get(4)).html("<a target='_blank' href='" + util.buildVideoPanoramaURL(v) + "'>Link to Original</a>");
         // Save data to DOM
         $item.find("select").data("v", v).val("default");
         $item.find("button").data("v", v);
@@ -238,7 +229,6 @@
       // Play the video
       util.handleVideoPromise(this, "play");
     });
-    src_url = util.replaceThumbnailWidth(src_url); // always use high resolution videos
     $vid.prop("src", src_url);
     util.handleVideoPromise($vid.get(0), "load"); // load to reset video promise
     return $item;
@@ -522,7 +512,7 @@
     if (util.browserSupported()) {
       showGalleryLoadingMsg();
       var ga_tracker = new edaplotjs.GoogleAnalyticsTracker({
-        ready: function (client_id) {
+        ready: function (ga_obj) {
           google_account_dialog.silentSignInWithGoogle({
             success: function (is_signed_in, google_id_token) {
               if (is_signed_in) {
@@ -534,7 +524,7 @@
                 });
               } else {
                 util.login({
-                  client_id: client_id
+                  client_id: ga_obj.getClientId()
                 }, {
                   success: onLoginSuccess,
                   complete: onLoginComplete
@@ -544,7 +534,7 @@
             error: function (error) {
               console.error("Error with Google sign-in: ", error);
               util.login({
-                client_id: client_id
+                client_id: ga_obj.getClientId()
               }, {
                 success: onLoginSuccess,
                 complete: onLoginComplete

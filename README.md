@@ -600,3 +600,32 @@ Remember to turn the "Enhanced measurement" off since we do not need the advance
 After that, [get the Measurement ID](https://support.google.com/analytics/answer/9539598) and paste it into the `getGoogleAnalyticsId()` function in the [GoogleAnalyticsTracker.js](front-end/js/GoogleAnalyticsTracker.js) file.
 Then, the tracker script will load Google's global site tag (`gtag.js`), set custom dimensions, and send the initial page view to the Google Analytics property.
 Note that it is better to have different data steams for development, staging, and production environments, where you can put different Measurement IDs in the `getGoogleAnalyticsId()` function in the tracker script.
+
+# <a name="prepare-gold-standards"></a>Prepare gold standards for quality check (administrator only)
+> WARNING: this section is only for system administrators, not developers.
+
+The system uses gold standards (videos with known labels) to check the quality of each labeled batch.
+If a user did not label the gold standards correctly, the corresponding batch would be discarded.
+Initially, there are no gold standards, and the backend will not return videos for labeling.
+To solve this issue, give yourself the admin permission by using:
+```sh
+python set_client_type.py USER_ID 0
+```
+where `USER_ID` can be found on the "Account" tab on the top right of the `label.html` page after logging in with Google.
+The number 0 that follows the user_id is the admin permission.
+For more information about the permission, please refer to the `client_type` variable in the `User` class in the [models.py](back-end/www/models/model.py) file.
+The system will not run the quality check for users with the admin permission. In this way, you can start labeling first.
+
+To assign gold standards videos, go to the `gallery.html` page when logging in with the account that has the admin permission.
+On the gallery, you will find "P*" and "N*" buttons.
+Clicking on these buttons shows the positive and negative videos that the admin labeled.
+You can now use the dropdown below each video to change the label to Gold Pos (positive gold standards) or Gold Neg (negative gold standards).
+Once there is a sufficient number of gold standards (more than 4), normal users will be able to label videos.
+I recommend having at least 100 gold standards to start.
+
+If you found that some videos are not suitable for labeling (e.g., due to incorrect image stitching), you can get the url of the video and use the following command to mark similar ones (with the same date and bounding box) as "bad" videos.
+This process does not remove videos.
+Instead it gives all bad videos a label state -2.
+```sh
+python mark_bad_videos.py [video_url]
+```
