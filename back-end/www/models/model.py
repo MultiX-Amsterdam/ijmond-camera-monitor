@@ -104,15 +104,6 @@ class Video(db.Model):
         The starting epochtime (in seconds) of the video clip.
     end_time : int
         The ending epochtime (in seconds) of the video clip.
-    left : int
-        The left position of the clip, relative to the original panorama video.
-        The top-left corner of the panorama is the origin with coordinate (0, 0).
-    right : int
-        The right position of the clip, relative to the original panorama video.
-    top : int
-        The top position of the clip, relative to the original panorama video.
-    bottom : int
-        The bottom position of the clip, relative to the original panorama video.
     url_part : str
         The URL part of the panorama video that contains the video clip.
     label_state : int
@@ -132,12 +123,8 @@ class Video(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     file_name = db.Column(db.String(255), unique=True, nullable=False)
     start_time = db.Column(db.Integer, nullable=False)
-    end_time = db.Column(db.Integer, nullable=False)
+    end_time = db.Column(db.Integer)
     url_part = db.Column(db.String(768), nullable=False)
-    left = db.Column(db.Integer, nullable=False)
-    right = db.Column(db.Integer, nullable=False)
-    top = db.Column(db.Integer, nullable=False)
-    bottom = db.Column(db.Integer, nullable=False)
     label_state = db.Column(db.Integer, nullable=False, default=-1, index=True)
     label_state_admin = db.Column(db.Integer, nullable=False, default=-1, index=True)
     label_update_time = db.Column(db.Integer)
@@ -150,12 +137,10 @@ class Video(db.Model):
     def __repr__(self):
         return (
             "<Video id=%r file_name=%r start_time=%r end_time=%r url_part=%r "
-            "left=%r right=%r top=%r bottom=%r, label_state=%r, label_state_admin=%r "
             "label_state=%r, label_state_admin=%r, label_update_time=%r view_id=%r "
             "camera_id=%r>"
         ) % (
             self.id, self.file_name, self.start_time, self.end_time, self.url_part,
-            self.left, self.right, self.top, self.bottom, self.label_state, self.label_state_admin,
             self.label_state, self.label_state_admin, self.label_update_time, self.view_id,
             self.camera_id
         )

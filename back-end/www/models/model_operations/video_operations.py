@@ -15,17 +15,13 @@ from config.config import config
 import models.model as m
 
 
-def create_video(fn, st, et, up, l, r, t, b, vid, cid):
+def create_video(fn, st, et, up, vid, cid):
     """Create a video."""
     video = Video(
         file_name=fn,
         start_time=st,
         end_time=et,
         url_part=up,
-        left=l,
-        right=r,
-        top=t,
-        bottom=b,
         view_id=vid,
         camera_id=cid
     )

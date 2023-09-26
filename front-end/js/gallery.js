@@ -187,10 +187,9 @@
   function updateItem($item, v) {
     // Update date and time information
     var src_url = util.buildVideoURL(v);
-    var fns = v["file_name"].split("-");
     var $i = $item.children(".label-control").find("i").removeClass();
-    var date_str = (new Date(parseInt(fns[12]) * 1000)).toLocaleString("en-US", {
-      timeZone: "America/New_York",
+    var date_str = (new Date(parseInt(v["start_time"]) * 1000)).toLocaleString("en-GB", {
+      timeZone: "Europe/Amsterdam",
       hour: "2-digit",
       minute: "2-digit",
       year: "numeric",
@@ -198,6 +197,7 @@
       day: "2-digit",
       hour12: false
     });
+    console.log(date_str);
     $($i.get(0)).html("<a target='_blank' href='" + src_url + "'>" + date_str + "</a>");
     if (typeof user_id === "undefined") {
       if (is_admin) {
