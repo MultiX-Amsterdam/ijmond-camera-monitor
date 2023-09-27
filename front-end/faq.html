@@ -1,0 +1,217 @@
+<!doctype html>
+<html>
+
+<head>
+  <title>IJmondCAM</title>
+  <meta charset="utf-8" name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" media="screen" rel="stylesheet" type="text/css" />
+  <link href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css" media="screen" rel="stylesheet" type="text/css" />
+  <link href="css/frame.css" media="screen" rel="stylesheet" type="text/css" />
+  <link href="css/controls.css" media="screen" rel="stylesheet" type="text/css" />
+  <link href="css/widgets.css" media="screen" rel="stylesheet" type="text/css" />
+  <link href="css/custom.css" media="screen" rel="stylesheet" type="text/css" />
+  <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+  <link href='https://fonts.googleapis.com/css?family=Open+Sans+Condensed:300,700' rel='stylesheet' type='text/css'>
+  <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700" rel="stylesheet">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+  <script src="js/widgets.js"></script>
+  <script src="js/Util.js"></script>
+  <script src="js/GoogleAnalyticsTracker.js"></script>
+  <script src="js/faq.js"></script>
+  <script src="js/menu.js"></script>
+  <style>
+    .menu-faq {
+      color: rgb(255, 255, 255) !important;
+      opacity: 1 !important;
+      font-weight: 700 !important;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="menu-container"></div>
+  <div class="content-container">
+    <div class="content">
+      <div class="content-table flex-column">
+        <div class="flex-row">
+          <div class="flex-item flex-column">
+            <p class="text">
+              We answered frequently asked questions below.
+            </p>
+            <a class="jump" name="q1"></a>
+            <p class="text no-bottom-margin add-top-margin">
+              <span>
+                Q1: How do you use all these labeled data?
+              </span>
+            </p>
+            <hr>
+            <ul>
+              <li>
+                We will use the data to train an AI model for recognizing smoke emissions based on <a href="https://github.com/CMU-CREATE-Lab/deep-smoke-machine" target="_blank">our previous work</a>.
+                The model will be a deep neural network that can learn how to classify videos into two categories: having smoke or no smoke.
+                Then, we will use the model to recognize smoke for many dates and camera views on <a href="https://spotdegifwolk.nl/" target="_blank">Frisse Wind's camera</a>.
+              </li>
+            </ul>
+            <a class="jump" name="q2"></a>
+            <p class="text no-bottom-margin add-top-margin">
+              <span>
+                Q2: Why do you need help from volunteers?
+              </span>
+            </p>
+            <hr>
+            <ul>
+              <li>
+                While deep neural networks have been proven useful in various applications (e.g., object recognition), training such networks requires a considerable amount of labeled data.
+                Annotating all the data will take hundreds of hours for one researcher, which is why we need help from volunteers.
+              </li>
+            </ul>
+            <a class="jump" name="q3"></a>
+            <p class="text no-bottom-margin add-top-margin">
+              <span>
+                Q3: Why is it important to recognize and visualize smoke emissions?
+              </span>
+            </p>
+            <hr>
+            <ul>
+              <li>
+                Our <a href="https://arxiv.org/pdf/1804.03293.pdf" target="_blank">previous work in air quality monitoring</a> shows that visualizing evidence of smoke emissions can influence the attitude of regulators.
+                Also, using such visual data increased the community's confidence when addressing air pollution.
+              </li>
+            </ul>
+            <a class="jump" name="q4"></a>
+            <p class="text no-bottom-margin add-top-margin">
+              <span>
+                Q4: Where do these video clips come from?
+              </span>
+            </p>
+            <hr>
+            <ul>
+              <li>
+                We selected and cropped several windows into videos from the <a href="https://www.youtube.com/@frissewindnu" target="_blank">Frisse Wind's YouTube channel</a>.
+                The original camera footage is on <a href="https://spotdegifwolk.nl/" target="_blank">Frisse Wind's tool</a>.
+              </li>
+            </ul>
+            <a class="image adaptive-image no-top-margin cam-0-image" href="img/cam_0.png"></a>
+            <a class="jump" name="q5"></a>
+            <p class="text no-bottom-margin add-top-margin">
+              <span>
+                Q5: Why did my labels not pass the quality check? How did you define the quality?
+              </span>
+            </p>
+            <hr>
+            <ul>
+              <li>
+                For each batch (16 videos) on the page, the system randomly placed several videos with known answers, also called gold standards.
+                A batch will pass the quality check if you label these gold standards correctly.
+              </li>
+            </ul>
+            <a class="jump" name="q6"></a>
+            <p class="text no-bottom-margin add-top-margin">
+              <span>
+                Q6: How does the system know if smoke emission is present in a video?
+              </span>
+            </p>
+            <hr>
+            <ul>
+              <li>
+                The system defines the final label by aggregating answers from citizens and researchers.
+                At least two volunteers or one researcher will review each video.
+                If the answers from the two volunteers agree, the system marks the video according to the agreement.
+                Otherwise, another volunteer or researcher will review the video, and the result is aggregated based on majority voting.
+              </li>
+            </ul>
+            <a class="jump" name="q7"></a>
+            <p class="text no-bottom-margin add-top-margin">
+              <span>
+                Q7: Why sometimes does a dialog box pop up and ask me to enable video autoplay?
+              </span>
+            </p>
+            <hr>
+            <ul>
+              <li>
+                During labeling, videos need to play automatically.
+                If a mobile device has data saver enabled, videos will stop autoplay.
+                Also, some mobile devices pause videos after waking up from sleeping mode.
+                To enable autoplay, browsers require user interactions, which is why the system shows the dialog box.
+              </li>
+            </ul>
+            <a class="jump" name="q8"></a>
+            <p class="text no-bottom-margin add-top-margin">
+              <span>
+                Q8: Why do I sometimes see similar videos? Were they the same?
+              </span>
+            </p>
+            <hr>
+            <ul>
+              <li>
+                Videos that have closer times (e.g., 8 and 8:10 am) can look similar due to the same weather and lighting conditions.
+                Also, gold standard videos for the quality check can appear again if you label many batches.
+              </li>
+            </ul>
+            <a class="jump" name="q9"></a>
+            <p class="text no-bottom-margin add-top-margin">
+              <span>
+                Q9: Can I build a similar system with your code?
+              </span>
+            </p>
+            <hr>
+            <ul>
+              <li>
+                This project is <a href="https://github.com/MultiX-Amsterdam/ijmond-camera-monitor" target="_blank">open-sourced on GitHub</a>. Please feel free to reuse the code.
+              </li>
+            </ul>
+            <a class="jump" name="q10"></a>
+            <p class="text no-bottom-margin add-top-margin">
+              <span>
+                Q10: Are there other actions that I can take to advocate for better air quality?
+              </span>
+            </p>
+            <hr>
+            <ul>
+              <li>
+                We recommend checking <a href="https://www.frissewind.nu/" target="_blank">Frisse Wind's website</a> to understand opportunities for air quality advocacy,
+                the <a href="https://odnzkg.nl/faq-handhaving-tata-steel-kooksgasfabrieken/" target="_blank">environmental services's action</a> in addressing the air pollution concerns,
+                the <a href="https://hollandse-luchten.org/" target="_blank">Hollandse Luchten network</a> to understand local citizen science activities in monitoring air quality,
+                the <a href="https://www.rivm.nl/nieuws/directe-relatie-tussen-uitstoot-tata-steel-en-hinder-en-kans-op-ziekte" target="_blank">recent RIVM report</a> about the health impact of Tata Steel emissions,
+                and <a href="https://www.ad.nl/binnenland/harde-conclusie-onderzoek-tata-inwoners-wijk-aan-zee-leven-korter-door-uitstoot-staalfabriek~a9bbf8f4/">this news article</a> about how various stakeholders respond to RIVM's research results.
+              </li>
+            </ul>
+            <a class="jump" name="q11"></a>
+            <p class="text no-bottom-margin add-top-margin">
+              <span>
+                Q11: Why does this tool not support devices older than Android 7 and iOS 11?
+              </span>
+            </p>
+            <hr>
+            <ul>
+              <li>
+                When labeling smoke, this tool shows 16 videos at the same time.
+                Older devices have difficulties in playing these videos, which results in poor user experiences.
+              </li>
+            </ul>
+            <a class="jump" name="q12"></a>
+            <p class="text no-bottom-margin add-top-margin">
+              <span>
+                Q12: Why are there no nighttime videos to label?
+              </span>
+            </p>
+            <hr>
+            <ul>
+              <li>
+                Smoke emissions in nighttime videos (captured by commercial digital cameras) are tough for the computer to recognize due to insufficient light.
+                We want to focus on training the computer to recognize daytime smoke emissions first.
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div id="video-test-dialog" class="custom-dialog-large" title="Autoplay" data-role="none">
+    <p>Video autoplay is disabled. Please enable it.</p>
+    <button id="play-video-button" class="custom-button">Enable video autoplay</button>
+  </div>
+</body>
+
+</html>

@@ -197,8 +197,7 @@
       day: "2-digit",
       hour12: false
     });
-    console.log(date_str);
-    $($i.get(0)).html("<a target='_blank' href='" + src_url + "'>" + date_str + "</a>");
+    $($i.get(0)).html("<a target='_blank' href='" + util.buildVideoPanoramaURL(v) + "'>" + date_str + "</a>");
     if (typeof user_id === "undefined") {
       if (is_admin) {
         // Update label information
@@ -208,7 +207,7 @@
         var label_citizen = safeGet(label_state_map[v["label_state"]], "Undefined");
         $($i.get(3)).text("Citizen: " + label_citizen).addClass("custom-text-info-dark-theme");
         $item.find("a").removeClass();
-        $($i.get(4)).html("<a target='_blank' href='" + util.buildVideoPanoramaURL(v) + "'>Link to Original</a>");
+        $($i.get(4)).html("<a target='_blank' href='" + src_url + "'>Link to Video</a>");
         // Save data to DOM
         $item.find("select").data("v", v).val("default");
         $item.find("button").data("v", v);
