@@ -478,6 +478,17 @@ Then, run the Certbot to get the SSL certificate.
 ```sh
 sudo certbot --apache certonly
 ```
+If you have an existing certificate and want to expand it with new domains, use the following:
+```sh
+sudo certbot --apache certonly --cert-name EXISTING_CERT_NAME -d EXISTING_DOMAIN -d NEW_DOMAIN
+
+# Below is an example
+sudo certbot --apache certonly --cert-name ijmondcam.multix.io -d ijmondcam.multix.io -d api.ijmondcam.multix.io
+```
+You can find the `EXISTING_CERT_NAME` using the following:
+```sh
+sudo certbot certificates
+```
 Copy the directories that point to the SSL certificate and its key in the terminal provided by the certbot.
 We will need to use the directories later when configuring apache.
 For example:
