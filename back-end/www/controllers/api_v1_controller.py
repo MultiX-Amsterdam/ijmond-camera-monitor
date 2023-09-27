@@ -149,8 +149,8 @@ def encode_user_token(**kwargs):
     payload = {}
     payload["iat"] = t
     payload["jti"] = uuid.uuid4().hex
-    payload["iss"] = "[CHANGE_THIS_TO_YOUR_ROOT_URL]"
-    payload["exp"] = t + 3600 # the token will expire after one hour
+    # This is a hack that we have not deal with token expiration yet
+    #payload["exp"] = t + 3600 # the token will expire after one hour
     for k in kwargs:
         payload[k] = kwargs[k]
     return encode_jwt(payload, config.JWT_PRIVATE_KEY)
