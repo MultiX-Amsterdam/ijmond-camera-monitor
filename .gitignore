@@ -13,3 +13,4 @@ front-end/event/
 back-end/www/reload
 **/secret/
 *.sql
+dataset/**/videos/

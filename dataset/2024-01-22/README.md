@@ -4,7 +4,7 @@ This dataset (the [metadata_ijmond_jan_22_2024.json](metadata_ijmond_jan_22_2024
 
 ### Table of Content
 - [Explanation of the JSON file](#explanation-json)
-- [Get the video URLs](#get-video-url)
+- [Get video URLs and download videos](#get-video-url)
 - [Explanation of label states](#explanation-label-state)
 
 ## <a name="explanation-json"></a>Explanation of the JSON file
@@ -34,13 +34,13 @@ The dataset JSON file contains an array, with each element in the array represen
   - File name of the video, for example "`vQZz9ePv_vQ`-`2`"
   - The format of the file_name is "`[url_part]`-`[view_id]`"
 
-## <a name="get-video-url"></a>Get the video URLs
+## <a name="get-video-url"></a>Get video URLs and download videos
 
 To get the URL of the cropped video from a dictionary, use the Python function below:
 ```python
 def get_video_url(v):
   """
-  The function for getting the video URL.
+  Get the video URL.
 
   Parameters
   ----------
@@ -60,7 +60,7 @@ To get the URL of the original panarama video from a dictionary, use the Python 
 ```python
 def get_video_panorama_url(v):
   """
-  The function for getting the video panorama URL.
+  Get the video panorama URL.
 
   Parameters
   ----------
@@ -90,6 +90,11 @@ with open(json_file_path, "r") as json_file:
 for v in data_dict:
   print(get_video_url(v))
   print(get_video_panorama_url(v))
+```
+
+To download the videos, run the [`download_videos.py`](download_videos.py) script in the terminal.
+```sh
+python download_videos.py
 ```
 
 ## <a name="explanation-label-state"></a>Explanation of label states
