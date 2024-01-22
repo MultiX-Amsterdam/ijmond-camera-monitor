@@ -1,4 +1,4 @@
-# IJmond-Video-Dataset-2024-01-22
+# IJmond-video-dataset-2024-01-22
 
 This dataset (the [metadata_ijmond_jan_22_2024.json](metadata_ijmond_jan_22_2024.json) file) is a snapshot of the database's state on January 22, 2024. It is released under the [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) license.
 
@@ -92,7 +92,7 @@ for v in data_dict:
   print(get_video_panorama_url(v))
 ```
 
-To download the videos, run the [`download_videos.py`](download_videos.py) script in the terminal.
+To download the videos, run the [`download_videos.py`](download_videos.py) script in the terminal, which will create a `videos/` folder under the `ijmond-camera-monitor/dataset/2024-01-22/` path and then download the videos there.
 ```sh
 python download_videos.py
 ```
