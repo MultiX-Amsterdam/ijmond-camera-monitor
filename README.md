@@ -1,5 +1,7 @@
 # ijmond-camera-monitor
 
+A lot of the code and documentation is borrowed from the [`video-labeling-tool`](https://github.com/CMU-CREATE-Lab/video-labeling-tool) repository.
+
 ### Table of Content
 - [Coding standards](#coding-standards)
 - [Install PostgreSQL (administrator only)](#install-postgresql)

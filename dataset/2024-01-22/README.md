@@ -2,6 +2,8 @@
 
 This dataset (the [metadata_ijmond_jan_22_2024.json](metadata_ijmond_jan_22_2024.json) file) is a snapshot of the database's state on January 22, 2024. It is released under the [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) license.
 
+A lot of the code and documentation is borrowed from the [`deep-smoke-machine`](https://github.com/CMU-CREATE-Lab/deep-smoke-machine) repository.
+
 ### Table of Content
 - [Explanation of the JSON file](#explanation-json)
 - [Get video URLs and download videos](#get-video-url)
@@ -116,3 +118,5 @@ Each video is reviewed by at least two citizen science volunteers or one researc
   - Two volunteers have different answers (one says yes, and another one says no).
 - -1 : no data, no discord
   - No data. If label_state_admin is -1, it means that the label is produced solely by citizen science volunteers. If label_state is -1, it means that the label is produced solely by researchers. Otherwise, the label is jointly produced by both citizen science volunteers and researchers. Please refer to our paper about these three cases.
+- -2 : bad videos
+  - This means that reseachers have checked the data and marked the video as not suitable for labeling (e.g., due to bad data quality such as incorrect image stitching or artifacts during video compression). These bad videos should not be used in building the model.
