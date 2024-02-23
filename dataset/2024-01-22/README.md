@@ -102,6 +102,10 @@ python download_videos.py
 ## <a name="explanation-label-state"></a>Explanation of label states
 
 Each video is reviewed by at least two citizen science volunteers or one researcher. [Our paper](https://ojs.aaai.org/index.php/AAAI/article/view/17739) describes the details of the labeling and quality control mechanism. The state of the label (`label_state` and `label_state_admin`) is briefly explained below.
+- 47 : gold standard positive
+  - The researcher assigned a positive label to the video and indicated that the video should be used as a gold standard for data quality checks.
+- 32 : gold standard negative
+  - The researcher assigned a negative label to the video and indicated that the video should be used as a gold standard for data quality checks.
 - 23 : strong positive
   - Two volunteers both agree (or one researcher says) that the video has smoke.
 - 16 : strong negative
