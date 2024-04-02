@@ -19,6 +19,7 @@ from models.model_operations.user_operations import get_user_by_client_id
 from models.model_operations.user_operations import create_user
 from models.model_operations.user_operations import get_user_by_id
 from models.model_operations.user_operations import update_best_tutorial_action_by_user_id
+from models.model_operations.user_operations import get_leaderboard_data
 from models.model_operations.connection_operations import create_connection
 from models.model_operations.batch_operations import create_batch
 from models.model_operations.video_operations import query_video_batch
@@ -512,6 +513,19 @@ def get_label_statistics():
     """Get statistics of the video labels."""
     return jsonify(get_statistics())
 
+@bp.route("/leaderboard", methods=["GET"])
+def leaderboard():
+    """
+    Return the data needed to populate the leaderboard
+
+    Returns
+    -------
+    All the users sorted by either their score or their raw_score
+        A list of video objects in JSON.
+    """
+
+    sort_by = request.args.get('sortBy', 'score')
+    return jsonify(get_leaderboard_data(sort_by))
 
 @bp.route("/api/v1/add_tutorial_record", methods=["POST"])
 def add_tutorial_record():

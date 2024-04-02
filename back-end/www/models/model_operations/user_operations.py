@@ -59,3 +59,18 @@ def update_best_tutorial_action_by_user_id(user_id, best_tutorial_action):
     app.logger.info("Update user: %r" % user)
     db.session.commit()
     return user
+
+def get_leaderboard_data(sort_by='score'):
+    """Get all users' scores based on the filter."""
+    if sort_by == 'score':
+        users = User.query.order_by(User.score.desc()).all()
+    elif sort_by == 'raw_score':
+        users = User.query.order_by(User.raw_score.desc()).all()
+    else:
+        users = get_all_users
+
+    leaderboard_data = [
+        {'client_id': user.client_id, 'id': user.id, 'score': user.score, 'raw_score': user.raw_score, 'client_type': user.client_type}
+        for user in users
+    ]
+    return leaderboard_data

@@ -25,7 +25,7 @@
     var no_ui = safeGet(settings["no_ui"], false);
 
     // Client ID and API key from the Developer Console
-    var CLIENT_ID = "524109318088-1gqhh8qeg09mss91qvbhfuuv6jc7s0tn.apps.googleusercontent.com";
+    var CLIENT_ID = "1084447885736-visf34celvg690met9n6e75vjfi9iq46.apps.googleusercontent.com";
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //
