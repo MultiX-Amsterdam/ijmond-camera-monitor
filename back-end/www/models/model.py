@@ -315,7 +315,7 @@ class Achievement(db.Model):
     description = db.Column(db.String(255), nullable=True)
 
     def __repr__(self):
-        return f"<Achievement id={self.id}, name={self.name}>"
+        return f"<Achievement id={self.id}, name={self.name}, description={self.description}>"
 
 class AchievementUser(db.Model):
     """

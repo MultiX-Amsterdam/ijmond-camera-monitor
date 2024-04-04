@@ -3,6 +3,7 @@
   
     var util = new edaplotjs.Util();
     var api_url_root = util.getRootApiUrl();
+    var intervalVal = 'alltime' // Default in all-time
   
     /**
      * Fetch leaderboard data and populate the table.
@@ -80,10 +81,11 @@
     /**
      * Sort leaderboard data by a given property by fetching the sorted leaderboard data.
      * @param {string} property - The property to sort by.
+     * @param {string} interval - The interval for the db you're interested in: All-Time and Daily (at the moment)
      * @param {string} currentUserId - The current user's ID.
      */
-    function sortLeaderboard(property, currentUserId) {
-        fetch(`${api_url_root}/leaderboard?sortBy=${property}`)
+    function sortLeaderboard(property, interval, currentUserId) {
+        fetch(`${api_url_root}/leaderboard?sortBy=${property}&interval=${interval}`)
             .then(response => response.json())
             .then(data => populateLeaderboard(data, currentUserId))
             .catch(error => console.error('Error sorting leaderboard:', error));
@@ -100,15 +102,28 @@
         }
         return null;
     }
+
+    // Event listener for the daily leaderboard
+    document.getElementById('selectAlltime').addEventListener('click', () => {
+        const currentUserId = getCurrentUserIdFromToken();
+        intervalVal = 'alltime';
+        sortLeaderboard('score', intervalVal, currentUserId);
+    });
+
+    document.getElementById('selectDaily').addEventListener('click', () => {
+        const currentUserId = getCurrentUserIdFromToken();
+        intervalVal = 'daily';
+        sortLeaderboard('score', intervalVal, currentUserId);
+    });
   
     // Event listeners for sort buttons
     document.getElementById('sortByScore').addEventListener('click', () => {
         const currentUserId = getCurrentUserIdFromToken();
-        sortLeaderboard('score', currentUserId);
+        sortLeaderboard('score', intervalVal, currentUserId);
     });
     document.getElementById('sortByRawScore').addEventListener('click', () => {
         const currentUserId = getCurrentUserIdFromToken();
-        sortLeaderboard('raw_score', currentUserId);
+        sortLeaderboard('raw_score', intervalVal, currentUserId);
     });
   
     // Initial fetch of leaderboard data

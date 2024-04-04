@@ -38,7 +38,6 @@
             $(".profile-name-placeholder").text(decodedToken.given_name || "User");
             $("#user-score").text(data.score);
             $("#user-raw-score").text(data.raw_score);
-    
             displayAchievements(data.achievements); // Call the function to display achievements
             $('#loading-overlay').hide(); // Hide the loading
         }
@@ -50,7 +49,7 @@
                 return `
                     <div>
                         <button type="button" class="btn text-white font-weight-bold" data-toggle="modal" data-target="#achievementModal${index}">
-                            ${achievement.name} X ${achievement.times_received}
+                            ${achievement.name} X ${achievement.times_received} : <span class="achievement-description">${achievement.description}</span>
                         </button>
                         <!-- Modal -->
                         <div class="modal fade" id="achievementModal${index}" tabindex="-1" role="dialog" aria-labelledby="achievementModalLabel${index}" aria-hidden="true">

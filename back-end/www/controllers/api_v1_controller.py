@@ -522,9 +522,9 @@ def leaderboard():
     -------
     All the users sorted by either their score or their raw_score
     """
-
     sort_by = request.args.get('sortBy', 'score')
-    return jsonify(get_leaderboard_data(sort_by))
+    interval = request.args.get('interval', 'alltime')
+    return jsonify(get_leaderboard_data(sort_by, interval))
 
 @bp.route("/get_user", methods=["GET"])
 def get_user():
@@ -555,6 +555,7 @@ def get_user():
         achievement = {
             "name": achievement_user.achievement.name,
             "times_received": achievement_user.times_received,
+            "description": achievement_user.achievement.description,
             "date_received": [achievement_day.date.strftime('%Y-%m-%d') for achievement_day in achievement_user.achievement.achievement_days]
         }
         achievements_data.append(achievement)

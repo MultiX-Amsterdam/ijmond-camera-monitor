@@ -82,3 +82,24 @@
     transform: translateY(-50%);
     font-size: 24px; 
 }
+
+/* Position the ranking filters */
+.ranking-filters {
+    right: 15px; /* Adjust as needed based on your layout */
+    top: 15px; /* Adjust as needed based on your layout */
+    text-align: right;
+}
+
+/* Style for the ranking filter links */
+.ranking-filter {
+    color: #FFFFFF; /* or any color you want */
+    margin-left: 10px; /* Space out the links */
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.ranking-filter:hover,
+.ranking-filter:focus {
+    text-decoration: underline;
+    color: #DDDDDD; /* Lighter color on hover/focus for better UX */
+}

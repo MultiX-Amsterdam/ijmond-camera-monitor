@@ -92,6 +92,12 @@ body {
     background-position: center;
   }
 
+.achievement-description {
+    background: linear-gradient(60deg, #4e54c8, #8f94fb); /* Replace 'blue' with any color you prefer */
+    -webkit-text-fill-color: transparent;
+    -webkit-background-clip: text;
+}
+
 /* Animation */
 @keyframes fadeInUp {
     from {
