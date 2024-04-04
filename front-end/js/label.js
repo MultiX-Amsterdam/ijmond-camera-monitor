@@ -165,6 +165,13 @@
               $sign_in_prompt.removeClass("pulse-white")
             }
             $user_score_container.show();
+
+            // Check if the profile icon already exists
+            if ($('#profile-icon-link').length === 0) {
+              // Create and insert the profile icon
+              var profileIconHtml = '<a href="profile.html" id="profile-icon-link" class="menu-profile"><i class="fas fa-user-circle" aria-hidden="true"></i></a>';
+              $(".menu-items").prepend(profileIconHtml);
+            }
           },
           error: function (xhr) {
             console.error("Error when updating user id by using google token!");
@@ -174,6 +181,7 @@
       },
       sign_out_success: function () {
         window.localStorage.removeItem("user_data");
+        $('#profile-icon-link').remove();
         video_labeling_tool.updateUserIdByClientId(ga_tracker.getClientId(), {
           success: function (obj) {
             onUserIdChangeSuccess(obj.userId());

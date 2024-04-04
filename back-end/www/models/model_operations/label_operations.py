@@ -1,10 +1,12 @@
 """Functions to operate the label table."""
 
+from datetime import datetime, timezone
 from models.model import db
 from models.model import Label
 from models.model import Video
 from models.model import User
 from models.model import Batch
+from models.model import DailyScore
 from app.app import app
 from util.util import get_current_time
 from config.config import config
@@ -33,6 +35,31 @@ def remove_label(label_id):
     db.session.delete(label)
     db.session.commit()
 
+def update_daily_score(user_id, score, raw_score):
+    """
+    Update the Daily Score of the users.
+
+    Parameters
+    ----------
+    user_id : int
+        The user id (defined in the user table).
+    score : int
+        The score to be added in the daily score table.
+    raw_score : int
+        The raw_score to be added in the daily score table.
+    """
+    # Daily score logic
+    today_date = datetime.now(timezone.utc).date()
+    app.logger.info("DATE: %r" % today_date)
+    daily_score_entry = DailyScore.query.filter_by(user_id=user_id, date=today_date).first()
+
+    if not daily_score_entry:
+        daily_score_entry = DailyScore(user_id=user_id, date=today_date, score=0, raw_score=0)
+        db.session.add(daily_score_entry)
+
+    daily_score_entry.score += score
+    daily_score_entry.raw_score += raw_score
+    db.session.commit()
 
 def update_labels(labels, user_id, connection_id, batch_id, client_type):
     """
@@ -111,6 +138,10 @@ def update_labels(labels, user_id, connection_id, batch_id, client_type):
                 app.logger.warning("No next state for video: %r" % video)
     # Update database
     db.session.commit()
+
+    # Update the daily user score
+    update_daily_score(user_id, batch.score, batch.num_unlabeled)
+
     return {"batch": batch_score, "user": user_score, "raw": user_raw_score}
 
 

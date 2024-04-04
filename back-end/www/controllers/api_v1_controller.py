@@ -521,11 +521,47 @@ def leaderboard():
     Returns
     -------
     All the users sorted by either their score or their raw_score
-        A list of video objects in JSON.
     """
 
     sort_by = request.args.get('sortBy', 'score')
     return jsonify(get_leaderboard_data(sort_by))
+
+@bp.route("/get_user", methods=["GET"])
+def get_user():
+    """
+    Retrieve the data of a user along with their achievements.
+
+    Returns
+    -------
+    A user containing their client_id, client_type, score, raw_score, and achievements.
+    """
+    user_id = request.args.get('user_id', '-1')
+    user = get_user_by_client_id(user_id)
+    
+    if user is None:
+        return jsonify({"error": "User not found"}), 404
+    
+    user_data = {
+        "client_id": user.client_id,
+        "client_type": user.client_type,
+        "score": user.score,
+        "raw_score": user.raw_score,
+        "best_tutorial_action": user.best_tutorial_action
+    }
+    
+    # Including the achievements in the response.
+    achievements_data = []
+    for achievement_user in user.achievement_users:
+        achievement = {
+            "name": achievement_user.achievement.name,
+            "times_received": achievement_user.times_received,
+            "date_received": [achievement_day.date.strftime('%Y-%m-%d') for achievement_day in achievement_user.achievement.achievement_days]
+        }
+        achievements_data.append(achievement)
+
+    user_data["achievements"] = achievements_data
+    
+    return jsonify(user_data)
 
 @bp.route("/api/v1/add_tutorial_record", methods=["POST"])
 def add_tutorial_record():

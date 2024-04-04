@@ -297,6 +297,104 @@ class View(db.Model):
             self.id, self.connection_id, self.video_id, self.query_type, self.time
         )
 
+class Achievement(db.Model):
+    """
+    Class representing an achievement.
+    
+    Attributes
+    ----------
+    id : int
+        Unique identifier (primary key).
+    name : str
+        The name of the achievement.
+    description : str
+        A short description of the achievement.
+    """
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(255), nullable=False)
+    description = db.Column(db.String(255), nullable=True)
+
+    def __repr__(self):
+        return f"<Achievement id={self.id}, name={self.name}>"
+
+class AchievementUser(db.Model):
+    """
+    Class representing the achievements earned by users.
+    
+    Attributes
+    ----------
+    id : int
+        Unique identifier (primary key).
+    user_id : int
+        The user ID in the User table (foreign key).
+    achievement_id : int
+        The achievement ID in the Achievement table (foreign key).
+    times_received: int
+        For achievements that can be earned more than once.
+    """
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    achievement_id = db.Column(db.Integer, db.ForeignKey('achievement.id'), nullable=False)
+    times_received = db.Column(db.Integer, default=0)
+
+    user = db.relationship('User', backref=db.backref('achievement_users', lazy=True))
+    achievement = db.relationship('Achievement', backref=db.backref('achievement_users', lazy=True))
+
+    def __repr__(self):
+        return f"<AchievementUser id={self.id}, user_id={self.user_id}, achievement_id={self.achievement_id}, times_received={self.times_received}>"
+
+class AchievementDay(db.Model):
+    """
+    Class representing the day the users have received their achievements.
+    
+    Attributes
+    ----------
+    id : int
+        Unique identifier (primary key).
+    user_id : int
+        The user ID in the User table (foreign key).
+    achievement_id : int
+        The achievement ID in the Achievement table (foreign key).
+    date: date
+        The date of the specific day
+    """
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    achievement_id = db.Column(db.Integer, db.ForeignKey('achievement.id'), nullable=False)
+    date = db.Column(db.Date, nullable=False)
+
+    achievement = db.relationship('Achievement', backref=db.backref('achievement_days', lazy=True))
+
+    def __repr__(self):
+        return f"<AchievementDay id={self.id}, user_id={self.user_id}, achievement_id={self.achievement_id}, date={self.date}>"
+
+class DailyScore(db.Model):
+    """
+    Class representing the daily score earned by labelling.
+    
+    Attributes
+    ----------
+    id : int
+        Unique identifier (primary key).
+    user_id : int
+        The user ID in the User table (foreign key).
+    score : int
+        The achievement ID in the Achievement table (foreign key).
+    raw_score : int
+        The achievement ID in the Achievement table (foreign key).
+    date : date
+        The date of the specific day
+    """
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    raw_score = db.Column(db.Integer, default=0)
+    score = db.Column(db.Integer, default=0)
+    date = db.Column(db.Date, nullable=False)
+
+    user = db.relationship('User', backref=db.backref('daily_scores', lazy=True))
+
+    def __repr__(self):
+        return f"<DailyScore user_id={self.user_id}, raw_score = {self.raw_score}, score={self.score}, date={self.date}>"
 
 class Tutorial(db.Model):
     """

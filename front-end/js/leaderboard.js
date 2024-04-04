@@ -48,7 +48,7 @@
                 } else if (rank === 3){
                     row.classList.add('third-place-highlight', 'animate__animated'); // Style the third place
                 } else {
-                    const contextClass = isCurrentUser ? 'table-success' : ''; // If it's not in top-three, use a table success class
+                    const contextClass = isCurrentUser ? 'current-user' : ''; // If it's not in top-three, use a table success class
                     row.className = contextClass;
                 }
         
@@ -66,13 +66,13 @@
             const currentUserEntry = data.find(entry => (entry.client_id).split('.')[1] === currentUserId);
             rank = data.findIndex(entry => (entry.client_id).split('.')[1] === currentUserId);
             
-            if (currentUserEntry) {
+            if (currentUserEntry !== undefined) {
                 const row = leaderboardBody.insertRow();
-                row.classList.add('current-user', 'animate__animated', 'animate__fadeIn');
                 row.insertCell(0).textContent = rank;
-                row.insertCell(1).textContent = entry.id;
-                row.insertCell(2).textContent = entry.score;
-                row.insertCell(3).textContent = entry.raw_score;
+                row.insertCell(1).textContent = currentUserEntry.id;
+                row.insertCell(2).textContent = currentUserEntry.score;
+                row.insertCell(3).textContent = currentUserEntry.raw_score;
+                row.classList.add('current-user', 'animate__animated', 'animate__fadeIn');
             }
         }
       }
@@ -96,7 +96,6 @@
         const googleIdToken = window.localStorage.getItem("google_id_token");
         if (googleIdToken) {
             const decodedToken = jwt_decode(googleIdToken);
-            console.log(decodedToken)
             return decodedToken.sub; // or the appropriate claim that represents the user's ID
         }
         return null;

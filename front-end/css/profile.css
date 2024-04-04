@@ -1,0 +1,106 @@
+body {
+    background-color: #343a40;
+}
+
+/* Profile Greeting */
+#profile-name {
+    color: #f8f9fa;
+    margin-bottom: 30px;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+}
+
+/* Card Styling */
+.card {
+    border: none;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    margin-bottom: 20px;
+    animation: fadeInUp 0.8s; /* Smooth appearance */
+}
+
+.card-header {
+    background: linear-gradient(60deg, #4e54c8, #8f94fb);
+    font-size: 1.2rem;
+}
+
+.card-body {
+    background-color: #424242;
+    color: #ffffff;
+}
+/* ------ */
+
+/* Modal */
+
+.modal-header {
+    background: linear-gradient(60deg, #4e54c8, #8f94fb);
+}
+
+.modal-content {
+    background-color: #424242;
+}
+
+.modal-title {
+    font-weight: bold;
+}
+
+.modal-btn {
+    background: linear-gradient(60deg, #4e54c8, #8f94fb);
+}
+
+/*---------*/
+
+.btn-achievement {
+    color: #fff !important;
+    font-weight: bold !important;
+    background-color: transparent;
+    border: none;
+    text-align: left;
+}
+
+.btn-achievement:hover,
+.btn-achievement:focus {
+    text-decoration: underline;
+    background-color: transparent;
+}
+
+/* Loading */
+.loading-overlay {
+    display: flex; 
+    position: fixed; 
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent black background */
+    backdrop-filter: blur(5px); /* Blur effect for the background */
+    justify-content: center;
+    align-items: center;
+    z-index: 9999; /* High z-index to be on top of other content */
+}
+
+.loading-text {
+    color: #3be4ff;
+    text-align: center;
+    flex: 1 0 100%;
+    max-width: 100%;
+    font-size: 18px;
+    padding: 10px 0;
+    min-height: 100px;
+    background-image: url(../img/loading.gif);
+    background-repeat: no-repeat;
+    background-size: 50px 50px;
+    background-position: center;
+  }
+
+/* Animation */
+@keyframes fadeInUp {
+    from {
+        transform: translate3d(0, 40px, 0);
+        opacity: 0;
+    }
+
+    to {
+        transform: none;
+        opacity: 1;
+    }
+}
