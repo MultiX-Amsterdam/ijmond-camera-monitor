@@ -17,6 +17,6 @@ sudo psql -U ijmond_camera_monitor -d "$DATABASE_NAME" -f "$CRON_DIRECTORY/daily
 sudo psql -U postgres -d "$DATABASE_NAME" -c "ALTER FUNCTION daily_champion() OWNER TO ijmond_camera_monitor;"
 
 # Schedule the function call with pg_cron, adjust the schedule as needed
-sudo psql -U ijmond_camera_monitor -d "$DATABASE_NAME" -c "SELECT cron.schedule('36 06 * * *', 'SELECT daily_champion()');"
+sudo psql -U ijmond_camera_monitor -d "$DATABASE_NAME" -c "SELECT cron.schedule('0 0 * * *', 'SELECT daily_champion()');"
 
 echo "All files processed."
