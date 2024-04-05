@@ -12,11 +12,23 @@ sudo psql -U postgres -d "$DATABASE_NAME" -c "CREATE EXTENSION IF NOT EXISTS pg_
 sudo psql -U postgres -d "$DATABASE_NAME" -c "GRANT USAGE ON SCHEMA cron TO ijmond_camera_monitor;"
 sudo psql -U postgres -d "$DATABASE_NAME" -c "UPDATE cron.job SET nodename = '';"
 
-# Execute the SQL file in the context of the provided database
-sudo psql -U ijmond_camera_monitor -d "$DATABASE_NAME" -f "$CRON_DIRECTORY/daily_champion.sql"
-sudo psql -U postgres -d "$DATABASE_NAME" -c "ALTER FUNCTION daily_champion() OWNER TO ijmond_camera_monitor;"
+# Loop through each SQL file in the cron directory
+for sql_file in "$CRON_DIRECTORY"*.sql
+do
+    # Execute the SQL file
+    sudo psql -U ijmond_camera_monitor -d "$DATABASE_NAME" -f "$sql_file"
+    
+    # Extract the function name from the filename (assuming filename matches function name)
+    function_name=$(basename "$sql_file" .sql)
+    
+    # Alter the function owner
+    sudo psql -U postgres -d "$DATABASE_NAME" -c "ALTER FUNCTION ${function_name}() OWNER TO ijmond_camera_monitor;"
+done
 
-# Schedule the function call with pg_cron, adjust the schedule as needed
+# Schedule tasks
 sudo psql -U ijmond_camera_monitor -d "$DATABASE_NAME" -c "SELECT cron.schedule('0 0 * * *', 'SELECT daily_champion()');"
+sudo psql -U ijmond_camera_monitor -d "$DATABASE_NAME" -c "SELECT cron.schedule('0 0 * * 0', 'SELECT weekly_champion()');"
+sudo psql -U ijmond_camera_monitor -d "$DATABASE_NAME" -c "SELECT cron.schedule('0 0 1 * *', 'SELECT monthly_champion()');"
+sudo psql -U ijmond_camera_monitor -d "$DATABASE_NAME" -c "SELECT cron.schedule('0 0 1 1 *', 'SELECT yearly_champion()');"
 
 echo "All files processed."

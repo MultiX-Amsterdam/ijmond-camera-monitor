@@ -49,6 +49,8 @@ body {
 
 /*---------*/
 
+/* Achievements */
+
 .btn-achievement {
     color: #fff !important;
     font-weight: bold !important;
@@ -62,6 +64,15 @@ body {
     text-decoration: underline;
     background-color: transparent;
 }
+
+.achievement-description {
+    background: linear-gradient(60deg, #4e54c8, #8f94fb); /* Replace 'blue' with any color you prefer */
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    -webkit-background-clip: text;
+}
+
+/* ---------------
 
 /* Loading */
 .loading-overlay {
@@ -91,12 +102,7 @@ body {
     background-size: 50px 50px;
     background-position: center;
   }
-
-.achievement-description {
-    background: linear-gradient(60deg, #4e54c8, #8f94fb); /* Replace 'blue' with any color you prefer */
-    -webkit-text-fill-color: transparent;
-    -webkit-background-clip: text;
-}
+/* ---------- */
 
 /* Animation */
 @keyframes fadeInUp {

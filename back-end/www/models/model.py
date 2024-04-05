@@ -356,7 +356,7 @@ class AchievementDay(db.Model):
     achievement_id : int
         The achievement ID in the Achievement table (foreign key).
     date: date
-        The date of the specific day
+        The date of the specific day.
     """
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
@@ -383,7 +383,7 @@ class DailyScore(db.Model):
     raw_score : int
         The achievement ID in the Achievement table (foreign key).
     date : date
-        The date of the specific day
+        The date of the specific day.
     """
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
@@ -395,6 +395,96 @@ class DailyScore(db.Model):
 
     def __repr__(self):
         return f"<DailyScore user_id={self.user_id}, raw_score = {self.raw_score}, score={self.score}, date={self.date}>"
+
+class WeeklyScore(db.Model):
+    """
+    Class representing the weekly score earned by labelling.
+    
+    Attributes
+    ----------
+    id : int
+        Unique identifier (primary key).
+    user_id : int
+        The user ID in the User table (foreign key).
+    score : int
+        The achievement ID in the Achievement table (foreign key).
+    raw_score : int
+        The achievement ID in the Achievement table (foreign key).
+    week : int
+        The week of the year.
+    year : int
+        The year.
+    """
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    raw_score = db.Column(db.Integer, default=0)
+    score = db.Column(db.Integer, default=0)
+    week = db.Column(db.Integer, default = 0)
+    year = db.Column(db.Integer, default = 0)
+
+    user = db.relationship('User', backref=db.backref('weekly_scores', lazy=True))
+
+    def __repr__(self):
+        return f"<DailyScore user_id={self.user_id}, raw_score = {self.raw_score}, score={self.score}, week={self.week}, year={self.year}>"
+
+class MonthlyScore(db.Model):
+    """
+    Class representing the monthly score earned by labelling.
+    
+    Attributes
+    ----------
+    id : int
+        Unique identifier (primary key).
+    user_id : int
+        The user ID in the User table (foreign key).
+    score : int
+        The achievement ID in the Achievement table (foreign key).
+    raw_score : int
+        The achievement ID in the Achievement table (foreign key).
+    month : int
+        The month of the year.
+    year : int
+        The year.
+    """
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    raw_score = db.Column(db.Integer, default=0)
+    score = db.Column(db.Integer, default=0)
+    month = db.Column(db.Integer, default = 0)
+    year = db.Column(db.Integer, default = 0)
+
+    user = db.relationship('User', backref=db.backref('monthly_scores', lazy=True))
+
+    def __repr__(self):
+        return f"<DailyScore user_id={self.user_id}, raw_score = {self.raw_score}, score={self.score}, month={self.month}, year={self.year}>"
+    
+class YearlyScore(db.Model):
+    """
+    Class representing the weekly score earned by labelling.
+    
+    Attributes
+    ----------
+    id : int
+        Unique identifier (primary key).
+    user_id : int
+        The user ID in the User table (foreign key).
+    score : int
+        The achievement ID in the Achievement table (foreign key).
+    raw_score : int
+        The achievement ID in the Achievement table (foreign key).
+    year : int
+        The year
+    """
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    raw_score = db.Column(db.Integer, default=0)
+    score = db.Column(db.Integer, default=0)
+    year = db.Column(db.Integer, default = 0)
+
+    user = db.relationship('User', backref=db.backref('yearly_scores', lazy=True))
+
+    def __repr__(self):
+        return f"<DailyScore user_id={self.user_id}, raw_score = {self.raw_score}, score={self.score}, yearly={self.year}>"
 
 class Tutorial(db.Model):
     """

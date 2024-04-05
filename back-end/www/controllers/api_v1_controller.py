@@ -19,7 +19,7 @@ from models.model_operations.user_operations import get_user_by_client_id
 from models.model_operations.user_operations import create_user
 from models.model_operations.user_operations import get_user_by_id
 from models.model_operations.user_operations import update_best_tutorial_action_by_user_id
-from models.model_operations.user_operations import get_leaderboard_data
+from models.model_operations.leaderboard_operations import get_leaderboard_data
 from models.model_operations.connection_operations import create_connection
 from models.model_operations.batch_operations import create_batch
 from models.model_operations.video_operations import query_video_batch

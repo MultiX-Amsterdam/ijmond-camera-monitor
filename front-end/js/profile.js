@@ -18,7 +18,7 @@
 
     /**
      * Get User ID from JWT Token
-     */
+    */
     function getCurrentUserIdFromToken() {
         const googleIdToken = window.localStorage.getItem("google_id_token");
         if (googleIdToken) {
@@ -30,7 +30,8 @@
 
     /**
      * Populate profile table with name, user score, raw score, consecutive days active, and with the achievements they earned.
-     */
+     * @param {any} data - User Data returning from query
+    */
     function populateProfile(data) {
         const googleIdToken = window.localStorage.getItem("google_id_token");
         if (googleIdToken) {
@@ -42,7 +43,11 @@
             $('#loading-overlay').hide(); // Hide the loading
         }
     }
-    
+
+    /**
+     * Create the Achievements table
+     * @param {any} achievements - User's Achievements
+    */
     function displayAchievements(achievements) {
         if (Object.keys(achievements).length !== 0) {
             let achievementsHtml = achievements.map((achievement, index) => {

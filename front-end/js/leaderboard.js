@@ -103,16 +103,38 @@
         return null;
     }
 
-    // Event listener for the daily leaderboard
+    // Event listener for the alltime leaderboard
     document.getElementById('selectAlltime').addEventListener('click', () => {
         const currentUserId = getCurrentUserIdFromToken();
         intervalVal = 'alltime';
         sortLeaderboard('score', intervalVal, currentUserId);
     });
 
+    // Event listener for the daily leaderboard
     document.getElementById('selectDaily').addEventListener('click', () => {
         const currentUserId = getCurrentUserIdFromToken();
         intervalVal = 'daily';
+        sortLeaderboard('score', intervalVal, currentUserId);
+    });
+
+    // Event listener for the weekly leaderboard
+    document.getElementById('selectWeekly').addEventListener('click', () => {
+        const currentUserId = getCurrentUserIdFromToken();
+        intervalVal = 'weekly';
+        sortLeaderboard('score', intervalVal, currentUserId);
+    });
+
+    // Event listener for the monthly leaderboard
+    document.getElementById('selectMonthly').addEventListener('click', () => {
+        const currentUserId = getCurrentUserIdFromToken();
+        intervalVal = 'monthly';
+        sortLeaderboard('score', intervalVal, currentUserId);
+    });
+
+    // Event listener for the yearly leaderboard
+    document.getElementById('selectYearly').addEventListener('click', () => {
+        const currentUserId = getCurrentUserIdFromToken();
+        intervalVal = 'yearly';
         sortLeaderboard('score', intervalVal, currentUserId);
     });
   
