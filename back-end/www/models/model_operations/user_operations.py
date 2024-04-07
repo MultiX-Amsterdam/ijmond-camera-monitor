@@ -1,6 +1,6 @@
 """Functions to operate the user table."""
 
-from datetime import datetime, timezone
+from sqlalchemy import desc
 from models.model import db
 from models.model import User
 from models.model import DailyScore
@@ -61,3 +61,21 @@ def update_best_tutorial_action_by_user_id(user_id, best_tutorial_action):
     app.logger.info("Update user: %r" % user)
     db.session.commit()
     return user
+
+def get_past_user_scores(user_id):
+    """Get the past 7 maximum active days of the user score-wise"""
+    user = get_user_by_client_id(user_id)
+    all_scores = DailyScore.query.filter(
+        DailyScore.user_id == user.id
+    ).order_by(desc(DailyScore.date)).limit(7).all()  # Ordering by date for chronological scores and picking the max last 7 days the user was active
+    
+    scores_list = [
+        {
+            'date': score.date.strftime('%Y-%m-%d'),
+            'score': score.score,
+            'raw_score': score.raw_score
+        }
+        for score in all_scores
+    ]
+    
+    return scores_list

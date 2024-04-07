@@ -5,7 +5,7 @@
   var video_labeling_tool;
   var google_account_dialog;
   var video_test_dialog;
-  //var tutorial_prompt_dialog;
+  var tutorial_prompt_dialog;
   var $next;
   var counter = 0;
   var max_counter = 10;
@@ -126,9 +126,9 @@
             // Fail the quality check
             $quality_check_passed_text.hide();
             consecutive_failed_batches += 1;
-            //if (consecutive_failed_batches >= 3) {
-            //  tutorial_prompt_dialog.getDialog().dialog("open");
-            //}
+            if (consecutive_failed_batches >= 3) {
+              tutorial_prompt_dialog.getDialog().dialog("open");
+            }
           } else {
             // Pass the quality check
             $quality_check_passed_text.show();
@@ -204,9 +204,9 @@
     });
     $user_score_container = $("#user-score-container");
     video_test_dialog = new edaplotjs.VideoTestDialog();
-    //tutorial_prompt_dialog = new edaplotjs.TutorialPromptDialog({
-    //  video_labeling_tool: video_labeling_tool
-    //});
+    tutorial_prompt_dialog = new edaplotjs.TutorialPromptDialog({
+     video_labeling_tool: video_labeling_tool
+    });
     ga_tracker = new edaplotjs.GoogleAnalyticsTracker({
       ready: function (ga_obj) {
         google_account_dialog.isAuthenticatedWithGoogle({

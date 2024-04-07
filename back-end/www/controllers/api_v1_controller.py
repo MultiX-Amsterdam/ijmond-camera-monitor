@@ -2,7 +2,7 @@
 
 import uuid
 import jwt
-from flask import Blueprint
+from flask import Blueprint, Flask
 from flask import request
 from flask import jsonify
 from flask import make_response
@@ -19,6 +19,7 @@ from models.model_operations.user_operations import get_user_by_client_id
 from models.model_operations.user_operations import create_user
 from models.model_operations.user_operations import get_user_by_id
 from models.model_operations.user_operations import update_best_tutorial_action_by_user_id
+from models.model_operations.user_operations import get_past_user_scores
 from models.model_operations.leaderboard_operations import get_leaderboard_data
 from models.model_operations.connection_operations import create_connection
 from models.model_operations.batch_operations import create_batch
@@ -29,7 +30,8 @@ from models.model_operations.video_operations import get_pos_video_query_by_user
 from models.model_operations.video_operations import get_statistics
 from models.model_operations.label_operations import update_labels
 from models.model_operations.view_operations import create_views_from_video_batch
-from models.model_operations.tutorial_operations import create_tutorial
+from models.model_operations.tutorial_operations import create_tutorial, give_tutorial_achievement
+from models.model_operations.achievement_operations import get_all_achievements
 from models.schema import videos_schema_is_admin
 from models.schema import videos_schema_with_detail
 from models.schema import videos_schema
@@ -92,6 +94,7 @@ def login():
     else:
         raise InvalidUsage("Missing field: google_id_token or client_id", status_code=400)
 
+app = Flask(__name__)
 
 def get_user_token_by_client_id(client_id):
     """
@@ -564,7 +567,7 @@ def get_user():
     
     return jsonify(user_data)
 
-@bp.route("/api/v1/add_tutorial_record", methods=["POST"])
+@bp.route("/add_tutorial_record", methods=["POST"])
 def add_tutorial_record():
     """Add tutorial record to the database."""
     request_json = request.get_json()
@@ -596,3 +599,35 @@ def add_tutorial_record():
         return make_response("", 204)
     except Exception as ex:
         raise InvalidUsage(ex.args[0], status_code=400)
+    
+@bp.route("/tutorial_achievement", methods=["POST"])
+def tutorial_achievement():
+    """Add tutorial achievements to the user."""
+    request_json = request.get_json()
+    action_type = request_json["action_type"]
+    user_id = request_json["user_id"]
+
+    give_tutorial_achievement(user_id, action_type)
+    return make_response("", 204)
+
+@bp.route("/get_daily_scores", methods=["GET"])
+def get_daily_scores():
+    """Get the daily scores to populate the table in the profile."""
+    user_id = request.args.get('user_id', None)
+    if not user_id:
+        return jsonify({"error": "User ID is required"}), 400
+
+    daily_scores = get_past_user_scores('google.'+user_id)  
+    return jsonify({"daily_scores": daily_scores})
+
+@bp.route("/get_all_achievements", methods=["GET"])
+def get_achievements():
+    """
+    Retrieve all possible achievements.
+    
+    Returns
+    -------
+    A list of all achievements.
+    """
+    all_achievements = get_all_achievements()
+    return jsonify({"achievements": all_achievements})

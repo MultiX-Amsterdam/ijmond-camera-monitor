@@ -27,6 +27,12 @@
     <script src="js/VideoTestDialog.js"></script>
     <script src="js/menu.js"></script>
     <script src="js/profile.js"></script>
+    <!-- Chart -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/luxon@^2.0.0"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-luxon@^1.0.0"></script>
+    <!-- Chart End -->
+
     <style>
         .menu-profile {
           color: rgb(255, 255, 255) !important;
@@ -50,20 +56,23 @@
             <h2 id="profile-name" class="text-white font-weight-bold">Hello, <span class="profile-name-placeholder">Username</span>!</h2>
         </div>
 
+        <!-- Statistics Section -->
+        <div class="card text-black mb-3" id="statistics-section">
+            <div class="card-header text-white font-weight-bold">Statistics</div>
+            <div class="card-body">
+                <canvas id="scoreChart" width="400" height="200"></canvas>
+                <div class="chart-scores">
+                    <h5 class="card-title">Score: <span id="user-score">0 </span></h5>
+                    <h5 class="card-title">Raw Score: <span id="user-raw-score">0</span></h5>
+                </div>
+            </div>
+        </div>
+
         <!-- Achievements Section -->
         <div class="card text-black mb-3" id="achievements-section">
             <div class="card-header text-white font-weight-bold">Achievements</div>
             <div class="card-body">
                 <p class="card-text" id="achievements">Your achievements will be displayed here.</p>
-            </div>
-        </div>
-
-        <!-- Statistics Section -->
-        <div class="card text-black mb-3" id="statistics-section">
-            <div class="card-header text-white font-weight-bold">Statistics</div>
-            <div class="card-body">
-                <h5 class="card-title">Score: <span id="user-score">0</span></h5>
-                <h5 class="card-title">Raw Score: <span id="user-raw-score">0</span></h5>
             </div>
         </div>
     </div>

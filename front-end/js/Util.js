@@ -346,6 +346,29 @@
       }
     };
 
+    // Get the the Google Analytics id
+    this.getGoogleAnalyticsId = function () {
+      var ga_id;
+      var url_hostname = window.location.hostname;
+      var is_localhost = url_hostname.indexOf("localhost");
+      var is_staging = url_hostname.indexOf("staging");
+      var is_testing = url_hostname.indexOf("192.168");
+      if (is_localhost >= 0 || is_testing >= 0) {
+        ga_id = "UA-10682694-25";
+      } else {
+        if (is_staging >= 0) {
+          ga_id = "UA-10682694-25";
+        } else {
+          ga_id = "UA-10682694-26";
+        }
+      }
+      return ga_id;
+    };
+
+    this.replaceThumbnailWidth = function (url) {
+      return url.replace("/180/", "/320/").replace("-180-180-", "-320-320-").replace("width=180", "width=320").replace("height=180", "height=320");
+    };
+
     // Is mobile device
     this.isMobile = function () {
       return isMobileDevice;

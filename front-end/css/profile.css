@@ -2,6 +2,41 @@ body {
     background-color: #343a40;
 }
 
+/* Chart Styles */
+
+.container {
+    width: 100%;
+    /* other styles */
+}
+
+.chart-scores {
+    display: ruby;
+    flex-direction: column; /* stack the scores vertically */
+    align-items: flex-end; /* align the text to the right */
+    gap: 10px; /* creates space between the items */
+    padding: 10px; /* Adjust padding as needed */
+    color: white;
+    top: 3px;
+    right: 0;
+    position: absolute;
+    z-index: 2; /* Ensure it's above the chart */
+}
+  
+#scoreChart {
+    width: 100% !important; /* important to override inline styles if necessary */
+    height: auto !important; /* maintain aspect ratio */
+}
+
+.chart-scores {
+    /* Additional styles if needed */
+    padding: 10px; /* Adjust padding as needed */
+    text-align: right; /* Align text to the right */
+    /* other styles */
+}
+
+/* -------- */
+
+
 /* Profile Greeting */
 #profile-name {
     color: #f8f9fa;
@@ -10,6 +45,7 @@ body {
 }
 
 /* Card Styling */
+
 .card {
     border: none;
     border-radius: 8px;
@@ -51,25 +87,41 @@ body {
 
 /* Achievements */
 
-.btn-achievement {
-    color: #fff !important;
-    font-weight: bold !important;
-    background-color: transparent;
-    border: none;
-    text-align: left;
+#achievements {
+    display: flex;
+    flex-direction: column; /* Stack achievements vertically */
+    align-items: center; /* Center achievements horizontally */
+    gap: 10px; /* Space between items */
 }
 
-.btn-achievement:hover,
-.btn-achievement:focus {
-    text-decoration: underline;
-    background-color: transparent;
+.achievement {
+    display: flex;
+    align-items: center; /* Align the icon and text vertically */
+    justify-content: center; /* Center content horizontally */
+    width: 100%; /* Full width of the container */
+    padding: 10px 0; /* Padding top and bottom for space */
+    border-bottom: 1px solid #ddd; /* Optional: adds a line between items */
 }
 
-.achievement-description {
-    background: linear-gradient(60deg, #4e54c8, #8f94fb); /* Replace 'blue' with any color you prefer */
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    -webkit-background-clip: text;
+.achievement-icon {
+    margin-right: 10px; /* Space between the icon and the text */
+}
+
+.achievement-description,
+.achievement-dates {
+    margin-left: 5px; /* Space after the achievement name */
+}
+
+.achievement:last-child {
+    border-bottom: none; /* Removes the border from the last item */
+}
+
+.fas.fa-check { /* Unlocked icon style */
+    color: #28a745; /* Bootstrap success color or any color you like */
+}
+
+.fas.fa-lock { /* Locked icon style */
+    color: #6c757d; /* Bootstrap secondary color or any color you like */
 }
 
 /* ---------------
