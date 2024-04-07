@@ -71,7 +71,7 @@ def get_leaderboard_data(sort_by='score', interval='alltime'):
     
     elif interval == 'monthly':
         current_year = datetime.now().isocalendar()[0]
-        current_month = datetime.now().isocalendar()[2]
+        current_month = datetime.now().month
 
         if sort_by == 'score':
             users = User.query.join(MonthlyScore, User.id == MonthlyScore.user_id)\

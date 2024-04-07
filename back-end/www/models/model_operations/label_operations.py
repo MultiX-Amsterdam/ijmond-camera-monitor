@@ -62,7 +62,7 @@ def update_daily_score(user_id, score, raw_score):
 
 def update_weekly_score(user_id, score, raw_score):
     """
-    Update the Daily Score of the users.
+    Update the Weekly Score of the users.
 
     Parameters
     ----------
@@ -88,7 +88,7 @@ def update_weekly_score(user_id, score, raw_score):
 
 def update_monthly_score(user_id, score, raw_score):
     """
-    Update the Daily Score of the users.
+    Update the Monthly Score of the users.
 
     Parameters
     ----------
@@ -99,7 +99,7 @@ def update_monthly_score(user_id, score, raw_score):
     raw_score : int
         The raw_score to be added in the daily score table.
     """
-    current_month = datetime.now().isocalendar()[2]
+    current_month = datetime.now().month
     current_year = datetime.now().isocalendar()[0]
 
     monthly_score_entry = MonthlyScore.query.filter_by(user_id=user_id, month=current_month, year=current_year).first()
@@ -114,7 +114,7 @@ def update_monthly_score(user_id, score, raw_score):
 
 def update_yearly_score(user_id, score, raw_score):
     """
-    Update the Daily Score of the users.
+    Update the Yearly Score of the users.
 
     Parameters
     ----------
