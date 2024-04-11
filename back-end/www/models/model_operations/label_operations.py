@@ -1,12 +1,11 @@
 """Functions to operate the label table."""
 
-from datetime import datetime, timezone
 from models.model import db
 from models.model import Label
 from models.model import Video
 from models.model import User
 from models.model import Batch
-from models.model import DailyScore,WeeklyScore,MonthlyScore,YearlyScore
+from models.model import Season,SeasonScore
 from app.app import app
 from util.util import get_current_time
 from config.config import config
@@ -35,107 +34,34 @@ def remove_label(label_id):
     db.session.delete(label)
     db.session.commit()
 
-def update_daily_score(user_id, score, raw_score):
+def update_season_score(user_id, score, raw_score, batch_time):
     """
-    Update the Daily Score of the users.
+    Update the Season Score of the users, if the season has not yet finished.
 
     Parameters
     ----------
     user_id : int
         The user id (defined in the user table).
     score : int
-        The score to be added in the daily score table.
+        The score to be added in the season score table.
     raw_score : int
-        The raw_score to be added in the daily score table.
+        The raw_score to be added in the season score table.
+    batch_time : int
+        The epochtime (in seconds) of the batch.
     """
-    # Daily score logic
-    today_date = datetime.now(timezone.utc).date()
-    daily_score_entry = DailyScore.query.filter_by(user_id=user_id, date=today_date).first()
+    latest_season = Season.query.order_by(Season.end_date.desc()).first()
 
-    if not daily_score_entry:
-        daily_score_entry = DailyScore(user_id=user_id, date=today_date, score=0, raw_score=0)
-        db.session.add(daily_score_entry)
+    user_season = SeasonScore.query.filter_by(user_id=user_id, season_id=latest_season.id).first()
 
-    daily_score_entry.score += score
-    daily_score_entry.raw_score += raw_score
-    db.session.commit()
+    if batch_time <= latest_season.end_date:
 
-def update_weekly_score(user_id, score, raw_score):
-    """
-    Update the Weekly Score of the users.
+        if not user_season:
+            season_score_entry = SeasonScore(user_id=user_id, season_id=latest_season.id, score=0, raw_score=0)
+            db.session.add(season_score_entry)
 
-    Parameters
-    ----------
-    user_id : int
-        The user id (defined in the user table).
-    score : int
-        The score to be added in the daily score table.
-    raw_score : int
-        The raw_score to be added in the daily score table.
-    """
-    current_week = datetime.now().isocalendar()[1]
-    current_year = datetime.now().isocalendar()[0]
-
-    weekly_score_entry = WeeklyScore.query.filter_by(user_id=user_id, week=current_week, year=current_year).first()
-
-    if not weekly_score_entry:
-        weekly_score_entry = WeeklyScore(user_id=user_id, week=current_week, year=current_year, score=0, raw_score=0)
-        db.session.add(weekly_score_entry)
-
-    weekly_score_entry.score += score
-    weekly_score_entry.raw_score += raw_score
-    db.session.commit()
-
-def update_monthly_score(user_id, score, raw_score):
-    """
-    Update the Monthly Score of the users.
-
-    Parameters
-    ----------
-    user_id : int
-        The user id (defined in the user table).
-    score : int
-        The score to be added in the daily score table.
-    raw_score : int
-        The raw_score to be added in the daily score table.
-    """
-    current_month = datetime.now().month
-    current_year = datetime.now().isocalendar()[0]
-
-    monthly_score_entry = MonthlyScore.query.filter_by(user_id=user_id, month=current_month, year=current_year).first()
-
-    if not monthly_score_entry:
-        monthly_score_entry = MonthlyScore(user_id=user_id, month=current_month, year=current_year, score=0, raw_score=0)
-        db.session.add(monthly_score_entry)
-
-    monthly_score_entry.score += score
-    monthly_score_entry.raw_score += raw_score
-    db.session.commit()
-
-def update_yearly_score(user_id, score, raw_score):
-    """
-    Update the Yearly Score of the users.
-
-    Parameters
-    ----------
-    user_id : int
-        The user id (defined in the user table).
-    score : int
-        The score to be added in the daily score table.
-    raw_score : int
-        The raw_score to be added in the daily score table.
-    """
-    current_year = datetime.now().isocalendar()[0]
-
-    yearly_score_entry = YearlyScore.query.filter_by(user_id=user_id, year=current_year).first()
-
-    if not yearly_score_entry:
-        yearly_score_entry = YearlyScore(user_id=user_id, year=current_year, score=0, raw_score=0)
-        db.session.add(yearly_score_entry)
-
-    yearly_score_entry.score += score
-    yearly_score_entry.raw_score += raw_score
-    db.session.commit()
+        season_score_entry.score += score
+        season_score_entry.raw_score += raw_score
+        db.session.commit()
 
 def update_labels(labels, user_id, connection_id, batch_id, client_type):
     """
@@ -215,11 +141,8 @@ def update_labels(labels, user_id, connection_id, batch_id, client_type):
     # Update database
     db.session.commit()
 
-    # Update the user scores per intervals
-    update_daily_score(user_id, batch.score, batch.num_unlabeled)
-    update_weekly_score(user_id, batch.score, batch.num_unlabeled)
-    update_monthly_score(user_id, batch.score, batch.num_unlabeled)
-    update_yearly_score(user_id, batch.score, batch.num_unlabeled)
+    # Update the season score of the user (if a season is active)
+    update_season_score(user_id, batch.score, batch.num_unlabeled, batch.return_time)
 
     return {"batch": batch_score, "user": user_score, "raw": user_raw_score}
 

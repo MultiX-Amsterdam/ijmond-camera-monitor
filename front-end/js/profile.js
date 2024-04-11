@@ -20,7 +20,7 @@
             let achievementsData = await achievementsResponse.json();
 
             fetchDailyScoresAndDisplayChart(currentUserId, userData);
-            displayAllAchievements(achievementsData.achievements, userData.achievements); // Make sure userData.achievements is correct
+            displayAllAchievements(achievementsData.achievements, userData.achievements);
           }
         catch(err) {
             console.log(err);
@@ -82,6 +82,17 @@
                       color: 'white'
                     }
                   }
+                },
+
+                onClick: (e) => {
+                    const points = chart.getElementsAtEventForMode(e, 'nearest', { intersect: true }, true);
+    
+                    if (points.length) {
+                        const firstPoint = points[0];
+                        const label = chart.data.labels[firstPoint.index];
+                        const value = chart.data.datasets[firstPoint.datasetIndex].data[firstPoint.index];
+                        console.log(`Clicked on label: ${label} with value: ${value}`);
+                    }
                 }
             }
         });
@@ -101,14 +112,14 @@
         $("#user-score").text(data.score);
         $("#user-raw-score").text(data.raw_score);
         
-        fetch(`${api_url_root}/get_daily_scores?user_id=${encodeURIComponent(currentUserId)}`)
+        fetch(`${api_url_root}/get_season_scores?user_id=${encodeURIComponent(currentUserId)}`)
             .then(response => response.json())
             .then(data => {
-                if (data && data.daily_scores) {
+                if (data && data.season_scores) {
                     const labels = []; // for dates
                     const scoreData = []; // for scores
                     const rawScoreData = []; // for raw scores
-                    data.daily_scores.forEach(day => {
+                    data.season_scores.forEach(day => {
                         labels.push(new Date(day.date));
                         scoreData.push(day.score);
                         rawScoreData.push(day.raw_score);
@@ -145,7 +156,10 @@
             let achievementClass = userAchievement ? "unlocked" : "locked";
             let icon = userAchievement ? "<i class='achievement-icon fas fa-check'></i>" : "<i class='achievement-icon fas fa-lock'></i>";
             let timesReceived = userAchievement ? `X ${userAchievement.times_received}` : "";
+            // let timesReceived = "";
             let description = achievement.description;
+
+            console.log(userAchievement)
     
             if (userAchievement) {
                 return `
@@ -164,7 +178,7 @@
                                         </button>
                                     </div>
                                     <div class="modal-body">
-                                        <p>Dates received: ${userAchievement.date_received.join(', ')}</p>
+                                        <p>Dates received: ${userAchievement.dates_received.join(', ')}</p>
                                     </div>
                                 </div>
                             </div>

@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title>Leaderboard</title>
+    <title>Profile</title>
     <meta charset="utf-8" name="viewport" content="width=device-width, initial-scale=1">
     <link href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" media="screen" rel="stylesheet" type="text/css" />
     <link href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css" media="screen" rel="stylesheet" type="text/css" />
@@ -26,53 +26,33 @@
     <script src="js/GoogleAccountDialog.js"></script>
     <script src="js/VideoTestDialog.js"></script>
     <script src="js/menu.js"></script>
+    <script src="js/performance.js"></script>
+    <!-- Chart -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/luxon@^2.0.0"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-luxon@^1.0.0"></script>
+    <!-- Chart End -->
+
     <style>
-        .menu-leaderboard {
+        .menu-profile {
           color: rgb(255, 255, 255) !important;
           opacity: 1 !important;
           font-weight: 700 !important;
         }
     </style>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.bundle.min.js"></script>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
-    <link href="css/leaderboard.css" media="screen" rel="stylesheet" type="text/css" />
+    <link href="css/performance.css" media="screen" rel="stylesheet" type="text/css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
 </head>
 <body>
     <div class="menu-container"></div>
-    <div class="container mt-4">
-        <div class="text-center mb-4">
-            <h1 class="h3 mb-3 font-weight-bold text-white">Ranking</h1>
-        </div>
-        <div class="ranking-filters">
-            <p class="text-white font-weight-bold" id="seasonCountdown">There is no active season.</p>
-            <a href="#" class="ranking-filter" id="selectAlltime">All-Time</a>
-                <select class="btn btn-secondary dropdown-toggle" id="seasonSelector">
-                    <option selected>Loading seasons...</option>
-                    <!-- Options will be populated here by JavaScript -->
-                </select>
-        </div>
-        <div class="table-responsive">
-            <table id="leaderboard" class="table table-dark table-striped table-hover">
-                <thead class="thead-dark">
-                    <tr>
-                        <th>Rank #</th>
-                        <th>User ID</th>
-                        <th>
-                            Score
-                            <i id="sortByScore" class="fas fa-filter icon-button"></i>
-                        </th>
-                        <th>
-                            Raw Score
-                            <i id="sortByRawScore" class="fas fa-filter icon-button"></i>
-                        </th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <!-- Leaderboard entries will be populated here -->
-                </tbody>
-            </table>
+    <div class="card text-black mb-3" id="metrics-section">
+        <div class="card-header text-white font-weight-bold">Performance Metrics</div>
+        <div class="card-body">
+            <canvas id="metricsChart" width="600" height="300"></canvas>
+            <p id="performance">Click on a point at the chart to see how the model performed for the date.</p>
         </div>
     </div>
-    <script src="js/leaderboard.js"></script>
 </body>
 </html>

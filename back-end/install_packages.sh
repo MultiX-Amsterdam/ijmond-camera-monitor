@@ -8,6 +8,7 @@ pip install --upgrade flask-marshmallow==0.15.0
 pip install --upgrade marshmallow-sqlalchemy==0.29.0
 pip install --upgrade flask-cors==4.0.0
 pip install --upgrade marshmallow_enum==1.5.1
+pip install --upgrade Flask-APScheduler
 
 # Testing
 pip install --upgrade flask-testing==0.8.1

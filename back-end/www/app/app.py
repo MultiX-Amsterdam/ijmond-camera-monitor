@@ -11,6 +11,7 @@ from models.model import db
 from models.schema import ma
 from util.util import InvalidUsage
 
+import logging
 
 class RequestFormatter(logging.Formatter):
     """The formatter for logging."""
@@ -79,12 +80,14 @@ def handle_invalid_usage(error):
     response.status_code = error.status_code
     return response
 
-
 # Initialize the Web Server Gateway Interface
 app = Flask(__name__)
 
 # Load the settings in config.py
 app.config.from_object("config.config.config")
+
+logging.basicConfig()
+logging.getLogger('apscheduler').setLevel(logging.DEBUG)
 
 # Special settings that depend on the environment
 if app.config["DEBUG"] == True:
@@ -104,7 +107,6 @@ db.init_app(app)
 
 # Initialize app with schema
 ma.init_app(app)
-
 
 @app.after_request
 def after_request(response):

@@ -317,7 +317,7 @@ class Achievement(db.Model):
     def __repr__(self):
         return f"<Achievement id={self.id}, name={self.name}, description={self.description}>"
 
-class AchievementUser(db.Model):
+class AchievementRecords(db.Model):
     """
     Class representing the achievements earned by users.
     
@@ -329,162 +329,69 @@ class AchievementUser(db.Model):
         The user ID in the User table (foreign key).
     achievement_id : int
         The achievement ID in the Achievement table (foreign key).
-    times_received: int
-        For achievements that can be earned more than once.
+    date: date
+        Date of receiving the achievement.
     """
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     achievement_id = db.Column(db.Integer, db.ForeignKey('achievement.id'), nullable=False)
-    times_received = db.Column(db.Integer, default=0)
+    date = db.Column(db.Date, nullable=False)
 
     user = db.relationship('User', backref=db.backref('achievement_users', lazy=True))
     achievement = db.relationship('Achievement', backref=db.backref('achievement_users', lazy=True))
 
     def __repr__(self):
-        return f"<AchievementUser id={self.id}, user_id={self.user_id}, achievement_id={self.achievement_id}, times_received={self.times_received}>"
+        return f"<AchievementUser id={self.id}, user_id={self.user_id}, achievement_id={self.achievement_id}, date={self.date}>"
 
-class AchievementDay(db.Model):
+class Season(db.Model):
     """
-    Class representing the day the users have received their achievements.
+    Class representing the labeling game's season. The start and the end is specified by the user, and through this period
+    users can earn scores and compete for the achievement of the season's champion.
     
     Attributes
     ----------
     id : int
         Unique identifier (primary key).
-    user_id : int
-        The user ID in the User table (foreign key).
-    achievement_id : int
-        The achievement ID in the Achievement table (foreign key).
-    date: date
-        The date of the specific day.
+    start_date : int
+        The epochtime (in seconds) of the start date of the season.
+    end_date : int
+        The epochtime (in seconds) of the end date of the season.
     """
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    achievement_id = db.Column(db.Integer, db.ForeignKey('achievement.id'), nullable=False)
-    date = db.Column(db.Date, nullable=False)
-
-    achievement = db.relationship('Achievement', backref=db.backref('achievement_days', lazy=True))
+    start_date = db.Column(db.Integer, nullable=False)
+    end_date = db.Column(db.Integer, nullable=False)
 
     def __repr__(self):
-        return f"<AchievementDay id={self.id}, user_id={self.user_id}, achievement_id={self.achievement_id}, date={self.date}>"
+        return f"<Season id={self.id}, start_date={self.start_date}, end_date={self.end_date}>"
 
-class DailyScore(db.Model):
+class SeasonScore(db.Model):
     """
-    Class representing the daily score earned by labelling.
+    Class representing the labeling game season's score earned by labelling in a specific season.
     
     Attributes
     ----------
     id : int
         Unique identifier (primary key).
-    user_id : int
-        The user ID in the User table (foreign key).
-    score : int
-        The achievement ID in the Achievement table (foreign key).
-    raw_score : int
-        The achievement ID in the Achievement table (foreign key).
-    date : date
-        The date of the specific day.
-    """
-    id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    raw_score = db.Column(db.Integer, default=0)
-    score = db.Column(db.Integer, default=0)
-    date = db.Column(db.Date, nullable=False)
-
-    user = db.relationship('User', backref=db.backref('daily_scores', lazy=True))
-
-    def __repr__(self):
-        return f"<DailyScore user_id={self.user_id}, raw_score = {self.raw_score}, score={self.score}, date={self.date}>"
-
-class WeeklyScore(db.Model):
-    """
-    Class representing the weekly score earned by labelling.
-    
-    Attributes
-    ----------
-    id : int
-        Unique identifier (primary key).
+    season_id : int
+        The ID of the season at the moment (foreign key).
     user_id : int
         The user ID in the User table (foreign key).
     score : int
         The achievement ID in the Achievement table (foreign key).
     raw_score : int
         The achievement ID in the Achievement table (foreign key).
-    week : int
-        The week of the year.
-    year : int
-        The year.
     """
     id = db.Column(db.Integer, primary_key=True)
+    season_id = db.Column(db.Integer, db.ForeignKey('season.id'), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     raw_score = db.Column(db.Integer, default=0)
     score = db.Column(db.Integer, default=0)
-    week = db.Column(db.Integer, default = 0)
-    year = db.Column(db.Integer, default = 0)
 
-    user = db.relationship('User', backref=db.backref('weekly_scores', lazy=True))
-
-    def __repr__(self):
-        return f"<DailyScore user_id={self.user_id}, raw_score = {self.raw_score}, score={self.score}, week={self.week}, year={self.year}>"
-
-class MonthlyScore(db.Model):
-    """
-    Class representing the monthly score earned by labelling.
-    
-    Attributes
-    ----------
-    id : int
-        Unique identifier (primary key).
-    user_id : int
-        The user ID in the User table (foreign key).
-    score : int
-        The achievement ID in the Achievement table (foreign key).
-    raw_score : int
-        The achievement ID in the Achievement table (foreign key).
-    month : int
-        The month of the year.
-    year : int
-        The year.
-    """
-    id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    raw_score = db.Column(db.Integer, default=0)
-    score = db.Column(db.Integer, default=0)
-    month = db.Column(db.Integer, default = 0)
-    year = db.Column(db.Integer, default = 0)
-
-    user = db.relationship('User', backref=db.backref('monthly_scores', lazy=True))
+    season = db.relationship('Season', backref=db.backref('season_score', lazy=True))
+    user = db.relationship('User', backref=db.backref('season_score', lazy=True))
 
     def __repr__(self):
-        return f"<DailyScore user_id={self.user_id}, raw_score = {self.raw_score}, score={self.score}, month={self.month}, year={self.year}>"
-    
-class YearlyScore(db.Model):
-    """
-    Class representing the weekly score earned by labelling.
-    
-    Attributes
-    ----------
-    id : int
-        Unique identifier (primary key).
-    user_id : int
-        The user ID in the User table (foreign key).
-    score : int
-        The achievement ID in the Achievement table (foreign key).
-    raw_score : int
-        The achievement ID in the Achievement table (foreign key).
-    year : int
-        The year
-    """
-    id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    raw_score = db.Column(db.Integer, default=0)
-    score = db.Column(db.Integer, default=0)
-    year = db.Column(db.Integer, default = 0)
-
-    user = db.relationship('User', backref=db.backref('yearly_scores', lazy=True))
-
-    def __repr__(self):
-        return f"<DailyScore user_id={self.user_id}, raw_score = {self.raw_score}, score={self.score}, yearly={self.year}>"
+        return f"<SeasonScore season_id={self.season_id} user_id={self.user_id}, raw_score = {self.raw_score}, score={self.score}>"
 
 class Tutorial(db.Model):
     """
@@ -523,4 +430,45 @@ class Tutorial(db.Model):
             "<Tutorial id=%r connection_id=%r action_type=%r query_type=%r time=%r>"
         ) % (
             self.id, self.connection_id, self.action_type, self.query_type, self.time
+        )
+
+class ModelScores(db.Model):
+    """
+    Class representing different metrics for the model along with actual and predicted scores.
+
+    Attributes
+    ----------
+    id : int
+        Unique identifier (primary key).
+    f1 : float
+        The f1-score of the model. (0,1)
+    mcc : float
+        The Matthews correlation coefficient (MCC) of the model. (-1,1)
+    accuracy: float
+        The accuracy of the model. (0,1)
+    precision: float
+        The precision of the model. (0,1)
+    recall: float
+        The recall of the model. (0,1)
+    specificity: float
+        The specificity of the model. (0,1)
+    date : date
+        The date of the specific entry.
+    """
+    id = db.Column(db.Integer, primary_key=True)
+
+    f1 = db.Column(db.Float, nullable=False)
+    mcc = db.Column(db.Float, nullable=False)
+    accuracy = db.Column(db.Float, nullable=False)
+    precision = db.Column(db.Float, nullable=False)
+    recall = db.Column(db.Float, nullable=False)
+    specificity = db.Column(db.Float, nullable=False)
+
+    date = db.Column(db.Date, nullable=False)
+
+    def __repr__(self):
+        return (
+            "<ModelScores id=%r f1=%r mcc=%r accuracy=%r precision=%r recall=%r specificity=%r date=%r>"
+        ) % (
+            self.id, self.f1, self.mcc, self.accuracy, self.precision, self.recall, self.specificity, self.date
         )

@@ -5,6 +5,7 @@ from app.app import app
 
 
 def get_all_achievements():
+    """Get all the achievements available"""
     achievements = Achievement.query.all()
     achievement_list = [
         {

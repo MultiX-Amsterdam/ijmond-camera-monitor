@@ -1,11 +1,11 @@
 import json
 import os
+from download_videos import get_video_url
 
 def filter_json():
     """
     Filter the JSON dataset.
     """
-    # Define the path to the current script's directory
     current_dir = os.path.dirname(os.path.abspath(__file__))
     
     # Construct the path to the input and output files
@@ -13,16 +13,24 @@ def filter_json():
     output_file_path = os.path.join(current_dir, 'metadata_new.json')
         
     try:
-        # Open the input file
+
         with open(input_file_path, 'r') as file:
             data = json.load(file)
 
-            # Filter the data for 32 and 47 as label state; golden negative and positive respectively, 
-            # which means we are 100% certain in what we have smoke wise
-            filtered_data = [entry for entry in data if entry['label_state_admin'] in [32, 47]]
-            print(f"Filtered data length: {len(filtered_data)}")
+        # Filter the entries and transform the data
+        filtered_data = []
+        for entry in data:
+            if entry['label_state_admin'] in (47, 32):
+                video_url = get_video_url(entry)
+                filtered_entry = {
+                    'cam_id': entry['camera_id'],
+                    'view_id': entry['view_id'],
+                    'url': video_url
+                }
+                filtered_data.append(filtered_entry)
+        
+        print(f"Filtered {len(filtered_data)} entries.")
 
-        # Open the output file
         with open(output_file_path, 'w') as file:
             print(f"Writing filtered data to {output_file_path}")
             json.dump(filtered_data, file, indent=4)

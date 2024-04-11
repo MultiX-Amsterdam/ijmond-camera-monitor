@@ -15,10 +15,71 @@
             .then(data => populateLeaderboard(data, currentUserId))
             .catch(error => console.error('Error fetching leaderboard data:', error));
     }
+
+    /**
+     * Fetch and populate the seasons' dropdown, and initiate the countdown if a season is active.
+     */
+    function populateCheckSeasons() {
+        fetch(`${api_url_root}/get_seasons`)
+            .then(response => response.json())
+            .then(data => {
+
+                const lastSeason = data.seasons[data.seasons.length-1]
+                const timeNow = Math.floor(Date.now() / 1000);
+                let isSeason = '';
+
+                if (timeNow <= lastSeason.season_end && timeNow >= lastSeason.season_start) {
+                    isSeason = 'countdownFinish'
+                } else if (timeNow < lastSeason.season_start) {
+                    isSeason = 'countdownStart'
+                }
+
+                if (isSeason) {
+                    // Update every second
+                    const x = setInterval(function() {
+                        const now = Math.floor(Date.now() / 1000);
+                        const distance = lastSeason.season_end - now;
+    
+                        // Time calculations for days, hours, minutes and seconds
+                        const days = Math.floor(distance / (60 * 60 * 24));
+                        const hours = Math.floor((distance % (60 * 60 * 24)) / (60 * 60));
+                        const minutes = Math.floor((distance % (60 * 60)) / 60);
+                        const seconds = Math.floor(distance % 60);
+    
+                        // Output the result in an element with id="seasonCountdown"
+                        seasonCountdown.innerHTML = `${days}d ${hours}h ${minutes}m ${seconds}s ` + (isSeason === 'countdownFinish' ? 'until season ends' : 'until season begins');
+                        
+                        // If the countdown is over, stop the countdown and set the text accordingly
+                        if (distance < 0) {
+                            clearInterval(x);
+                            seasonCountdown.innerHTML = "There is no active season.";
+                        }
+                    }, 1000);
+                } else {
+                    // If not within a season or before a season starts, keep the initial message
+                    seasonCountdown.classList.add("text-white", "font-weight-bold");
+                    seasonCountdown.innerHTML = "There is no active season.";
+                }
+
+                const selector = document.getElementById('seasonSelector');
+                selector.innerHTML = ''; // Clear all the other options
+                const select = document.createElement('option');
+                select.textContent = 'Select a Season'
+                select.value = 'alltime' // If we click the Select a Season, we display the alltime leaderboard instead
+                selector.appendChild(select);
+                data.seasons.forEach(season => {
+                    const option = document.createElement('option');
+                    option.value = season.id; 
+                    option.textContent = season.name;
+                    selector.appendChild(option);
+                });
+            })
+            .catch(error => console.error('Error fetching seasons:', error));
+    }
   
     /**
      * Populate leaderboard table with data.
-     * @param {Array} data - The leaderboard data.
+     * @param {any} data - The leaderboard data.
      * @param {string} currentUserId - The current user's ID.
      */
     function populateLeaderboard(data, currentUserId) {
@@ -110,31 +171,10 @@
         sortLeaderboard('score', intervalVal, currentUserId);
     });
 
-    // Event listener for the daily leaderboard
-    document.getElementById('selectDaily').addEventListener('click', () => {
+    // Event listener for the selected season's leaderboard
+    document.getElementById('seasonSelector').addEventListener('change', function () {
         const currentUserId = getCurrentUserIdFromToken();
-        intervalVal = 'daily';
-        sortLeaderboard('score', intervalVal, currentUserId);
-    });
-
-    // Event listener for the weekly leaderboard
-    document.getElementById('selectWeekly').addEventListener('click', () => {
-        const currentUserId = getCurrentUserIdFromToken();
-        intervalVal = 'weekly';
-        sortLeaderboard('score', intervalVal, currentUserId);
-    });
-
-    // Event listener for the monthly leaderboard
-    document.getElementById('selectMonthly').addEventListener('click', () => {
-        const currentUserId = getCurrentUserIdFromToken();
-        intervalVal = 'monthly';
-        sortLeaderboard('score', intervalVal, currentUserId);
-    });
-
-    // Event listener for the yearly leaderboard
-    document.getElementById('selectYearly').addEventListener('click', () => {
-        const currentUserId = getCurrentUserIdFromToken();
-        intervalVal = 'yearly';
+        intervalVal = this.value; // The selected item (season)
         sortLeaderboard('score', intervalVal, currentUserId);
     });
   
@@ -150,6 +190,7 @@
   
     // Initial fetch of leaderboard data
     function init() {
+        populateCheckSeasons();
         const currentUserId = getCurrentUserIdFromToken(); // Get the current user ID from the token
         fetchLeaderboard(currentUserId);
     }

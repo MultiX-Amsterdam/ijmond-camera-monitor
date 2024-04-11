@@ -1,1069 +1,487 @@
 [
     {
-        "camera_id": 1,
-        "file_name": "23x-vGYMbec-2",
-        "id": 6,
-        "label_state": 16,
-        "label_state_admin": 32,
-        "start_time": 1681288970,
-        "url_part": "23x-vGYMbec",
-        "url_root": "https://ijmondcam.multix.io/videos/",
-        "view_id": 2
-    },
-    {
-        "camera_id": 1,
-        "file_name": "Qv9-nS5BloI-2",
-        "id": 81,
-        "label_state": 23,
-        "label_state_admin": 47,
-        "start_time": 1686140002,
-        "url_part": "Qv9-nS5BloI",
-        "url_root": "https://ijmondcam.multix.io/videos/",
-        "view_id": 2
-    },
-    {
-        "camera_id": 1,
-        "file_name": "glLcsYu7mbM-3",
-        "id": 14,
-        "label_state": 23,
-        "label_state_admin": 47,
-        "start_time": 1690009709,
-        "url_part": "glLcsYu7mbM",
-        "url_root": "https://ijmondcam.multix.io/videos/",
-        "view_id": 3
-    },
-    {
-        "camera_id": 1,
-        "file_name": "Cjs_IIDUDVM-2",
-        "id": 41,
-        "label_state": 16,
-        "label_state_admin": 32,
-        "start_time": 1687196719,
-        "url_part": "Cjs_IIDUDVM",
-        "url_root": "https://ijmondcam.multix.io/videos/",
-        "view_id": 2
-    },
-    {
-        "camera_id": 1,
-        "file_name": "M7arDQZyAG4-0",
-        "id": 65,
-        "label_state": 16,
-        "label_state_admin": 32,
-        "start_time": 1682525308,
-        "url_part": "M7arDQZyAG4",
-        "url_root": "https://ijmondcam.multix.io/videos/",
-        "view_id": 0
-    },
-    {
-        "camera_id": 1,
-        "file_name": "p5klKMpdREI-3",
-        "id": 40,
-        "label_state": 23,
-        "label_state_admin": 47,
-        "start_time": 1687199455,
-        "url_part": "p5klKMpdREI",
-        "url_root": "https://ijmondcam.multix.io/videos/",
-        "view_id": 3
-    },
-    {
-        "camera_id": 1,
-        "file_name": "S1Juid0Wi8M-3",
-        "id": 78,
-        "label_state": 23,
-        "label_state_admin": 47,
-        "start_time": 1687199436,
-        "url_part": "S1Juid0Wi8M",
-        "url_root": "https://ijmondcam.multix.io/videos/",
-        "view_id": 3
-    },
-    {
-        "camera_id": 1,
-        "file_name": "A9W8G55JucU-1",
-        "id": 73,
-        "label_state": 16,
-        "label_state_admin": 32,
-        "start_time": 1679680066,
-        "url_part": "A9W8G55JucU",
-        "url_root": "https://ijmondcam.multix.io/videos/",
-        "view_id": 1
-    },
-    {
-        "camera_id": 1,
-        "file_name": "HgNO44L2INY-0",
-        "id": 27,
-        "label_state": 16,
-        "label_state_admin": 32,
-        "start_time": 1683214231,
-        "url_part": "HgNO44L2INY",
-        "url_root": "https://ijmondcam.multix.io/videos/",
-        "view_id": 0
-    },
-    {
-        "camera_id": 1,
-        "file_name": "A9W8G55JucU-0",
-        "id": 76,
-        "label_state": 16,
-        "label_state_admin": 32,
-        "start_time": 1679680066,
-        "url_part": "A9W8G55JucU",
-        "url_root": "https://ijmondcam.multix.io/videos/",
-        "view_id": 0
-    },
-    {
-        "camera_id": 1,
-        "file_name": "A9W8G55JucU-2",
-        "id": 74,
-        "label_state": 16,
-        "label_state_admin": 32,
-        "start_time": 1679680066,
-        "url_part": "A9W8G55JucU",
-        "url_root": "https://ijmondcam.multix.io/videos/",
-        "view_id": 2
-    },
-    {
-        "camera_id": 1,
-        "file_name": "rsBRGyFrPwM-2",
-        "id": 54,
-        "label_state": 16,
-        "label_state_admin": 32,
-        "start_time": 1687681486,
-        "url_part": "rsBRGyFrPwM",
-        "url_root": "https://ijmondcam.multix.io/videos/",
-        "view_id": 2
-    },
-    {
-        "camera_id": 1,
-        "file_name": "aINMnqmwSUg-3",
-        "id": 20,
-        "label_state": 16,
-        "label_state_admin": 32,
-        "start_time": 1684418807,
-        "url_part": "aINMnqmwSUg",
-        "url_root": "https://ijmondcam.multix.io/videos/",
-        "view_id": 3
-    },
-    {
-        "camera_id": 1,
-        "file_name": "zgTCcwKiEXQ-3",
-        "id": 129,
-        "label_state": 23,
-        "label_state_admin": 47,
-        "start_time": 1687197195,
-        "url_part": "zgTCcwKiEXQ",
-        "url_root": "https://ijmondcam.multix.io/videos/",
-        "view_id": 3
-    },
-    {
-        "camera_id": 1,
-        "file_name": "crAL3CrEt3s-3",
-        "id": 171,
-        "label_state": 16,
-        "label_state_admin": 32,
-        "start_time": 1681132754,
-        "url_part": "crAL3CrEt3s",
-        "url_root": "https://ijmondcam.multix.io/videos/",
-        "view_id": 3
-    },
-    {
-        "camera_id": 1,
-        "file_name": "rPBe7y54Yxs-0",
-        "id": 111,
-        "label_state": 16,
-        "label_state_admin": 32,
-        "start_time": 1685090375,
-        "url_part": "rPBe7y54Yxs",
-        "url_root": "https://ijmondcam.multix.io/videos/",
-        "view_id": 0
-    },
-    {
-        "camera_id": 1,
-        "file_name": "yeP5MvlMCbM-3",
-        "id": 91,
-        "label_state": 23,
-        "label_state_admin": 47,
-        "start_time": 1687196007,
-        "url_part": "yeP5MvlMCbM",
-        "url_root": "https://ijmondcam.multix.io/videos/",
-        "view_id": 3
-    },
-    {
-        "camera_id": 1,
-        "file_name": "5ljnXgkRfaM-2",
-        "id": 126,
-        "label_state": 16,
-        "label_state_admin": 32,
-        "start_time": 1687197214,
-        "url_part": "5ljnXgkRfaM",
-        "url_root": "https://ijmondcam.multix.io/videos/",
-        "view_id": 2
-    },
-    {
-        "camera_id": 2,
-        "file_name": "Dj2I-b0zTWU-1",
-        "id": 422,
-        "label_state": 16,
-        "label_state_admin": 32,
-        "start_time": 1679062084,
-        "url_part": "Dj2I-b0zTWU",
-        "url_root": "https://ijmondcam.multix.io/videos/",
-        "view_id": 1
-    },
-    {
-        "camera_id": 1,
-        "file_name": "rPBe7y54Yxs-1",
-        "id": 110,
-        "label_state": 16,
-        "label_state_admin": 32,
-        "start_time": 1685090375,
-        "url_part": "rPBe7y54Yxs",
-        "url_root": "https://ijmondcam.multix.io/videos/",
-        "view_id": 1
-    },
-    {
-        "camera_id": 1,
-        "file_name": "zgTCcwKiEXQ-2",
-        "id": 132,
-        "label_state": 16,
-        "label_state_admin": 32,
-        "start_time": 1687197195,
-        "url_part": "zgTCcwKiEXQ",
-        "url_root": "https://ijmondcam.multix.io/videos/",
-        "view_id": 2
-    },
-    {
-        "camera_id": 1,
-        "file_name": "FfRfRhkohqs-0",
-        "id": 105,
-        "label_state": 16,
-        "label_state_admin": 32,
-        "start_time": 1690806823,
-        "url_part": "FfRfRhkohqs",
-        "url_root": "https://ijmondcam.multix.io/videos/",
-        "view_id": 0
-    },
-    {
-        "camera_id": 1,
-        "file_name": "Hvk6xygq27o-3",
-        "id": 30,
-        "label_state": 23,
-        "label_state_admin": 47,
-        "start_time": 1689223189,
-        "url_part": "Hvk6xygq27o",
-        "url_root": "https://ijmondcam.multix.io/videos/",
-        "view_id": 3
-    },
-    {
-        "camera_id": 1,
-        "file_name": "4CA-G8uUtyA-2",
-        "id": 119,
-        "label_state": 23,
-        "label_state_admin": 47,
-        "start_time": 1678552390,
-        "url_part": "4CA-G8uUtyA",
-        "url_root": "https://ijmondcam.multix.io/videos/",
-        "view_id": 2
-    },
-    {
-        "camera_id": 1,
-        "file_name": "bTuGDZ7RVUI-1",
-        "id": 95,
-        "label_state": 23,
-        "label_state_admin": 47,
-        "start_time": 1685558736,
-        "url_part": "bTuGDZ7RVUI",
-        "url_root": "https://ijmondcam.multix.io/videos/",
-        "view_id": 1
-    },
-    {
-        "camera_id": 1,
-        "file_name": "5X1jbx4Hii4-3",
-        "id": 122,
-        "label_state": 23,
-        "label_state_admin": 47,
-        "start_time": 1680765627,
-        "url_part": "5X1jbx4Hii4",
-        "url_root": "https://ijmondcam.multix.io/videos/",
-        "view_id": 3
-    },
-    {
-        "camera_id": 1,
-        "file_name": "FfRfRhkohqs-2",
-        "id": 107,
-        "label_state": 16,
-        "label_state_admin": 32,
-        "start_time": 1690806823,
-        "url_part": "FfRfRhkohqs",
-        "url_root": "https://ijmondcam.multix.io/videos/",
-        "view_id": 2
-    },
-    {
-        "camera_id": 1,
-        "file_name": "aBA6JSWKW3c-0",
-        "id": 137,
-        "label_state": 23,
-        "label_state_admin": 47,
-        "start_time": 1687107281,
-        "url_part": "aBA6JSWKW3c",
-        "url_root": "https://ijmondcam.multix.io/videos/",
-        "view_id": 0
-    },
-    {
-        "camera_id": 1,
-        "file_name": "q1RdTphU5yU-2",
-        "id": 159,
-        "label_state": 16,
-        "label_state_admin": 32,
-        "start_time": 1681287750,
-        "url_part": "q1RdTphU5yU",
-        "url_root": "https://ijmondcam.multix.io/videos/",
-        "view_id": 2
-    },
-    {
-        "camera_id": 1,
-        "file_name": "zuX9sR4wYKc-3",
-        "id": 147,
-        "label_state": 16,
-        "label_state_admin": 32,
-        "start_time": 1690389696,
-        "url_part": "zuX9sR4wYKc",
-        "url_root": "https://ijmondcam.multix.io/videos/",
-        "view_id": 3
-    },
-    {
-        "camera_id": 1,
-        "file_name": "zuX9sR4wYKc-0",
-        "id": 148,
-        "label_state": 16,
-        "label_state_admin": 32,
-        "start_time": 1690389696,
-        "url_part": "zuX9sR4wYKc",
-        "url_root": "https://ijmondcam.multix.io/videos/",
-        "view_id": 0
-    },
-    {
-        "camera_id": 1,
-        "file_name": "5ljnXgkRfaM-3",
-        "id": 127,
-        "label_state": 23,
-        "label_state_admin": 47,
-        "start_time": 1687197214,
-        "url_part": "5ljnXgkRfaM",
-        "url_root": "https://ijmondcam.multix.io/videos/",
-        "view_id": 3
-    },
-    {
-        "camera_id": 1,
-        "file_name": "93aaWg7BzaA-1",
-        "id": 206,
-        "label_state": 16,
-        "label_state_admin": 32,
-        "start_time": 1684505195,
-        "url_part": "93aaWg7BzaA",
-        "url_root": "https://ijmondcam.multix.io/videos/",
-        "view_id": 1
-    },
-    {
-        "camera_id": 1,
-        "file_name": "S0pXH97m558-0",
-        "id": 276,
-        "label_state": 16,
-        "label_state_admin": 32,
-        "start_time": 1682159012,
-        "url_part": "S0pXH97m558",
-        "url_root": "https://ijmondcam.multix.io/videos/",
-        "view_id": 0
-    },
-    {
-        "camera_id": 1,
-        "file_name": "wg6C4QySFD4-2",
-        "id": 249,
-        "label_state": 16,
-        "label_state_admin": 32,
-        "start_time": 1685885553,
-        "url_part": "wg6C4QySFD4",
-        "url_root": "https://ijmondcam.multix.io/videos/",
-        "view_id": 2
-    },
-    {
-        "camera_id": 1,
-        "file_name": "kpOrtl8MizM-0",
-        "id": 179,
-        "label_state": 16,
-        "label_state_admin": 32,
-        "start_time": 1687197893,
-        "url_part": "kpOrtl8MizM",
-        "url_root": "https://ijmondcam.multix.io/videos/",
-        "view_id": 0
-    },
-    {
-        "camera_id": 1,
-        "file_name": "dQbSLpPnyXU-2",
-        "id": 240,
-        "label_state": 16,
-        "label_state_admin": 32,
-        "start_time": 1678543348,
-        "url_part": "dQbSLpPnyXU",
-        "url_root": "https://ijmondcam.multix.io/videos/",
-        "view_id": 2
-    },
-    {
-        "camera_id": 1,
-        "file_name": "NcY7dtGpyus-2",
-        "id": 317,
-        "label_state": 16,
-        "label_state_admin": 32,
-        "start_time": 1690610314,
-        "url_part": "NcY7dtGpyus",
-        "url_root": "https://ijmondcam.multix.io/videos/",
-        "view_id": 2
-    },
-    {
-        "camera_id": 1,
-        "file_name": "EACU2K9A44M-2",
-        "id": 209,
-        "label_state": 16,
-        "label_state_admin": 32,
-        "start_time": 1689737535,
-        "url_part": "EACU2K9A44M",
-        "url_root": "https://ijmondcam.multix.io/videos/",
-        "view_id": 2
-    },
-    {
-        "camera_id": 1,
-        "file_name": "zJpGtu3jf_w-0",
-        "id": 214,
-        "label_state": 16,
-        "label_state_admin": 32,
-        "start_time": 1680431440,
-        "url_part": "zJpGtu3jf_w",
-        "url_root": "https://ijmondcam.multix.io/videos/",
-        "view_id": 0
-    },
-    {
-        "camera_id": 1,
-        "file_name": "_JzCaMSLzK0-0",
-        "id": 229,
-        "label_state": 16,
-        "label_state_admin": 32,
-        "start_time": 1690571605,
-        "url_part": "_JzCaMSLzK0",
-        "url_root": "https://ijmondcam.multix.io/videos/",
-        "view_id": 0
-    },
-    {
-        "camera_id": 1,
-        "file_name": "fD_2Qr7HN4c-1",
-        "id": 348,
-        "label_state": 23,
-        "label_state_admin": 47,
-        "start_time": 1688904341,
-        "url_part": "fD_2Qr7HN4c",
-        "url_root": "https://ijmondcam.multix.io/videos/",
-        "view_id": 1
-    },
-    {
-        "camera_id": 1,
-        "file_name": "VQ5OZbuwXgg-2",
-        "id": 164,
-        "label_state": 16,
-        "label_state_admin": 32,
-        "start_time": 1685611218,
-        "url_part": "VQ5OZbuwXgg",
-        "url_root": "https://ijmondcam.multix.io/videos/",
-        "view_id": 2
-    },
-    {
-        "camera_id": 1,
-        "file_name": "ILO3p3GdlQg-0",
-        "id": 332,
-        "label_state": 16,
-        "label_state_admin": 32,
-        "start_time": 1684504750,
-        "url_part": "ILO3p3GdlQg",
-        "url_root": "https://ijmondcam.multix.io/videos/",
-        "view_id": 0
-    },
-    {
-        "camera_id": 1,
-        "file_name": "ubv9JZ-k4bU-3",
-        "id": 343,
-        "label_state": 16,
-        "label_state_admin": 32,
-        "start_time": 1684578614,
-        "url_part": "ubv9JZ-k4bU",
-        "url_root": "https://ijmondcam.multix.io/videos/",
-        "view_id": 3
-    },
-    {
-        "camera_id": 1,
-        "file_name": "WarrpDCyYmY-3",
-        "id": 304,
-        "label_state": 23,
-        "label_state_admin": 47,
-        "start_time": 1682156911,
-        "url_part": "WarrpDCyYmY",
-        "url_root": "https://ijmondcam.multix.io/videos/",
-        "view_id": 3
-    },
-    {
-        "camera_id": 1,
-        "file_name": "qG2GLIybaRQ-0",
-        "id": 289,
-        "label_state": 23,
-        "label_state_admin": 47,
-        "start_time": 1674741404,
-        "url_part": "qG2GLIybaRQ",
-        "url_root": "https://ijmondcam.multix.io/videos/",
-        "view_id": 0
-    },
-    {
-        "camera_id": 1,
-        "file_name": "fD_2Qr7HN4c-3",
-        "id": 346,
-        "label_state": 23,
-        "label_state_admin": 47,
-        "start_time": 1688904341,
-        "url_part": "fD_2Qr7HN4c",
-        "url_root": "https://ijmondcam.multix.io/videos/",
-        "view_id": 3
-    },
-    {
-        "camera_id": 1,
-        "file_name": "qG2GLIybaRQ-1",
-        "id": 292,
-        "label_state": 23,
-        "label_state_admin": 47,
-        "start_time": 1674741404,
-        "url_part": "qG2GLIybaRQ",
-        "url_root": "https://ijmondcam.multix.io/videos/",
-        "view_id": 1
-    },
-    {
-        "camera_id": 1,
-        "file_name": "6_j636Zv6fs-0",
-        "id": 305,
-        "label_state": 16,
-        "label_state_admin": 32,
-        "start_time": 1678539458,
-        "url_part": "6_j636Zv6fs",
-        "url_root": "https://ijmondcam.multix.io/videos/",
-        "view_id": 0
-    },
-    {
-        "camera_id": 2,
-        "file_name": "j7QUpjlW1x4-1",
-        "id": 429,
-        "label_state": 23,
-        "label_state_admin": 47,
-        "start_time": 1681109437,
-        "url_part": "j7QUpjlW1x4",
-        "url_root": "https://ijmondcam.multix.io/videos/",
-        "view_id": 1
-    },
-    {
-        "camera_id": 2,
-        "file_name": "3P0bkMMGSCc-0",
-        "id": 417,
-        "label_state": 23,
-        "label_state_admin": 47,
-        "start_time": 1686797815,
-        "url_part": "3P0bkMMGSCc",
-        "url_root": "https://ijmondcam.multix.io/videos/",
-        "view_id": 0
-    },
-    {
-        "camera_id": 1,
-        "file_name": "4CA-G8uUtyA-1",
-        "id": 120,
-        "label_state": 16,
-        "label_state_admin": 32,
-        "start_time": 1678552390,
-        "url_part": "4CA-G8uUtyA",
-        "url_root": "https://ijmondcam.multix.io/videos/",
-        "view_id": 1
-    },
-    {
-        "camera_id": 1,
-        "file_name": "R0esnWDfaP8-0",
-        "id": 388,
-        "label_state": 16,
-        "label_state_admin": 32,
-        "start_time": 1679846182,
-        "url_part": "R0esnWDfaP8",
-        "url_root": "https://ijmondcam.multix.io/videos/",
-        "view_id": 0
-    },
-    {
-        "camera_id": 1,
-        "file_name": "1NKYOpxE90A-3",
-        "id": 369,
-        "label_state": 16,
-        "label_state_admin": 32,
-        "start_time": 1684581304,
-        "url_part": "1NKYOpxE90A",
-        "url_root": "https://ijmondcam.multix.io/videos/",
-        "view_id": 3
-    },
-    {
-        "camera_id": 1,
-        "file_name": "1NKYOpxE90A-1",
-        "id": 371,
-        "label_state": 16,
-        "label_state_admin": 32,
-        "start_time": 1684581304,
-        "url_part": "1NKYOpxE90A",
-        "url_root": "https://ijmondcam.multix.io/videos/",
-        "view_id": 1
-    },
-    {
-        "camera_id": 1,
-        "file_name": "whmQf-ud0RY-2",
-        "id": 360,
-        "label_state": 16,
-        "label_state_admin": 32,
-        "start_time": 1687196007,
-        "url_part": "whmQf-ud0RY",
-        "url_root": "https://ijmondcam.multix.io/videos/",
-        "view_id": 2
-    },
-    {
-        "camera_id": 2,
-        "file_name": "LXB7SXlDvq8-0",
-        "id": 433,
-        "label_state": 23,
-        "label_state_admin": 47,
-        "start_time": 1683224168,
-        "url_part": "LXB7SXlDvq8",
-        "url_root": "https://ijmondcam.multix.io/videos/",
-        "view_id": 0
-    },
-    {
-        "camera_id": 1,
-        "file_name": "DoNtmf5UBkY-2",
-        "id": 382,
-        "label_state": 23,
-        "label_state_admin": 47,
-        "start_time": 1688831353,
-        "url_part": "DoNtmf5UBkY",
-        "url_root": "https://ijmondcam.multix.io/videos/",
-        "view_id": 2
-    },
-    {
-        "camera_id": 2,
-        "file_name": "5ay369iRsi0-1",
-        "id": 488,
-        "label_state": 23,
-        "label_state_admin": 47,
-        "start_time": 1680350860,
-        "url_part": "5ay369iRsi0",
-        "url_root": "https://ijmondcam.multix.io/videos/",
-        "view_id": 1
-    },
-    {
-        "camera_id": 1,
-        "file_name": "_JzCaMSLzK0-1",
-        "id": 232,
-        "label_state": 16,
-        "label_state_admin": 32,
-        "start_time": 1690571605,
-        "url_part": "_JzCaMSLzK0",
-        "url_root": "https://ijmondcam.multix.io/videos/",
-        "view_id": 1
-    },
-    {
-        "camera_id": 2,
-        "file_name": "8Y9cfUKvqvU-0",
-        "id": 512,
-        "label_state": 16,
-        "label_state_admin": 32,
-        "start_time": 1690703750,
-        "url_part": "8Y9cfUKvqvU",
-        "url_root": "https://ijmondcam.multix.io/videos/",
-        "view_id": 0
-    },
-    {
-        "camera_id": 2,
-        "file_name": "Ajsd1Q08DmA-0",
-        "id": 507,
-        "label_state": 16,
-        "label_state_admin": 32,
-        "start_time": 1681717969,
-        "url_part": "Ajsd1Q08DmA",
-        "url_root": "https://ijmondcam.multix.io/videos/",
-        "view_id": 0
-    },
-    {
-        "camera_id": 2,
-        "file_name": "INYCPw7nzLc-1",
-        "id": 455,
-        "label_state": 23,
-        "label_state_admin": 47,
-        "start_time": 1685701345,
-        "url_part": "INYCPw7nzLc",
-        "url_root": "https://ijmondcam.multix.io/videos/",
-        "view_id": 1
-    },
-    {
-        "camera_id": 2,
-        "file_name": "lL9ungbqqCU-0",
-        "id": 467,
-        "label_state": 23,
-        "label_state_admin": 47,
-        "start_time": 1685522142,
-        "url_part": "lL9ungbqqCU",
-        "url_root": "https://ijmondcam.multix.io/videos/",
-        "view_id": 0
-    },
-    {
-        "camera_id": 1,
-        "file_name": "DoIBg8LAfWI-3",
-        "id": 196,
-        "label_state": 23,
-        "label_state_admin": 47,
-        "start_time": 1684412072,
-        "url_part": "DoIBg8LAfWI",
-        "url_root": "https://ijmondcam.multix.io/videos/",
-        "view_id": 3
-    },
-    {
-        "camera_id": 2,
-        "file_name": "A-nnAPBqYcs-1",
-        "id": 602,
-        "label_state": 23,
-        "label_state_admin": 47,
-        "start_time": 1681562904,
-        "url_part": "A-nnAPBqYcs",
-        "url_root": "https://ijmondcam.multix.io/videos/",
-        "view_id": 1
-    },
-    {
-        "camera_id": 2,
-        "file_name": "z-MaBhPlmz0-0",
-        "id": 577,
-        "label_state": 23,
-        "label_state_admin": 47,
-        "start_time": 1691555927,
-        "url_part": "z-MaBhPlmz0",
-        "url_root": "https://ijmondcam.multix.io/videos/",
-        "view_id": 0
-    },
-    {
-        "camera_id": 2,
-        "file_name": "wP78ukOa9W8-1",
-        "id": 582,
-        "label_state": 19,
-        "label_state_admin": 47,
-        "start_time": 1681908500,
-        "url_part": "wP78ukOa9W8",
-        "url_root": "https://ijmondcam.multix.io/videos/",
-        "view_id": 1
-    },
-    {
-        "camera_id": 2,
-        "file_name": "Q1yTGkLuAc0-0",
-        "id": 586,
-        "label_state": 23,
-        "label_state_admin": 47,
-        "start_time": 1684141503,
-        "url_part": "Q1yTGkLuAc0",
-        "url_root": "https://ijmondcam.multix.io/videos/",
-        "view_id": 0
-    },
-    {
-        "camera_id": 2,
-        "file_name": "5nGAnsaKbA8-0",
-        "id": 543,
-        "label_state": 23,
-        "label_state_admin": 47,
-        "start_time": 1685342267,
-        "url_part": "5nGAnsaKbA8",
-        "url_root": "https://ijmondcam.multix.io/videos/",
-        "view_id": 0
-    },
-    {
-        "camera_id": 1,
-        "file_name": "b2_XE0-ZufQ-2",
-        "id": 241,
-        "label_state": 23,
-        "label_state_admin": 47,
-        "start_time": 1682182740,
-        "url_part": "b2_XE0-ZufQ",
-        "url_root": "https://ijmondcam.multix.io/videos/",
-        "view_id": 2
-    },
-    {
-        "camera_id": 0,
-        "file_name": "TUZbSqcLVtU-1",
-        "id": 704,
-        "label_state": 16,
-        "label_state_admin": 32,
-        "start_time": 1686336673,
-        "url_part": "TUZbSqcLVtU",
-        "url_root": "https://ijmondcam.multix.io/videos/",
-        "view_id": 1
-    },
-    {
-        "camera_id": 2,
-        "file_name": "VPlcWn5Xkyg-1",
-        "id": 666,
-        "label_state": 23,
-        "label_state_admin": 47,
-        "start_time": 1686946278,
-        "url_part": "VPlcWn5Xkyg",
-        "url_root": "https://ijmondcam.multix.io/videos/",
-        "view_id": 1
-    },
-    {
-        "camera_id": 0,
-        "file_name": "TUZbSqcLVtU-3",
-        "id": 702,
-        "label_state": 23,
-        "label_state_admin": 47,
-        "start_time": 1686336673,
-        "url_part": "TUZbSqcLVtU",
-        "url_root": "https://ijmondcam.multix.io/videos/",
-        "view_id": 3
-    },
-    {
-        "camera_id": 2,
-        "file_name": "FYZNq4uWCxM-1",
-        "id": 669,
-        "label_state": 23,
-        "label_state_admin": 47,
-        "start_time": 1688822638,
-        "url_part": "FYZNq4uWCxM",
-        "url_root": "https://ijmondcam.multix.io/videos/",
-        "view_id": 1
-    },
-    {
-        "camera_id": 0,
-        "file_name": "TuF5Qnk3TkI-3",
-        "id": 734,
-        "label_state": 23,
-        "label_state_admin": 47,
-        "start_time": 1685474862,
-        "url_part": "TuF5Qnk3TkI",
-        "url_root": "https://ijmondcam.multix.io/videos/",
-        "view_id": 3
-    },
-    {
-        "camera_id": 0,
-        "file_name": "lG7hIctXNiI-0",
-        "id": 708,
-        "label_state": 23,
-        "label_state_admin": 47,
-        "start_time": 1686716905,
-        "url_part": "lG7hIctXNiI",
-        "url_root": "https://ijmondcam.multix.io/videos/",
-        "view_id": 0
-    },
-    {
-        "camera_id": 0,
-        "file_name": "j81VqAaG_3I-0",
-        "id": 747,
-        "label_state": 16,
-        "label_state_admin": 32,
-        "start_time": 1686572942,
-        "url_part": "j81VqAaG_3I",
-        "url_root": "https://ijmondcam.multix.io/videos/",
-        "view_id": 0
-    },
-    {
-        "camera_id": 0,
-        "file_name": "FGRFWwvDBTo-2",
-        "id": 724,
-        "label_state": 23,
-        "label_state_admin": 47,
-        "start_time": 1687502293,
-        "url_part": "FGRFWwvDBTo",
-        "url_root": "https://ijmondcam.multix.io/videos/",
-        "view_id": 2
-    },
-    {
-        "camera_id": 0,
-        "file_name": "ygySU_Bdvok-3",
-        "id": 830,
-        "label_state": 23,
-        "label_state_admin": 47,
-        "start_time": 1688886063,
-        "url_part": "ygySU_Bdvok",
-        "url_root": "https://ijmondcam.multix.io/videos/",
-        "view_id": 3
-    },
-    {
-        "camera_id": 0,
-        "file_name": "mP45MTdzdoI-4",
-        "id": 808,
-        "label_state": 23,
-        "label_state_admin": 47,
-        "start_time": 1685992032,
-        "url_part": "mP45MTdzdoI",
-        "url_root": "https://ijmondcam.multix.io/videos/",
-        "view_id": 4
-    },
-    {
-        "camera_id": 0,
-        "file_name": "gLXdasSk8JU-3",
-        "id": 872,
-        "label_state": 23,
-        "label_state_admin": 47,
-        "start_time": 1690280533,
-        "url_part": "gLXdasSk8JU",
-        "url_root": "https://ijmondcam.multix.io/videos/",
-        "view_id": 3
-    },
-    {
-        "camera_id": 2,
-        "file_name": "cS2Fk8M2Pj4-0",
-        "id": 569,
-        "label_state": 16,
-        "label_state_admin": 32,
-        "start_time": 1680947213,
-        "url_part": "cS2Fk8M2Pj4",
-        "url_root": "https://ijmondcam.multix.io/videos/",
-        "view_id": 0
-    },
-    {
-        "camera_id": 0,
-        "file_name": "bu7USw70eXs-0",
-        "id": 699,
-        "label_state": 16,
-        "label_state_admin": 32,
-        "start_time": 1690229314,
-        "url_part": "bu7USw70eXs",
-        "url_root": "https://ijmondcam.multix.io/videos/",
-        "view_id": 0
-    },
-    {
-        "camera_id": 2,
-        "file_name": "kSuSGf9_dqA-0",
-        "id": 458,
-        "label_state": 16,
-        "label_state_admin": 32,
-        "start_time": 1684263294,
-        "url_part": "kSuSGf9_dqA",
-        "url_root": "https://ijmondcam.multix.io/videos/",
-        "view_id": 0
-    },
-    {
-        "camera_id": 1,
-        "file_name": "OCgjZK8LUmE-1",
-        "id": 198,
-        "label_state": 23,
-        "label_state_admin": 47,
-        "start_time": 1685108997,
-        "url_part": "OCgjZK8LUmE",
-        "url_root": "https://ijmondcam.multix.io/videos/",
-        "view_id": 1
-    },
-    {
-        "camera_id": 0,
-        "file_name": "5CiaQ_ppyHo-3",
-        "id": 875,
-        "label_state": 23,
-        "label_state_admin": 47,
-        "start_time": 1686197560,
-        "url_part": "5CiaQ_ppyHo",
-        "url_root": "https://ijmondcam.multix.io/videos/",
-        "view_id": 3
-    },
-    {
-        "camera_id": 2,
-        "file_name": "5IUJvUa_eso-1",
-        "id": 564,
-        "label_state": 16,
-        "label_state_admin": 32,
-        "start_time": 1680958095,
-        "url_part": "5IUJvUa_eso",
-        "url_root": "https://ijmondcam.multix.io/videos/",
-        "view_id": 1
-    },
-    {
-        "camera_id": 2,
-        "file_name": "UgBeBBYzTbQ-1",
-        "id": 523,
-        "label_state": 23,
-        "label_state_admin": 47,
-        "start_time": 1686945618,
-        "url_part": "UgBeBBYzTbQ",
-        "url_root": "https://ijmondcam.multix.io/videos/",
-        "view_id": 1
-    },
-    {
-        "camera_id": 0,
-        "file_name": "TuF5Qnk3TkI-2",
-        "id": 730,
-        "label_state": 23,
-        "label_state_admin": 47,
-        "start_time": 1685474862,
-        "url_part": "TuF5Qnk3TkI",
-        "url_root": "https://ijmondcam.multix.io/videos/",
-        "view_id": 2
-    },
-    {
-        "camera_id": 1,
-        "file_name": "S0pXH97m558-2",
-        "id": 274,
-        "label_state": 16,
-        "label_state_admin": 32,
-        "start_time": 1682159012,
-        "url_part": "S0pXH97m558",
-        "url_root": "https://ijmondcam.multix.io/videos/",
-        "view_id": 2
-    },
-    {
-        "camera_id": 1,
-        "file_name": "NfEhg5sAXPI-0",
-        "id": 328,
-        "label_state": 23,
-        "label_state_admin": 47,
-        "start_time": 1687107281,
-        "url_part": "NfEhg5sAXPI",
-        "url_root": "https://ijmondcam.multix.io/videos/",
-        "view_id": 0
-    },
-    {
-        "camera_id": 0,
-        "file_name": "omlxGgMOjz8-3",
-        "id": 855,
-        "label_state": 23,
-        "label_state_admin": 47,
-        "start_time": 1685853333,
-        "url_part": "omlxGgMOjz8",
-        "url_root": "https://ijmondcam.multix.io/videos/",
-        "view_id": 3
-    },
-    {
-        "camera_id": 1,
-        "file_name": "nKIyHSJDzds-2",
-        "id": 188,
-        "label_state": 16,
-        "label_state_admin": 32,
-        "start_time": 1690480885,
-        "url_part": "nKIyHSJDzds",
-        "url_root": "https://ijmondcam.multix.io/videos/",
-        "view_id": 2
-    },
-    {
-        "camera_id": 1,
-        "file_name": "5PurGkmy0aw-3",
-        "id": 59,
-        "label_state": 23,
-        "label_state_admin": 47,
-        "start_time": 1687197896,
-        "url_part": "5PurGkmy0aw",
-        "url_root": "https://ijmondcam.multix.io/videos/",
-        "view_id": 3
-    },
-    {
-        "camera_id": 0,
-        "file_name": "TUZbSqcLVtU-4",
-        "id": 700,
-        "label_state": 23,
-        "label_state_admin": 47,
-        "start_time": 1686336673,
-        "url_part": "TUZbSqcLVtU",
-        "url_root": "https://ijmondcam.multix.io/videos/",
-        "view_id": 4
+        "cam_id": 1,
+        "view_id": 2,
+        "url": "https://ijmondcam.multix.io/videos/kooksfabriek_1/23x-vGYMbec/23x-vGYMbec-2.mp4"
+    },
+    {
+        "cam_id": 1,
+        "view_id": 2,
+        "url": "https://ijmondcam.multix.io/videos/kooksfabriek_1/Qv9-nS5BloI/Qv9-nS5BloI-2.mp4"
+    },
+    {
+        "cam_id": 1,
+        "view_id": 3,
+        "url": "https://ijmondcam.multix.io/videos/kooksfabriek_1/glLcsYu7mbM/glLcsYu7mbM-3.mp4"
+    },
+    {
+        "cam_id": 1,
+        "view_id": 2,
+        "url": "https://ijmondcam.multix.io/videos/kooksfabriek_1/Cjs_IIDUDVM/Cjs_IIDUDVM-2.mp4"
+    },
+    {
+        "cam_id": 1,
+        "view_id": 0,
+        "url": "https://ijmondcam.multix.io/videos/kooksfabriek_1/M7arDQZyAG4/M7arDQZyAG4-0.mp4"
+    },
+    {
+        "cam_id": 1,
+        "view_id": 3,
+        "url": "https://ijmondcam.multix.io/videos/kooksfabriek_1/p5klKMpdREI/p5klKMpdREI-3.mp4"
+    },
+    {
+        "cam_id": 1,
+        "view_id": 3,
+        "url": "https://ijmondcam.multix.io/videos/kooksfabriek_1/S1Juid0Wi8M/S1Juid0Wi8M-3.mp4"
+    },
+    {
+        "cam_id": 1,
+        "view_id": 1,
+        "url": "https://ijmondcam.multix.io/videos/kooksfabriek_1/A9W8G55JucU/A9W8G55JucU-1.mp4"
+    },
+    {
+        "cam_id": 1,
+        "view_id": 0,
+        "url": "https://ijmondcam.multix.io/videos/kooksfabriek_1/HgNO44L2INY/HgNO44L2INY-0.mp4"
+    },
+    {
+        "cam_id": 1,
+        "view_id": 0,
+        "url": "https://ijmondcam.multix.io/videos/kooksfabriek_1/A9W8G55JucU/A9W8G55JucU-0.mp4"
+    },
+    {
+        "cam_id": 1,
+        "view_id": 2,
+        "url": "https://ijmondcam.multix.io/videos/kooksfabriek_1/A9W8G55JucU/A9W8G55JucU-2.mp4"
+    },
+    {
+        "cam_id": 1,
+        "view_id": 2,
+        "url": "https://ijmondcam.multix.io/videos/kooksfabriek_1/rsBRGyFrPwM/rsBRGyFrPwM-2.mp4"
+    },
+    {
+        "cam_id": 1,
+        "view_id": 3,
+        "url": "https://ijmondcam.multix.io/videos/kooksfabriek_1/aINMnqmwSUg/aINMnqmwSUg-3.mp4"
+    },
+    {
+        "cam_id": 1,
+        "view_id": 3,
+        "url": "https://ijmondcam.multix.io/videos/kooksfabriek_1/zgTCcwKiEXQ/zgTCcwKiEXQ-3.mp4"
+    },
+    {
+        "cam_id": 1,
+        "view_id": 3,
+        "url": "https://ijmondcam.multix.io/videos/kooksfabriek_1/crAL3CrEt3s/crAL3CrEt3s-3.mp4"
+    },
+    {
+        "cam_id": 1,
+        "view_id": 0,
+        "url": "https://ijmondcam.multix.io/videos/kooksfabriek_1/rPBe7y54Yxs/rPBe7y54Yxs-0.mp4"
+    },
+    {
+        "cam_id": 1,
+        "view_id": 3,
+        "url": "https://ijmondcam.multix.io/videos/kooksfabriek_1/yeP5MvlMCbM/yeP5MvlMCbM-3.mp4"
+    },
+    {
+        "cam_id": 1,
+        "view_id": 2,
+        "url": "https://ijmondcam.multix.io/videos/kooksfabriek_1/5ljnXgkRfaM/5ljnXgkRfaM-2.mp4"
+    },
+    {
+        "cam_id": 2,
+        "view_id": 1,
+        "url": "https://ijmondcam.multix.io/videos/kooksfabriek_2/Dj2I-b0zTWU/Dj2I-b0zTWU-1.mp4"
+    },
+    {
+        "cam_id": 1,
+        "view_id": 1,
+        "url": "https://ijmondcam.multix.io/videos/kooksfabriek_1/rPBe7y54Yxs/rPBe7y54Yxs-1.mp4"
+    },
+    {
+        "cam_id": 1,
+        "view_id": 2,
+        "url": "https://ijmondcam.multix.io/videos/kooksfabriek_1/zgTCcwKiEXQ/zgTCcwKiEXQ-2.mp4"
+    },
+    {
+        "cam_id": 1,
+        "view_id": 0,
+        "url": "https://ijmondcam.multix.io/videos/kooksfabriek_1/FfRfRhkohqs/FfRfRhkohqs-0.mp4"
+    },
+    {
+        "cam_id": 1,
+        "view_id": 3,
+        "url": "https://ijmondcam.multix.io/videos/kooksfabriek_1/Hvk6xygq27o/Hvk6xygq27o-3.mp4"
+    },
+    {
+        "cam_id": 1,
+        "view_id": 2,
+        "url": "https://ijmondcam.multix.io/videos/kooksfabriek_1/4CA-G8uUtyA/4CA-G8uUtyA-2.mp4"
+    },
+    {
+        "cam_id": 1,
+        "view_id": 1,
+        "url": "https://ijmondcam.multix.io/videos/kooksfabriek_1/bTuGDZ7RVUI/bTuGDZ7RVUI-1.mp4"
+    },
+    {
+        "cam_id": 1,
+        "view_id": 3,
+        "url": "https://ijmondcam.multix.io/videos/kooksfabriek_1/5X1jbx4Hii4/5X1jbx4Hii4-3.mp4"
+    },
+    {
+        "cam_id": 1,
+        "view_id": 2,
+        "url": "https://ijmondcam.multix.io/videos/kooksfabriek_1/FfRfRhkohqs/FfRfRhkohqs-2.mp4"
+    },
+    {
+        "cam_id": 1,
+        "view_id": 0,
+        "url": "https://ijmondcam.multix.io/videos/kooksfabriek_1/aBA6JSWKW3c/aBA6JSWKW3c-0.mp4"
+    },
+    {
+        "cam_id": 1,
+        "view_id": 2,
+        "url": "https://ijmondcam.multix.io/videos/kooksfabriek_1/q1RdTphU5yU/q1RdTphU5yU-2.mp4"
+    },
+    {
+        "cam_id": 1,
+        "view_id": 3,
+        "url": "https://ijmondcam.multix.io/videos/kooksfabriek_1/zuX9sR4wYKc/zuX9sR4wYKc-3.mp4"
+    },
+    {
+        "cam_id": 1,
+        "view_id": 0,
+        "url": "https://ijmondcam.multix.io/videos/kooksfabriek_1/zuX9sR4wYKc/zuX9sR4wYKc-0.mp4"
+    },
+    {
+        "cam_id": 1,
+        "view_id": 3,
+        "url": "https://ijmondcam.multix.io/videos/kooksfabriek_1/5ljnXgkRfaM/5ljnXgkRfaM-3.mp4"
+    },
+    {
+        "cam_id": 1,
+        "view_id": 1,
+        "url": "https://ijmondcam.multix.io/videos/kooksfabriek_1/93aaWg7BzaA/93aaWg7BzaA-1.mp4"
+    },
+    {
+        "cam_id": 1,
+        "view_id": 0,
+        "url": "https://ijmondcam.multix.io/videos/kooksfabriek_1/S0pXH97m558/S0pXH97m558-0.mp4"
+    },
+    {
+        "cam_id": 1,
+        "view_id": 2,
+        "url": "https://ijmondcam.multix.io/videos/kooksfabriek_1/wg6C4QySFD4/wg6C4QySFD4-2.mp4"
+    },
+    {
+        "cam_id": 1,
+        "view_id": 0,
+        "url": "https://ijmondcam.multix.io/videos/kooksfabriek_1/kpOrtl8MizM/kpOrtl8MizM-0.mp4"
+    },
+    {
+        "cam_id": 1,
+        "view_id": 2,
+        "url": "https://ijmondcam.multix.io/videos/kooksfabriek_1/dQbSLpPnyXU/dQbSLpPnyXU-2.mp4"
+    },
+    {
+        "cam_id": 1,
+        "view_id": 2,
+        "url": "https://ijmondcam.multix.io/videos/kooksfabriek_1/NcY7dtGpyus/NcY7dtGpyus-2.mp4"
+    },
+    {
+        "cam_id": 1,
+        "view_id": 2,
+        "url": "https://ijmondcam.multix.io/videos/kooksfabriek_1/EACU2K9A44M/EACU2K9A44M-2.mp4"
+    },
+    {
+        "cam_id": 1,
+        "view_id": 0,
+        "url": "https://ijmondcam.multix.io/videos/kooksfabriek_1/zJpGtu3jf_w/zJpGtu3jf_w-0.mp4"
+    },
+    {
+        "cam_id": 1,
+        "view_id": 0,
+        "url": "https://ijmondcam.multix.io/videos/kooksfabriek_1/_JzCaMSLzK0/_JzCaMSLzK0-0.mp4"
+    },
+    {
+        "cam_id": 1,
+        "view_id": 1,
+        "url": "https://ijmondcam.multix.io/videos/kooksfabriek_1/fD_2Qr7HN4c/fD_2Qr7HN4c-1.mp4"
+    },
+    {
+        "cam_id": 1,
+        "view_id": 2,
+        "url": "https://ijmondcam.multix.io/videos/kooksfabriek_1/VQ5OZbuwXgg/VQ5OZbuwXgg-2.mp4"
+    },
+    {
+        "cam_id": 1,
+        "view_id": 0,
+        "url": "https://ijmondcam.multix.io/videos/kooksfabriek_1/ILO3p3GdlQg/ILO3p3GdlQg-0.mp4"
+    },
+    {
+        "cam_id": 1,
+        "view_id": 3,
+        "url": "https://ijmondcam.multix.io/videos/kooksfabriek_1/ubv9JZ-k4bU/ubv9JZ-k4bU-3.mp4"
+    },
+    {
+        "cam_id": 1,
+        "view_id": 3,
+        "url": "https://ijmondcam.multix.io/videos/kooksfabriek_1/WarrpDCyYmY/WarrpDCyYmY-3.mp4"
+    },
+    {
+        "cam_id": 1,
+        "view_id": 0,
+        "url": "https://ijmondcam.multix.io/videos/kooksfabriek_1/qG2GLIybaRQ/qG2GLIybaRQ-0.mp4"
+    },
+    {
+        "cam_id": 1,
+        "view_id": 3,
+        "url": "https://ijmondcam.multix.io/videos/kooksfabriek_1/fD_2Qr7HN4c/fD_2Qr7HN4c-3.mp4"
+    },
+    {
+        "cam_id": 1,
+        "view_id": 1,
+        "url": "https://ijmondcam.multix.io/videos/kooksfabriek_1/qG2GLIybaRQ/qG2GLIybaRQ-1.mp4"
+    },
+    {
+        "cam_id": 1,
+        "view_id": 0,
+        "url": "https://ijmondcam.multix.io/videos/kooksfabriek_1/6_j636Zv6fs/6_j636Zv6fs-0.mp4"
+    },
+    {
+        "cam_id": 2,
+        "view_id": 1,
+        "url": "https://ijmondcam.multix.io/videos/kooksfabriek_2/j7QUpjlW1x4/j7QUpjlW1x4-1.mp4"
+    },
+    {
+        "cam_id": 2,
+        "view_id": 0,
+        "url": "https://ijmondcam.multix.io/videos/kooksfabriek_2/3P0bkMMGSCc/3P0bkMMGSCc-0.mp4"
+    },
+    {
+        "cam_id": 1,
+        "view_id": 1,
+        "url": "https://ijmondcam.multix.io/videos/kooksfabriek_1/4CA-G8uUtyA/4CA-G8uUtyA-1.mp4"
+    },
+    {
+        "cam_id": 1,
+        "view_id": 0,
+        "url": "https://ijmondcam.multix.io/videos/kooksfabriek_1/R0esnWDfaP8/R0esnWDfaP8-0.mp4"
+    },
+    {
+        "cam_id": 1,
+        "view_id": 3,
+        "url": "https://ijmondcam.multix.io/videos/kooksfabriek_1/1NKYOpxE90A/1NKYOpxE90A-3.mp4"
+    },
+    {
+        "cam_id": 1,
+        "view_id": 1,
+        "url": "https://ijmondcam.multix.io/videos/kooksfabriek_1/1NKYOpxE90A/1NKYOpxE90A-1.mp4"
+    },
+    {
+        "cam_id": 1,
+        "view_id": 2,
+        "url": "https://ijmondcam.multix.io/videos/kooksfabriek_1/whmQf-ud0RY/whmQf-ud0RY-2.mp4"
+    },
+    {
+        "cam_id": 2,
+        "view_id": 0,
+        "url": "https://ijmondcam.multix.io/videos/kooksfabriek_2/LXB7SXlDvq8/LXB7SXlDvq8-0.mp4"
+    },
+    {
+        "cam_id": 1,
+        "view_id": 2,
+        "url": "https://ijmondcam.multix.io/videos/kooksfabriek_1/DoNtmf5UBkY/DoNtmf5UBkY-2.mp4"
+    },
+    {
+        "cam_id": 2,
+        "view_id": 1,
+        "url": "https://ijmondcam.multix.io/videos/kooksfabriek_2/5ay369iRsi0/5ay369iRsi0-1.mp4"
+    },
+    {
+        "cam_id": 1,
+        "view_id": 1,
+        "url": "https://ijmondcam.multix.io/videos/kooksfabriek_1/_JzCaMSLzK0/_JzCaMSLzK0-1.mp4"
+    },
+    {
+        "cam_id": 2,
+        "view_id": 0,
+        "url": "https://ijmondcam.multix.io/videos/kooksfabriek_2/8Y9cfUKvqvU/8Y9cfUKvqvU-0.mp4"
+    },
+    {
+        "cam_id": 2,
+        "view_id": 0,
+        "url": "https://ijmondcam.multix.io/videos/kooksfabriek_2/Ajsd1Q08DmA/Ajsd1Q08DmA-0.mp4"
+    },
+    {
+        "cam_id": 2,
+        "view_id": 1,
+        "url": "https://ijmondcam.multix.io/videos/kooksfabriek_2/INYCPw7nzLc/INYCPw7nzLc-1.mp4"
+    },
+    {
+        "cam_id": 2,
+        "view_id": 0,
+        "url": "https://ijmondcam.multix.io/videos/kooksfabriek_2/lL9ungbqqCU/lL9ungbqqCU-0.mp4"
+    },
+    {
+        "cam_id": 1,
+        "view_id": 3,
+        "url": "https://ijmondcam.multix.io/videos/kooksfabriek_1/DoIBg8LAfWI/DoIBg8LAfWI-3.mp4"
+    },
+    {
+        "cam_id": 2,
+        "view_id": 1,
+        "url": "https://ijmondcam.multix.io/videos/kooksfabriek_2/A-nnAPBqYcs/A-nnAPBqYcs-1.mp4"
+    },
+    {
+        "cam_id": 2,
+        "view_id": 0,
+        "url": "https://ijmondcam.multix.io/videos/kooksfabriek_2/z-MaBhPlmz0/z-MaBhPlmz0-0.mp4"
+    },
+    {
+        "cam_id": 2,
+        "view_id": 1,
+        "url": "https://ijmondcam.multix.io/videos/kooksfabriek_2/wP78ukOa9W8/wP78ukOa9W8-1.mp4"
+    },
+    {
+        "cam_id": 2,
+        "view_id": 0,
+        "url": "https://ijmondcam.multix.io/videos/kooksfabriek_2/Q1yTGkLuAc0/Q1yTGkLuAc0-0.mp4"
+    },
+    {
+        "cam_id": 2,
+        "view_id": 0,
+        "url": "https://ijmondcam.multix.io/videos/kooksfabriek_2/5nGAnsaKbA8/5nGAnsaKbA8-0.mp4"
+    },
+    {
+        "cam_id": 1,
+        "view_id": 2,
+        "url": "https://ijmondcam.multix.io/videos/kooksfabriek_1/b2_XE0-ZufQ/b2_XE0-ZufQ-2.mp4"
+    },
+    {
+        "cam_id": 0,
+        "view_id": 1,
+        "url": "https://ijmondcam.multix.io/videos/hoogovens/TUZbSqcLVtU/TUZbSqcLVtU-1.mp4"
+    },
+    {
+        "cam_id": 2,
+        "view_id": 1,
+        "url": "https://ijmondcam.multix.io/videos/kooksfabriek_2/VPlcWn5Xkyg/VPlcWn5Xkyg-1.mp4"
+    },
+    {
+        "cam_id": 0,
+        "view_id": 3,
+        "url": "https://ijmondcam.multix.io/videos/hoogovens/TUZbSqcLVtU/TUZbSqcLVtU-3.mp4"
+    },
+    {
+        "cam_id": 2,
+        "view_id": 1,
+        "url": "https://ijmondcam.multix.io/videos/kooksfabriek_2/FYZNq4uWCxM/FYZNq4uWCxM-1.mp4"
+    },
+    {
+        "cam_id": 0,
+        "view_id": 3,
+        "url": "https://ijmondcam.multix.io/videos/hoogovens/TuF5Qnk3TkI/TuF5Qnk3TkI-3.mp4"
+    },
+    {
+        "cam_id": 0,
+        "view_id": 0,
+        "url": "https://ijmondcam.multix.io/videos/hoogovens/lG7hIctXNiI/lG7hIctXNiI-0.mp4"
+    },
+    {
+        "cam_id": 0,
+        "view_id": 0,
+        "url": "https://ijmondcam.multix.io/videos/hoogovens/j81VqAaG_3I/j81VqAaG_3I-0.mp4"
+    },
+    {
+        "cam_id": 0,
+        "view_id": 2,
+        "url": "https://ijmondcam.multix.io/videos/hoogovens/FGRFWwvDBTo/FGRFWwvDBTo-2.mp4"
+    },
+    {
+        "cam_id": 0,
+        "view_id": 3,
+        "url": "https://ijmondcam.multix.io/videos/hoogovens/ygySU_Bdvok/ygySU_Bdvok-3.mp4"
+    },
+    {
+        "cam_id": 0,
+        "view_id": 4,
+        "url": "https://ijmondcam.multix.io/videos/hoogovens/mP45MTdzdoI/mP45MTdzdoI-4.mp4"
+    },
+    {
+        "cam_id": 0,
+        "view_id": 3,
+        "url": "https://ijmondcam.multix.io/videos/hoogovens/gLXdasSk8JU/gLXdasSk8JU-3.mp4"
+    },
+    {
+        "cam_id": 2,
+        "view_id": 0,
+        "url": "https://ijmondcam.multix.io/videos/kooksfabriek_2/cS2Fk8M2Pj4/cS2Fk8M2Pj4-0.mp4"
+    },
+    {
+        "cam_id": 0,
+        "view_id": 0,
+        "url": "https://ijmondcam.multix.io/videos/hoogovens/bu7USw70eXs/bu7USw70eXs-0.mp4"
+    },
+    {
+        "cam_id": 2,
+        "view_id": 0,
+        "url": "https://ijmondcam.multix.io/videos/kooksfabriek_2/kSuSGf9_dqA/kSuSGf9_dqA-0.mp4"
+    },
+    {
+        "cam_id": 1,
+        "view_id": 1,
+        "url": "https://ijmondcam.multix.io/videos/kooksfabriek_1/OCgjZK8LUmE/OCgjZK8LUmE-1.mp4"
+    },
+    {
+        "cam_id": 0,
+        "view_id": 3,
+        "url": "https://ijmondcam.multix.io/videos/hoogovens/5CiaQ_ppyHo/5CiaQ_ppyHo-3.mp4"
+    },
+    {
+        "cam_id": 2,
+        "view_id": 1,
+        "url": "https://ijmondcam.multix.io/videos/kooksfabriek_2/5IUJvUa_eso/5IUJvUa_eso-1.mp4"
+    },
+    {
+        "cam_id": 2,
+        "view_id": 1,
+        "url": "https://ijmondcam.multix.io/videos/kooksfabriek_2/UgBeBBYzTbQ/UgBeBBYzTbQ-1.mp4"
+    },
+    {
+        "cam_id": 0,
+        "view_id": 2,
+        "url": "https://ijmondcam.multix.io/videos/hoogovens/TuF5Qnk3TkI/TuF5Qnk3TkI-2.mp4"
+    },
+    {
+        "cam_id": 1,
+        "view_id": 2,
+        "url": "https://ijmondcam.multix.io/videos/kooksfabriek_1/S0pXH97m558/S0pXH97m558-2.mp4"
+    },
+    {
+        "cam_id": 1,
+        "view_id": 0,
+        "url": "https://ijmondcam.multix.io/videos/kooksfabriek_1/NfEhg5sAXPI/NfEhg5sAXPI-0.mp4"
+    },
+    {
+        "cam_id": 0,
+        "view_id": 3,
+        "url": "https://ijmondcam.multix.io/videos/hoogovens/omlxGgMOjz8/omlxGgMOjz8-3.mp4"
+    },
+    {
+        "cam_id": 1,
+        "view_id": 2,
+        "url": "https://ijmondcam.multix.io/videos/kooksfabriek_1/nKIyHSJDzds/nKIyHSJDzds-2.mp4"
+    },
+    {
+        "cam_id": 1,
+        "view_id": 3,
+        "url": "https://ijmondcam.multix.io/videos/kooksfabriek_1/5PurGkmy0aw/5PurGkmy0aw-3.mp4"
+    },
+    {
+        "cam_id": 0,
+        "view_id": 4,
+        "url": "https://ijmondcam.multix.io/videos/hoogovens/TUZbSqcLVtU/TUZbSqcLVtU-4.mp4"
     }
 ]

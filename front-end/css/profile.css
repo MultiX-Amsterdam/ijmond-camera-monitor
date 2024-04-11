@@ -11,15 +11,15 @@ body {
 
 .chart-scores {
     display: ruby;
-    flex-direction: column; /* stack the scores vertically */
-    align-items: flex-end; /* align the text to the right */
+    flex-direction: column;
+    align-items: flex-end;
     gap: 10px; /* creates space between the items */
-    padding: 10px; /* Adjust padding as needed */
+    padding: 10px;
     color: white;
     top: 3px;
     right: 0;
     position: absolute;
-    z-index: 2; /* Ensure it's above the chart */
+    z-index: 2;
 }
   
 #scoreChart {
@@ -28,7 +28,6 @@ body {
 }
 
 .chart-scores {
-    /* Additional styles if needed */
     padding: 10px; /* Adjust padding as needed */
     text-align: right; /* Align text to the right */
     /* other styles */
@@ -89,22 +88,22 @@ body {
 
 #achievements {
     display: flex;
-    flex-direction: column; /* Stack achievements vertically */
-    align-items: center; /* Center achievements horizontally */
-    gap: 10px; /* Space between items */
+    flex-direction: column;
+    align-items: center;
+    gap: 10px; 
 }
 
 .achievement {
     display: flex;
-    align-items: center; /* Align the icon and text vertically */
-    justify-content: center; /* Center content horizontally */
-    width: 100%; /* Full width of the container */
-    padding: 10px 0; /* Padding top and bottom for space */
-    border-bottom: 1px solid #ddd; /* Optional: adds a line between items */
+    align-items: center;
+    justify-content: center; 
+    width: 100%;
+    padding: 10px 0; 
+    border-bottom: 1px solid #ddd;
 }
 
 .achievement-icon {
-    margin-right: 10px; /* Space between the icon and the text */
+    margin-right: 10px;
 }
 
 .achievement-description,
@@ -117,11 +116,11 @@ body {
 }
 
 .fas.fa-check { /* Unlocked icon style */
-    color: #28a745; /* Bootstrap success color or any color you like */
+    color: #28a745;
 }
 
 .fas.fa-lock { /* Locked icon style */
-    color: #6c757d; /* Bootstrap secondary color or any color you like */
+    color: #6c757d;
 }
 
 /* ---------------

@@ -2,7 +2,7 @@
 
 from models.model import db
 from datetime import datetime, timezone
-from models.model import Tutorial, AchievementDay, AchievementUser, User
+from models.model import Tutorial, AchievementRecords, User
 from app.app import app
 
 
@@ -44,51 +44,23 @@ def give_tutorial_achievement(user_id, action_type):
         client_id = 'google.'+user_id # We create client_id to query the DB
         # Map action_type to achievement IDs
         achievement_mappings = {
-            0: [5],
-            2: [5],
-            3: [5],
-            4: [5,6]
+            0: [1],
+            2: [1],
+            3: [1],
+            4: [1,2]
         }
 
         achievement_ids = achievement_mappings.get(action_type, []) # Find the achievements per your action_type, based on the mappings
         user = User.query.filter_by(client_id = client_id).first()
 
         for achievement_id in achievement_ids:
-            # Check if the user has already received this achievement
-            achievement_user = AchievementUser.query.filter_by(
-                user_id=user.id,
-                achievement_id=achievement_id
-            ).first()
-
-            if achievement_user:
-                # User already has this achievement, increment times_received
-                achievement_user.times_received += 1
-            else:
-                # User does not have this achievement, create a new record
-                achievement_user = AchievementUser(
-                    user_id=user.id,
-                    achievement_id=achievement_id,
-                    times_received=1
-                )
-                db.session.add(achievement_user)
-
-            db.session.commit()
 
             today = datetime.now(timezone.utc).date()
-
-            # Check if there's already a record in AchievementDay for this user and achievement today
-            achievement_day_exists = AchievementDay.query.filter(
-                (AchievementDay.user_id == user.id) &
-                (AchievementDay.achievement_id == achievement_id) &
-                (AchievementDay.date == today)
-            ).first()
-
-            if not achievement_day_exists:
-                # No record for today, insert a new one
-                achievement_day = AchievementDay(
-                    user_id=user.id,
-                    achievement_id=achievement_id,
-                    date=today
-                )
-                db.session.add(achievement_day)
-                db.session.commit()
+            achievement_day = AchievementRecords(
+                user_id=user.id,
+                achievement_id=achievement_id,
+                date=today
+            )
+            
+            db.session.add(achievement_day)
+            db.session.commit()

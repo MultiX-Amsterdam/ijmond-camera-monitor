@@ -1,0 +1,69 @@
+/* Card Styling */
+
+.card {
+    border: none;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    margin-bottom: 20px;
+    animation: fadeInUp 0.8s;
+}
+
+.card-header {
+    background: linear-gradient(60deg, #4e54c8, #8f94fb);
+    font-size: 1.2rem;
+}
+
+.card-body {
+    background-color: #424242;
+    color: #ffffff;
+}
+
+/* ------ */
+  
+#metricsChart {
+    width: 100% !important;
+    height: 100% !important;
+}
+
+.explanation {
+    display: flex;
+    align-items: center;
+    justify-content: center; 
+    width: 100%;
+    padding: 10px 0; 
+    border-bottom: 1px solid #ddd;
+}
+
+/* Modal */
+
+.modal-header {
+    background: linear-gradient(60deg, #4e54c8, #8f94fb);
+}
+
+.modal-content {
+    background-color: #424242;
+}
+
+.modal-title {
+    font-weight: bold;
+    color: white;
+}
+
+.modal-btn {
+    background: linear-gradient(60deg, #4e54c8, #8f94fb);
+}
+
+/* --------- */
+
+/* Animation */
+@keyframes fadeInUp {
+    from {
+        transform: translate3d(0, 40px, 0);
+        opacity: 0;
+    }
+
+    to {
+        transform: none;
+        opacity: 1;
+    }
+}

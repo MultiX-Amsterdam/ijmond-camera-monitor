@@ -6,7 +6,7 @@ from flask import Blueprint, Flask
 from flask import request
 from flask import jsonify
 from flask import make_response
-from collections import Counter
+from collections import Counter, defaultdict
 from google.oauth2 import id_token
 from google.auth.transport import requests as g_requests
 from urllib.parse import parse_qs
@@ -20,7 +20,7 @@ from models.model_operations.user_operations import create_user
 from models.model_operations.user_operations import get_user_by_id
 from models.model_operations.user_operations import update_best_tutorial_action_by_user_id
 from models.model_operations.user_operations import get_past_user_scores
-from models.model_operations.leaderboard_operations import get_leaderboard_data
+from models.model_operations.leaderboard_operations import get_leaderboard_data, get_all_seasons
 from models.model_operations.connection_operations import create_connection
 from models.model_operations.batch_operations import create_batch
 from models.model_operations.video_operations import query_video_batch
@@ -32,6 +32,7 @@ from models.model_operations.label_operations import update_labels
 from models.model_operations.view_operations import create_views_from_video_batch
 from models.model_operations.tutorial_operations import create_tutorial, give_tutorial_achievement
 from models.model_operations.achievement_operations import get_all_achievements
+from models.model_operations.explanation_operations import get_all_model_data
 from models.schema import videos_schema_is_admin
 from models.schema import videos_schema_with_detail
 from models.schema import videos_schema
@@ -516,6 +517,10 @@ def get_label_statistics():
     """Get statistics of the video labels."""
     return jsonify(get_statistics())
 
+@bp.route("/get_seasons", methods=["GET"])
+def get_seasons():
+    return jsonify({"seasons":get_all_seasons()})
+
 @bp.route("/leaderboard", methods=["GET"])
 def leaderboard():
     """
@@ -552,16 +557,23 @@ def get_user():
         "best_tutorial_action": user.best_tutorial_action
     }
     
-    # Including the achievements in the response.
+    # Including the achievements in the response. First we collect all the dates of a specific achievement in a dictionary
+    # and then we send it back for the frontend to visualize.
     achievements_data = []
-    for achievement_user in user.achievement_users:
-        achievement = {
-            "name": achievement_user.achievement.name,
-            "times_received": achievement_user.times_received,
-            "description": achievement_user.achievement.description,
-            "date_received": [achievement_day.date.strftime('%Y-%m-%d') for achievement_day in achievement_user.achievement.achievement_days]
+    achievements_collected = defaultdict(list) # Initialize with defaultdict and an empty list to avoid KeyError errors
+
+    for achievement_record in user.achievement_users:
+        achievements_collected[achievement_record.achievement.name].append(achievement_record.date.strftime('%Y-%m-%d'))
+
+    for achievement_name, dates_received in achievements_collected.items():
+        achievement_data = {
+            "name": achievement_name,
+            # We iterate through the achievement entries to grab the correct description based on the achievement name
+            "description": next((ar.achievement.description for ar in user.achievement_users if ar.achievement.name == achievement_name), None),
+            "times_received": len(dates_received),
+            "dates_received": dates_received
         }
-        achievements_data.append(achievement)
+        achievements_data.append(achievement_data)
 
     user_data["achievements"] = achievements_data
     
@@ -610,15 +622,15 @@ def tutorial_achievement():
     give_tutorial_achievement(user_id, action_type)
     return make_response("", 204)
 
-@bp.route("/get_daily_scores", methods=["GET"])
-def get_daily_scores():
-    """Get the daily scores to populate the table in the profile."""
+@bp.route("/get_season_scores", methods=["GET"])
+def get_season_scores():
+    """Get the scores of the user per season to populate the table in the profile."""
     user_id = request.args.get('user_id', None)
     if not user_id:
         return jsonify({"error": "User ID is required"}), 400
 
-    daily_scores = get_past_user_scores('google.'+user_id)  
-    return jsonify({"daily_scores": daily_scores})
+    season_scores = get_past_user_scores('google.'+user_id)
+    return jsonify({"season_scores": season_scores})
 
 @bp.route("/get_all_achievements", methods=["GET"])
 def get_achievements():
@@ -631,3 +643,15 @@ def get_achievements():
     """
     all_achievements = get_all_achievements()
     return jsonify({"achievements": all_achievements})
+
+@bp.route("/get_model_data", methods=["GET"])
+def get_model_data():
+    """
+    Retrieve weekly model data
+    
+    Returns
+    -------
+    A list of weekly model data.
+    """
+    model_data = get_all_model_data()
+    return jsonify({"model_data": model_data})
