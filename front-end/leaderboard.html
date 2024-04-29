@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title>Leaderboard</title>
+    <title>IJmondCAM</title>
     <meta charset="utf-8" name="viewport" content="width=device-width, initial-scale=1">
     <link href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" media="screen" rel="stylesheet" type="text/css" />
     <link href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css" media="screen" rel="stylesheet" type="text/css" />
@@ -20,12 +20,14 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
     <script src="js/Util.js"></script>
+    <script src="https://unpkg.com/i18next@23.11.2/dist/umd/i18next.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/i18next-http-backend/2.5.1/i18nextHttpBackend.min.js" integrity="sha512-pPM6tiFuZQha3Fb8COApKU0hIPIs1Nr+Cis8/KbHLN4jTNrluDiMc1Y4lRCk3yEdh/ZxH3E2zGXBiXmbgARP+w==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script type="module" src="js/i18n-setup.js"></script>
     <script src="js/widgets.js"></script>
-    <script src="js/Util.js"></script>
     <script src="js/GoogleAnalyticsTracker.js"></script>
     <script src="js/GoogleAccountDialog.js"></script>
     <script src="js/VideoTestDialog.js"></script>
-    <script src="js/menu.js"></script>
+    <script type="module" src="js/menu.js"></script>
     <style>
         .menu-leaderboard {
           color: rgb(255, 255, 255) !important;
@@ -41,13 +43,13 @@
     <div class="menu-container"></div>
     <div class="container mt-4">
         <div class="text-center mb-4">
-            <h1 class="h3 mb-3 font-weight-bold text-white">Ranking</h1>
+            <h1 class="h3 mb-3 font-weight-bold text-white" data-i18n="ranking">Ranking</h1>
         </div>
         <div class="ranking-filters">
             <p class="text-white font-weight-bold" id="seasonCountdown">There is no active season.</p>
-            <a href="#" class="ranking-filter" id="selectAlltime">All-Time</a>
+            <a href="#" class="ranking-filter" id="selectAlltime" data-i18n="all-time">All-Time</a>
                 <select class="btn btn-secondary dropdown-toggle" id="seasonSelector">
-                    <option selected>Loading seasons...</option>
+                    <option selected data-i18n="loading-seasons">Loading seasons...</option>
                     <!-- Options will be populated here by JavaScript -->
                 </select>
         </div>
@@ -55,14 +57,14 @@
             <table id="leaderboard" class="table table-dark table-striped table-hover">
                 <thead class="thead-dark">
                     <tr>
-                        <th>Rank #</th>
-                        <th>User ID</th>
+                        <th data-i18n="rank-number">Rank #</th>
+                        <th data-i18n="user-id">User ID</th>
                         <th>
-                            Score
+                            <span data-i18n="score">Score</span>
                             <i id="sortByScore" class="fas fa-filter icon-button"></i>
                         </th>
                         <th>
-                            Raw Score
+                            <span data-i18n="raw-score">Raw Score</span>
                             <i id="sortByRawScore" class="fas fa-filter icon-button"></i>
                         </th>
                     </tr>

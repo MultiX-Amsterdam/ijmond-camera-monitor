@@ -83,6 +83,35 @@
     font-size: 24px; 
 }
 
+@media (max-width: 450px) {
+    .first-place-highlight::after {
+        content: '🥇';
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 15px;
+    }
+    
+    .second-place-highlight::after {
+        content: '🥈';
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 15px;
+    }
+    
+    .third-place-highlight::after {
+        content: '🥉';
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 15px; 
+    }
+  }
+
 /* Position the ranking filters */
 .ranking-filters {
     right: 15px; /* Adjust as needed based on your layout */

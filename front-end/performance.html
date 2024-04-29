@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title>Profile</title>
+    <title>IJmondCAM</title>
     <meta charset="utf-8" name="viewport" content="width=device-width, initial-scale=1">
     <link href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" media="screen" rel="stylesheet" type="text/css" />
     <link href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css" media="screen" rel="stylesheet" type="text/css" />
@@ -19,22 +19,17 @@
     <!-- End for Google Sign-In -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
-    <script src="js/Util.js"></script>
     <script src="js/widgets.js"></script>
-    <script src="js/Util.js"></script>
     <script src="js/GoogleAnalyticsTracker.js"></script>
     <script src="js/GoogleAccountDialog.js"></script>
-    <script src="js/VideoTestDialog.js"></script>
-    <script src="js/menu.js"></script>
-    <script src="js/performance.js"></script>
-    <!-- Chart -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/luxon@^2.0.0"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-luxon@^1.0.0"></script>
-    <!-- Chart End -->
+    <script type="module" src="js/i18n-setup.js"></script>
+    <script src="https://unpkg.com/i18next@23.11.2/dist/umd/i18next.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/i18next-http-backend/2.5.1/i18nextHttpBackend.min.js" integrity="sha512-pPM6tiFuZQha3Fb8COApKU0hIPIs1Nr+Cis8/KbHLN4jTNrluDiMc1Y4lRCk3yEdh/ZxH3E2zGXBiXmbgARP+w==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script type="module" src="js/menu.js"></script>
+    <script type="module" src="js/performance.js"></script>
 
     <style>
-        .menu-profile {
+        .menu-performance {
           color: rgb(255, 255, 255) !important;
           opacity: 1 !important;
           font-weight: 700 !important;
@@ -47,12 +42,137 @@
 </head>
 <body>
     <div class="menu-container"></div>
-    <div class="card text-black mb-3" id="metrics-section">
-        <div class="card-header text-white font-weight-bold">Performance Metrics</div>
-        <div class="card-body">
-            <canvas id="metricsChart" width="600" height="300"></canvas>
-            <p id="performance">Click on a point at the chart to see how the model performed for the date.</p>
-        </div>
+
+    <div id="loading-overlay" class="loading-overlay">
+        <div class="loading-text"></div>
     </div>
+
+    <div id="app-container">
+        <section id="section1" class="full-page">
+            <div>
+                <h1 data-i18n="performance-intro1">The performance of the model changes after re-training and modifications</h1>
+                <p data-i18n="performance-intro2">It is thus very important for us to know exactly how our model is performing through <span class="custom-text-info-dark-theme" id="time-text">time</span>
+                   to understand what went wrong and when</p>
+            </div>
+            <div id="timeline-container">
+                <span data-i18n="time" id="time" style="opacity: 0;">Time</span>
+                <div id="timeline"></div>
+                <div data-i18n="january" class="timeline-marker" style="position: absolute; left: 10%;">Jan</div>
+                <div data-i18n="february" class="timeline-marker" style="position: absolute; left: 30%;">Feb</div>
+                <div data-i18n="march" class="timeline-marker" style="position: absolute; left: 50%;">Mar</div>
+                <div data-i18n="april" class="timeline-marker" style="position: absolute; left: 70%;">Apr</div>
+                <div data-i18n="may" class="timeline-marker" style="position: absolute; left: 90%;">May</div>
+            </div>
+
+            <div class="fa fa-angle-double-down" class="scroll-down" id="scroll-icon"><span data-i18n="scroll-down">Scroll down</span></div>
+
+        </section>
+
+        <section id="section2" class="full-page">
+            <div>
+                <h1 data-i18n="metrics-intro1">We store information regarding the AI model that is trained with <span class="custom-text-info-dark-theme">your contribution</span></h1>
+                <h3 data-i18n="metrics-intro2">But what are we using to measure that performance?</h3>
+            </div>
+        </section>
+        
+        <section id="section3" class="full-page">
+            <div>
+                <h1 data-i18n="metrics-intro3">The answer to the question is <span class="custom-text-info-dark-theme">metrics</span></h1>
+                <p data-i18n="metrics-intro4"><span class="custom-text-info-dark-theme">Metrics</span> are measurements used to count and compare different things in various fields</p>
+            </div>
+
+            <p data-i18n="metrics-intro5">You may have even seen and used metrics in your daily life</p>
+
+            <div class = "metrics-example"></div>
+            <p class = "change-text" data-i18n="metrics-intro6">from your job, where we use revenues as a metric to measure success</p>
+            <p class = "change-text2" data-i18n="metrics-intro7">to employee satisfaction, where we have questionnaires and pie charts to quantify and measure it</p>
+        </section>
+
+        <section id="section4" class="full-page">
+            <div class="metrics-explain-intro">
+                <h2 data-i18n="scenario-intro1">There are a lot of metrics that we are using for machine learning models.</h2>
+                <p data-i18n="scenario-intro2">To explain the most important ones, and the ones that we picked, we will make a scenario.</p>
+            </div>
+
+            <div class="doc-explain">
+                <h2 data-i18n="scenario-intro3">We have <span class="custom-text-info-dark-theme">10 people</span> below that visited a doctor. The doctor will have to examine them and give a diagnosis</h2>
+                <p data-i18n="scenario-intro4" class="doc-explain2">In a similar fashion, our model will examine the videos and depending on how well it is trained it will predict which of those videos contain smoke; so the same idea and metrics stand</p>
+            </div>
+
+            <div id="people"></div>
+
+            <div class="steps">
+                <h3 data-i18n="scenario-intro5" class="step1">The people with the <span class="red-text">red color </span>are the ones that are actually sick</h3>
+                <h3 data-i18n="scenario-intro6" class="step2">We can see from the <span class="red-text">sick patients</span> the doctor has diagnosed <span class="green-text">three</span> succesfully and misdiagnosed <span class="orange-text">one</span> as healthy. From the <span class="custom-text-info-dark-theme">healthy patients</span> they diagnosed <span class="green-text">four</span> healthy patients succesfully and misdiagnosed <span class="orange-text">two</span> as unhealthy</h3>
+                <h3 data-i18n="accuracy-1" class="step3">The <span class="custom-text-info-dark-theme">accuracy</span> of the doctor in this scenario is calculated as <span class="green-text">correct diagnoses</span> / <span class="custom-text-info-dark-theme">all diagnoses</span></h3>
+                <h3 data-i18n="accuracy-2" class="step4">So, the accuracy is <span class="green-text">7</span> / <span class="custom-text-info-dark-theme">10</span> = 0.7 or 70 percent</h3>
+            </div>
+        </section>
+
+        <section id="section5" class="full-page">
+            <div class="accuracy-not-working">
+                <h2 data-i18n="accuracy-bad-1">While we may think that this doctor is not that bad, <span class="custom-text-info-dark-theme">accuracy</span> can be a misleading metric</h2>
+                <h4 data-i18n="accuracy-bad-2">Here's why:</h4>
+            </div>
+
+            <div id="people2"></div>
+            <div class="steps-5">
+                <h3 data-i18n="accuracy-bad-3" class="step1-5">This time, we have only <span class="red-text">2 sick patients</span></h3>
+                <h4 data-i18n="accuracy-bad-4" class="step2-5">Our doctor, who has a reputation for their unconventional methods, diagnoses everyone as <span class="custom-text-info-dark-theme">healthy</span></h4>
+                <h4 data-i18n="accuracy-bad-5" class="step3-5">This doctor will have an accuracy of <span class="custom-text-info-dark-theme">80%</span>, even higher than the other doctor</h4>
+                <h4 data-i18n="accuracy-bad-6" class="step4-5">However, we know that this doctor is no better than a random person, as they completely missed diagnosing any sick people</h4>
+            </div>
+        </section>
+
+        <section id="section6" class="full-page">
+            <div class="precision-recall-intro">
+                <h2 data-i18n="precisionrecall-1">We will now move on to a duet of metrics: a rather <span class="red-text">incompatible</span> one</h2>
+                <h4 data-i18n="precisionrecall-2">Let's display them and show what we mean:</h4>
+            </div>
+
+            <div id="people3"></div>
+
+            <div class="explanation-containers">
+                <div class="card card1">
+                    <div class="card-body card-body1">
+                        <h4 data-i18n="precisionrecall-3">Of all the diagnosed sick patients, how many are actually sick? This is the <span class="custom-text-info-dark-theme">precision</span></h4>
+                        <h4 data-i18n="precisionrecall-4">Of all the diagnosed sick patients, how many are actually found? This is the <span class="custom-text-info-dark-theme">recall</span></h4>
+                        <h4 data-i18n="precisionrecall-5">These two have a maximum of 1. However, like <span class="red-text">tug-of-war</span>, they can never both be 1. Check it out using the slider yourself!</h4>
+                    </div>
+                </div>
+
+                <div class="card card2">
+                    <div class="card-body card-body2">
+                        <div class="card-info1">
+                            <h4 id="tp"><span class="green-text">Correctly Sick:</span> X</h4>
+                            <h4 id="tn"><span class="green-text">Correctly Healthy:</span> X</h4>
+                            <h4 id="fp"><span class="red-text">Falsely Sick:</span> X</h4>
+                            <h4 id="fn"><span class="red-text">Falsely Healthy:</span> X</h4>
+                            <h4 id="precision"><span class="custom-text-info-dark-theme">Precision:</span> X</h4>
+                            <h4 id="recall"><span class="custom-text-info-dark-theme">Recall:</span> X</h4>
+                        </div>
+
+                        <div class="card-info2">
+                            <h4 data-i18n="precisionrecall-6">If a doctor is <span class="red-text">too strict</span> or careful in their diagnoses, many sick patients might not be diagnosed</h4>
+                            <h4 data-i18n="precisionrecall-7">Vice versa, a <span class="red-text">less strict</span> doctor will diagnose more people, but might misdiagnose some healthy people as well</h4>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+
+        <section id="section7" class="full-page">
+            <div>
+                <h3 data-i18n="f1-intro1">So if we want to achieve both high <span class="custom-text-info-dark-theme">precision</span> and high <span class="custom-text-info-dark-theme">recall</span>, how can we balance the scales?</h3>
+                <h4 data-i18n="f1-intro2">Can we <span class="custom-text-info-dark-theme">combine</span> these two into one metric that represents both?</h4>
+            </div>
+        </section>
+    </div>
+
+    <script src="js/Util.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/TextPlugin.min.js"></script>
 </body>
 </html>

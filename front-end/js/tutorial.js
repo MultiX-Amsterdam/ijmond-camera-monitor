@@ -96,6 +96,13 @@
     util.addVideoClearEvent();
     const currentUserId = getCurrentUserIdFromToken(); // Get the current user ID from the token
 
+    let tutorial_data = {};
+    if (localStorage.getItem('selectedLanguage') == 'en') {
+      tutorial_data = tutorial_data_en;
+    } else {
+      tutorial_data = tutorial_data_gr;
+    }
+
     $next = $("#next");
     $next.on("click", function () {
       next();

@@ -261,20 +261,20 @@
             }
             if (typeof callback["success"] === "function") callback["success"](data);
             if (!is_all_answers_correct && wrong_times == 1 && "try_again" in d) {
-              $next.find("span").text("Try Again");
+              $next.find("span").text(window.i18n.t('try-again'));
             } else if (!is_all_answers_correct && wrong_times == 2 && "final_try" in d) {
-              $next.find("span").text("Try Again (with hints)");
+              $next.find("span").text(window.i18n.t('try-again-with-hints'));
             } else {
               current_idx += 1;
               wrong_times = 0;
-              $next.find("span").text("Next Step");
+              $next.find("span").text(window.i18n.t('next'));
             }
             is_in_checking_state = false;
           } else {
             var d = data[current_idx];
             var video_data = util.shuffleArrayInPlace(d["data"]);
             updateVideos(video_data, callback);
-            $next.find("span").text("Check Answer");
+            $next.find("span").text(window.i18n.t('check-answer'));
             if (wrong_times == 1 && "try_again" in d) {
               $tool_instruction.html(d["try_again"]);
             } else if (wrong_times == 2 && "final_try" in d) {

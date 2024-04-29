@@ -2,6 +2,10 @@ body {
     background-color: #343a40;
 }
 
+h5 {
+    font-size: 0.90rem;
+}
+
 /* Chart Styles */
 
 .container {

@@ -444,14 +444,18 @@ class ModelScores(db.Model):
         The f1-score of the model. (0,1)
     mcc : float
         The Matthews correlation coefficient (MCC) of the model. (-1,1)
-    accuracy: float
-        The accuracy of the model. (0,1)
     precision: float
         The precision of the model. (0,1)
     recall: float
         The recall of the model. (0,1)
-    specificity: float
-        The specificity of the model. (0,1)
+    tp : int
+        The number of true positives after running the benchmark
+    tn : int
+        The number of true negatives after running the benchmark
+    fp : int
+        The number of false positives after running the benchmark
+    fn : int
+        The number of false negatives after running the benchmark
     date : date
         The date of the specific entry.
     """
@@ -459,16 +463,39 @@ class ModelScores(db.Model):
 
     f1 = db.Column(db.Float, nullable=False)
     mcc = db.Column(db.Float, nullable=False)
-    accuracy = db.Column(db.Float, nullable=False)
     precision = db.Column(db.Float, nullable=False)
     recall = db.Column(db.Float, nullable=False)
-    specificity = db.Column(db.Float, nullable=False)
+    tp = db.Column(db.Integer, nullable = False)
+    tn = db.Column(db.Integer, nullable = False)
+    fp = db.Column(db.Integer, nullable = False)
+    fn = db.Column(db.Integer, nullable = False)
 
     date = db.Column(db.Date, nullable=False)
 
     def __repr__(self):
         return (
-            "<ModelScores id=%r f1=%r mcc=%r accuracy=%r precision=%r recall=%r specificity=%r date=%r>"
+            "<ModelScores id=%r f1=%r mcc=%r precision=%r recall=%r tp=%r tn=%r fp=%r fn=%r date=%r>"
         ) % (
-            self.id, self.f1, self.mcc, self.accuracy, self.precision, self.recall, self.specificity, self.date
+            self.id, self.f1, self.mcc, self.precision, self.recall, self.tp, self.tn, self.fp, self.fn, self.date
+        )
+    
+class Tasks(db.Model):
+    """
+    Class with the tasks and their respective IDs; useful for rescheduling (revoke the task and then reschedule it)
+
+    Attributes
+    ----------
+    id : int
+        Unique identifier (primary key).
+    task_id : string
+        The ID of the task, as obtained by Celery after scheduling it
+    """
+    id = db.Column(db.Integer, primary_key=True)
+    task_id = db.Column(db.String(255), nullable=False)
+    
+    def __repr__(self):
+        return (
+            "<Tasks id=%r task_id=%r>"
+        ) % (
+            self.id, self.task_id
         )

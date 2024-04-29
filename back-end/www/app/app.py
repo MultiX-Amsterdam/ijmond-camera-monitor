@@ -11,7 +11,7 @@ from models.model import db
 from models.schema import ma
 from util.util import InvalidUsage
 
-import logging
+
 
 class RequestFormatter(logging.Formatter):
     """The formatter for logging."""
@@ -85,9 +85,6 @@ app = Flask(__name__)
 
 # Load the settings in config.py
 app.config.from_object("config.config.config")
-
-logging.basicConfig()
-logging.getLogger('apscheduler').setLevel(logging.DEBUG)
 
 # Special settings that depend on the environment
 if app.config["DEBUG"] == True:

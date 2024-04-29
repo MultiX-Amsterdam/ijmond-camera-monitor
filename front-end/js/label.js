@@ -160,7 +160,7 @@
         video_labeling_tool.updateUserIdByGoogleIdToken(google_id_token, {
           success: function (obj) {
             onUserIdChangeSuccess(obj.userId());
-            $sign_in_prompt.find("span").text("Sign Out");
+            $sign_in_prompt.find("span").text(window.i18n.t('sign-out'));
             if ($sign_in_prompt.hasClass("pulse-white")) {
               $sign_in_prompt.removeClass("pulse-white")
             }
@@ -185,7 +185,7 @@
         video_labeling_tool.updateUserIdByClientId(ga_tracker.getClientId(), {
           success: function (obj) {
             onUserIdChangeSuccess(obj.userId());
-            $sign_in_prompt.find("span").text("Sign In");
+            $sign_in_prompt.find("span").text(window.i18n.t('sign-in'));
             if (!$sign_in_prompt.hasClass("pulse-white")) {
               $sign_in_prompt.addClass("pulse-white")
             }
@@ -242,5 +242,10 @@
     });
   }
 
-  $(init);
+
+    if(!window.i18n.isInitialized) {
+      window.i18n.on('initialized', init);
+    } else {
+      init();
+    }
 })();

@@ -2,7 +2,7 @@
 <html>
 
 <head>
-  <title>Project RISE</title>
+  <title>IJmondCAM</title>
   <meta charset="utf-8" name="viewport" content="width=device-width, initial-scale=1">
   <link href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" media="screen" rel="stylesheet" type="text/css" />
   <link href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css" media="screen" rel="stylesheet" type="text/css" />
@@ -21,14 +21,18 @@
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
   <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
   <script src="js/widgets.js"></script>
+  <script src="https://unpkg.com/i18next@23.11.2/dist/umd/i18next.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/i18next-http-backend/2.5.1/i18nextHttpBackend.min.js" integrity="sha512-pPM6tiFuZQha3Fb8COApKU0hIPIs1Nr+Cis8/KbHLN4jTNrluDiMc1Y4lRCk3yEdh/ZxH3E2zGXBiXmbgARP+w==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script type="module" src="js/i18n-setup.js"></script>
   <script src="js/Util.js"></script>
   <script src="js/GoogleAnalyticsTracker.js"></script>
   <script src="js/TutorialTool.js"></script>
   <script src="js/GoogleAccountDialog.js"></script>
   <script src="js/VideoTestDialog.js"></script>
-  <script src="js/tutorial_data.js"></script>
-  <script src="js/tutorial.js"></script>
-  <script src="js/menu.js"></script>
+  <script src="js/tutorial_data_en.js"></script>
+  <script src="js/tutorial_data_gr.js"></script>
+  <script type="module" src="js/menu.js"></script>
+  <script type="module" src="js/tutorial.js"></script>
 </head>
 
 <body>
@@ -38,21 +42,28 @@
       <div class="content-table flex-column">
         <div class="flex-row">
           <div class="flex-item flex-column">
-            <h3>Tutorial</h3>
+            <h3 data-i18n="tutorial-intro">Tutorial</h3>
             <hr>
             <p class="text" id="tutorial-tool-instruction"></p>
             <div id="tutorial-end-text" class="force-hidden">
-              <p class="text no-bottom-margin">
+              <p data-i18n="tutorial-end" class="text no-bottom-margin">
                 <span class="custom-text-info-dark-theme">Congratulations! You have completed the tutorial</span> for identifying smoke emissions.
                 Please also let us know which aspects are working well and which could be improved via our <a href="https://docs.google.com/forms/d/e/1FAIpQLSf5yrCEfwR5wXLQh8jE_icZXHmPfAs19tNbx9KaAeGKg3B6Xw/viewform?usp=sf_link" target="_blank">Feedback Form</a>.
               </p>
               <a class="image adaptive-image cam-0-image" href="img/cam_0.png"></a>
               <p id="label-statistics" class="text no-top-margin">
-                Currently, the dataset has <span class="num-all-videos-text">[...]</span> videos.
-                Among them, <span class="custom-text-info-dark-theme"><span class="num-fully-labeled-text">[...]</span> are fully labeled</span> and confirmed by multiple users so far.
-                Also, <span class="num-partially-labeled-text">[...]</span> are partially labeled.
+                <span data-i18n="tutorial-1-1">Currently, the dataset has</span> 
+                <span class="num-all-videos-text">[...]</span>
+                <span data-i18n="tutorial-1-2">videos.</span>
+                <span data-i18n="tutorial-1-3">Among them,</span>
+                <span class="custom-text-info-dark-theme"><span class="num-fully-labeled-text">[...]</span></span>
+                <span class="custom-text-info-dark-theme" data-i18n="tutorial-1-4">are fully labeled</span>
+                <span data-i18n="tutorial-1-5">and confirmed by multiple users so far.</span>
+                <span data-i18n="tutorial-1-6">Also,</span>
+                <span class="num-partially-labeled-text">[...]</span>
+                <span data-i18n="tutorial-1-7">are partially labeled.</span>
               </p>
-              <p class="text no-top-margin">
+              <p data-i18n="tutorial-2" class="text no-top-margin">
                 <span class="custom-text-info-dark-theme">Please help us label the real data!</span>
                 Your contributions can greatly help train the artificial intelligence model to recognize smoke emissions, which can benefit communities who suffer from industrial air pollution.
                 We appreciate your support!
@@ -64,8 +75,8 @@
         <div class="flex-row">
           <div class="flex-item flex-column full-width">
             <div class="control-group">
-              <button id="next" class="custom-button-flat large stretch-on-mobile" disabled><img src="img/next.png"><span>Check Answer</span></button>
-              <a id="label" class="custom-button-flat large stretch-on-mobile force-hidden" href="label.html"><img src="img/play.png"><span>Label Real Data</span></a>
+              <button id="next" class="custom-button-flat large stretch-on-mobile"><img src="img/next.png"><span>Check Answer</span></button>
+              <a id="label" class="custom-button-flat large stretch-on-mobile force-hidden"  data-i18n="label-real-data" href="label.html"><img src="img/play.png"><span>Label Real Data</span></a>
             </div>
           </div>
         </div>
@@ -73,8 +84,8 @@
     </div>
   </div>
   <div id="video-test-dialog" class="custom-dialog-large" title="Autoplay" data-role="none">
-    <p>Video autoplay is disabled. Please enable it.</p>
-    <button id="play-video-button" class="custom-button">Enable video autoplay</button>
+    <p data-i18n="video-autoplay-disabled">Video autoplay is disabled. Please enable it.</p>
+    <button data-i18n="enable-video-autoplay" id="play-video-button" class="custom-button">Enable video autoplay</button>
   </div>
 </body>
 

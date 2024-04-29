@@ -43,13 +43,13 @@
             data: {
                 labels: labels,
                 datasets: [{
-                    label: 'Score',
+                    label: window.i18n.t('score'),
                     backgroundColor: 'rgb(255, 99, 132)',
                     borderColor: 'rgb(255, 99, 132)',
                     data: scoreData,
                     fill: false,
                 }, {
-                    label: 'Raw Score',
+                    label: window.i18n.t('raw-score'),
                     backgroundColor: 'rgb(54, 162, 235)',
                     borderColor: 'rgb(54, 162, 235)',
                     data: rawScoreData,
@@ -69,10 +69,18 @@
                     x: {
                         type: 'time',
                         time: {
-                            unit: 'day'
+                            unit: 'day',
+                            tooltipFormat: 'dd/MM/yyyy',
+                            displayFormats: {
+                                day: 'dd/MM/yyyy'
+                            },            
+                            parser: 'dd/MM/yyyy'
                         },
                         ticks: {
-                            color: 'white'
+                            color: 'white',
+                            maxRotation: 90,
+                            autoSkip: true,
+                            maxTicksLimit: 10
                         }
                     },
                 },
@@ -104,10 +112,6 @@
      * @param {any} data - User Data returning from query
     */
     function fetchDailyScoresAndDisplayChart(currentUserId, data) {
-        const googleIdToken = window.localStorage.getItem("google_id_token");
-        const decodedToken = jwt_decode(googleIdToken);
-
-        $(".profile-name-placeholder").text(decodedToken.given_name || "User");
 
         $("#user-score").text(data.score);
         $("#user-raw-score").text(data.raw_score);
@@ -152,33 +156,45 @@
     */
     function displayAllAchievements(allAchievements, userAchievements) {
         let achievementsHtml = allAchievements.map((achievement,index) => {
+    
+            let achievementName = '';
+            let description = '';
+            if (achievement.name.split(' ')[0] == 'Season') {
+                achievementName = window.i18n.t('achievements-list.season-champion.name', { season: achievement.name.split(' ')[1]});
+                description = window.i18n.t('achievements-list.season-champion.description');
+            } else if (achievement.name.split(' ')[0] == 'Tutorial') {
+                if (achievement.name.split(' ')[1] == 'Finisher') {
+                    achievementName = window.i18n.t('achievements-list.tutorial-finisher.name', { season: achievement.name.split(' ')[1]});
+                    description = window.i18n.t('achievements-list.tutorial-finisher.description');
+                } else {
+                    achievementName = window.i18n.t('achievements-list.tutorial-pro.name', { season: achievement.name.split(' ')[1]});
+                    description = window.i18n.t('achievements-list.tutorial-pro.description');
+                }
+            }
+
             let userAchievement = userAchievements.find(ua => ua.name === achievement.name); // find if the achievement has been earned by the user
             let achievementClass = userAchievement ? "unlocked" : "locked";
             let icon = userAchievement ? "<i class='achievement-icon fas fa-check'></i>" : "<i class='achievement-icon fas fa-lock'></i>";
             let timesReceived = userAchievement ? `X ${userAchievement.times_received}` : "";
-            // let timesReceived = "";
-            let description = achievement.description;
-
-            console.log(userAchievement)
     
             if (userAchievement) {
                 return `
                     <div class="achievement ${achievementClass}">
                         <button class="btn text-white" data-toggle="modal" data-target="#achievementModal${index}">
-                            ${icon} ${achievement.name} ${timesReceived}
+                            ${icon} ${achievementName} ${timesReceived}
                             <span class="achievement-description">${description}</span>
                         </button>
                         <div class="modal fade" id="achievementModal${index}" tabindex="-1" role="dialog">
                             <div class="modal-dialog modal-dialog-centered" role="document">
                                 <div class="modal-content">
                                     <div class="modal-header">
-                                        <h5 class="modal-title">${achievement.name}</h5>
+                                        <h5 class="modal-title">${achievementName}</h5>
                                         <button type="button" class="close" data-dismiss="modal">
                                             <span aria-hidden="true">&times;</span>
                                         </button>
                                     </div>
                                     <div class="modal-body">
-                                        <p>Dates received: ${userAchievement.dates_received.join(', ')}</p>
+                                        <p>${window.i18n.t('dates-received', { dates: userAchievement.dates_received.join(', ')})}</p>
                                     </div>
                                 </div>
                             </div>
@@ -187,7 +203,7 @@
             } else {
                 return `
                     <div class="achievement ${achievementClass}">
-                        ${icon} ${achievement.name} ${timesReceived}
+                        ${icon} ${achievementName} ${timesReceived}
                         <span class="achievement-description">${description}</span>
                     </div>`;
             }

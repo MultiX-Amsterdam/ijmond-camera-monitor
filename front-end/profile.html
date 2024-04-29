@@ -19,14 +19,16 @@
     <!-- End for Google Sign-In -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
-    <script src="js/Util.js"></script>
     <script src="js/widgets.js"></script>
+    <script src="https://unpkg.com/i18next@23.11.2/dist/umd/i18next.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/i18next-http-backend/2.5.1/i18nextHttpBackend.min.js" integrity="sha512-pPM6tiFuZQha3Fb8COApKU0hIPIs1Nr+Cis8/KbHLN4jTNrluDiMc1Y4lRCk3yEdh/ZxH3E2zGXBiXmbgARP+w==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script type="module" src="js/i18n-setup.js"></script>
     <script src="js/Util.js"></script>
     <script src="js/GoogleAnalyticsTracker.js"></script>
     <script src="js/GoogleAccountDialog.js"></script>
     <script src="js/VideoTestDialog.js"></script>
-    <script src="js/menu.js"></script>
-    <script src="js/profile.js"></script>
+    <script type="module" src="js/menu.js"></script>
+    <script type="module" src="js/profile.js"></script>
     <!-- Chart -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/luxon@^2.0.0"></script>
@@ -51,28 +53,24 @@
         <div class="loading-text"></div>
     </div>
     <div class="container mt-5">
-        <!-- Profile Greeting -->
-        <div class="text-center mb-5">
-            <h2 id="profile-name" class="text-white font-weight-bold">Hello, <span class="profile-name-placeholder">Username</span>!</h2>
-        </div>
 
         <!-- Statistics Section -->
         <div class="card text-black mb-3" id="statistics-section">
-            <div class="card-header text-white font-weight-bold">Statistics</div>
+            <div class="card-header text-white font-weight-bold" data-i18n="statistics">Statistics</div>
             <div class="card-body">
                 <canvas id="scoreChart" width="400" height="200"></canvas>
                 <div class="chart-scores">
-                    <h5 class="card-title">Score: <span id="user-score">0 </span></h5>
-                    <h5 class="card-title">Raw Score: <span id="user-raw-score">0</span></h5>
+                    <h5 class="card-title"><span data-i18n="score">Score: </span><span id="user-score">0 </span></h5>
+                    <h5 class="card-title"><span data-i18n="raw-score">Raw Score: </span><span id="user-raw-score">0</span></h5>
                 </div>
             </div>
         </div>
 
         <!-- Achievements Section -->
         <div class="card text-black mb-3" id="achievements-section">
-            <div class="card-header text-white font-weight-bold">Achievements</div>
+            <div class="card-header text-white font-weight-bold" data-i18n="achievements">Achievements</div>
             <div class="card-body">
-                <p class="card-text" id="achievements">Your achievements will be displayed here.</p>
+                <p class="card-text" id="achievements" data-i18n="achievements-text">Your achievements will be displayed here.</p>
             </div>
         </div>
     </div>

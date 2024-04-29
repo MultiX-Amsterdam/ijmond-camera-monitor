@@ -6,7 +6,7 @@ var general_try_again_txt = "Let's try again and aim for getting all the labels 
 var general_final_try_txt = "Let's try again and aim for getting all the labels correct. Now the same set of videos are randomly shuffled. Recall that:" + general_prompt + "Hints are also provided under each video. Please select the ones that <u>have smoke</u>.";
 var general_need_to_select_head = "Oops! You should have selected this one because it ";
 var general_not_to_select_head = "Oops! You should NOT have selected this one because it ";
-var tutorial_data = [{
+var tutorial_data_en = [{
   "instruction": "This tutorial provides guidelines about how to recognize smoke, which will take about 10 to 20 minutes. Each video is 3 seconds, which represents about 6 minutes in real-world time. Please select <u>the video that has smoke</u> by clicking or tapping.",
   "wrong": general_wrong_txt,
   "correct": general_correct_txt,

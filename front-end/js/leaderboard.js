@@ -27,18 +27,21 @@
                 const lastSeason = data.seasons[data.seasons.length-1]
                 const timeNow = Math.floor(Date.now() / 1000);
                 let isSeason = '';
+                let interval = 0;
 
                 if (timeNow <= lastSeason.season_end && timeNow >= lastSeason.season_start) {
-                    isSeason = 'countdownFinish'
+                    isSeason = 'countdownFinish';
+                    interval = lastSeason.season_end;
                 } else if (timeNow < lastSeason.season_start) {
-                    isSeason = 'countdownStart'
+                    isSeason = 'countdownStart';
+                    interval = lastSeason.season_start;
                 }
 
                 if (isSeason) {
                     // Update every second
                     const x = setInterval(function() {
                         const now = Math.floor(Date.now() / 1000);
-                        const distance = lastSeason.season_end - now;
+                        const distance = interval - now;
     
                         // Time calculations for days, hours, minutes and seconds
                         const days = Math.floor(distance / (60 * 60 * 24));
@@ -47,30 +50,33 @@
                         const seconds = Math.floor(distance % 60);
     
                         // Output the result in an element with id="seasonCountdown"
-                        seasonCountdown.innerHTML = `${days}d ${hours}h ${minutes}m ${seconds}s ` + (isSeason === 'countdownFinish' ? 'until season ends' : 'until season begins');
+                        seasonCountdown.innerHTML = `${days}${window.i18n.t('days')} ${hours}${window.i18n.t('hours')} ${minutes}${window.i18n.t('minutes')} ${seconds}${window.i18n.t('seconds')} ` + (isSeason === 'countdownFinish' ? window.i18n.t('until-season-ends') : window.i18n.t('until-season-begins'));
                         
                         // If the countdown is over, stop the countdown and set the text accordingly
-                        if (distance < 0) {
+                        if (distance < 0 && isSeason == 'countdownFinish') {
                             clearInterval(x);
-                            seasonCountdown.innerHTML = "There is no active season.";
+                            seasonCountdown.innerHTML = window.i18n.t('no-active-season');
+                        } else if (distance < 0 && isSeason == 'countdownStart'){
+                            clearInterval(x);
+                            seasonCountdown.innerHTML = populateCheckSeasons();
                         }
                     }, 1000);
                 } else {
                     // If not within a season or before a season starts, keep the initial message
                     seasonCountdown.classList.add("text-white", "font-weight-bold");
-                    seasonCountdown.innerHTML = "There is no active season.";
+                    seasonCountdown.innerHTML = window.i18n.t('no-active-season');
                 }
 
                 const selector = document.getElementById('seasonSelector');
                 selector.innerHTML = ''; // Clear all the other options
                 const select = document.createElement('option');
-                select.textContent = 'Select a Season'
+                select.textContent = window.i18n.t('select-season');
                 select.value = 'alltime' // If we click the Select a Season, we display the alltime leaderboard instead
                 selector.appendChild(select);
                 data.seasons.forEach(season => {
                     const option = document.createElement('option');
                     option.value = season.id; 
-                    option.textContent = season.name;
+                    option.textContent = window.i18n.t('season') + season.name;
                     selector.appendChild(option);
                 });
             })

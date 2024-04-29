@@ -7,7 +7,7 @@ from app import app
 def get_all_seasons():
     """Retrieve all seasons."""
     seasons = Season.query.all()
-    return [{"id": season.id, "name": f"Season {season.id}", "season_start": season.start_date, "season_end": season.end_date} for season in seasons]
+    return [{"id": season.id, "name": f"{season.id}", "season_start": season.start_date, "season_end": season.end_date} for season in seasons]
 
 def get_leaderboard_data(sort_by='score', interval='alltime'):
     """Get all users' scores based on the filter (alltime, or specific season)."""

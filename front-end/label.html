@@ -21,14 +21,18 @@
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
   <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
   <script src="js/widgets.js"></script>
+  <script src="https://unpkg.com/i18next@23.11.2/dist/umd/i18next.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/i18next-http-backend/2.5.1/i18nextHttpBackend.min.js" integrity="sha512-pPM6tiFuZQha3Fb8COApKU0hIPIs1Nr+Cis8/KbHLN4jTNrluDiMc1Y4lRCk3yEdh/ZxH3E2zGXBiXmbgARP+w==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script type="module" src="js/i18n-setup.js"></script>
   <script src="js/Util.js"></script>
   <script src="js/GoogleAnalyticsTracker.js"></script>
   <script src="js/VideoLabelingTool.js"></script>
   <script src="js/TutorialPromptDialog.js"></script>
   <script src="js/GoogleAccountDialog.js"></script>
   <script src="js/VideoTestDialog.js"></script>
-  <script src="js/label.js"></script>
-  <script src="js/menu.js"></script>
+  <script type="module" src="js/menu.js"></script>
+  <script type="module" src="js/label.js"></script>
+
   <style>
     .menu-label {
       color: rgb(255, 255, 255) !important;
@@ -46,20 +50,31 @@
         <div class="flex-row">
           <div class="flex-item flex-column">
             <p class="text" id="label-statistics">
-              So far, <span class="num-fully-labeled-text">[...]</span> out of <span class="num-all-videos-text">[...]</span> videos are fully labeled, and <span class="num-partially-labeled-text">[...]</span> videos are partially labeled (<a href="faq.html#q6" target="_blank">learn more</a>).
+              <span data-i18n="label-1-1">So far,</span> 
+              <span class="num-fully-labeled-text">[...]</span> 
+              <span data-i18n="label-1-2">out of </span> 
+              <span class="num-all-videos-text">[...]</span> 
+              <span data-i18n="label-1-3">videos are fully labeled, and</span>
+              <span class="num-partially-labeled-text">[...]</span> 
+              <span data-i18n="label-1-4">videos are partially labeled (<a href="faq.html#q6" target="_blank">learn more</a>).</span>
+
               <span id="user-score-container">
-                You have <span class="custom-text-info-dark-theme">reviewed <span class="user-raw-score-text">[...]</span> pages</span>, of which <span class="custom-text-info-dark-theme"><span class="user-score-text">[...]</span> have passed the quality check</span> (<a href="faq.html#q5" target="_blank">learn more</a>).
+                <span data-i18n="label-2-1">You have <span class="custom-text-info-dark-theme">reviewed</span></span>
+                <span class="custom-text-info-dark-theme"><span class="user-raw-score-text">[...]</span></span> 
+                <span data-i18n="label-2-2"> <span class="custom-text-info-dark-theme">pages</span>, of which </span>
+                <span class="custom-text-info-dark-theme"><span class="user-score-text">[...]</span></span>
+                <span data-i18n="label-2-3"> <span class="custom-text-info-dark-theme">have passed the quality check</span> (<a href="faq.html#q5" target="_blank">learn more</a>).</span>
               </span>
             </p>
             <p class="text" id="quality-check-passed-text">
-              <span class="custom-text-primary-dark-theme">(Good job! Your previous batch passed the system's quality check!)</span>
+              <span data-i18n="good-job" class="custom-text-primary-dark-theme">(Good job! Your previous batch passed the system's quality check!)</span>
             </p>
             <div class="control-group">
-              <a id="sign-in-prompt" class="custom-button-flat large stretch-on-mobile pulse-white"><img src="img/user.png"><span>Sign In</span></a>
-              <button id="tutorial" class="custom-button-flat large stretch-on-mobile"><img src="img/book.png"><span>Interactive Tutorial</span></button>
-              <a id="review" class="custom-button-flat large stretch-on-mobile" href=""><img src="img/collection.png"><span>My Contribution</span></a>
+              <a id="sign-in-prompt" class="custom-button-flat large stretch-on-mobile pulse-white"><img src="img/user.png"><span data-i18n="sign-in">Sign In</span></a>
+              <button id="tutorial" class="custom-button-flat large stretch-on-mobile"><img src="img/book.png"><span data-i18n="interactive-tutorial">Interactive Tutorial</span></button>
+              <a id="review" class="custom-button-flat large stretch-on-mobile" href=""><img src="img/collection.png"><span data-i18n="my-contribution">My Contribution</span></a>
             </div>
-            <p class="text">
+            <p data-i18n="label-3" class="text">
               Each video is 2 or 3 seconds.
               Click or tap to select videos that <span class="custom-text-info-dark-theme">have smoke</span>.
               Click or tap again to deselect.
@@ -71,7 +86,7 @@
         <div class="flex-row">
           <div class="flex-item flex-column full-width">
             <div class="control-group">
-              <button id="next" class="custom-button-flat large stretch-on-mobile" disabled><img src="img/play.png"><span>Submit and Continue</span></button>
+              <button data-i18n="submit-and-continue" id="next" class="custom-button-flat large stretch-on-mobile" disabled><img src="img/play.png"><span>Submit and Continue</span></button>
             </div>
           </div>
         </div>
@@ -79,24 +94,26 @@
     </div>
   </div>
   <div id="account-dialog" class="custom-dialog-large" title="Account" data-role="none">
-    <p id="sign-in-text">Sign in to track your personal achievements.</p>
+    <p data-i18n="sign-in-text" id="sign-in-text">Sign in to track your personal achievements.</p>
     <div id="hello-text">
       <p>
-        Hi <span id="user-name-text"></span>, thank you for signing in.
-        Your user ID is <span id="user-id-text"></span>.
+        <span data-i18n="label-4-1">Hi</span>
+        <span id="user-name-text"></span>
+        <span data-i18n="label-4-2"> , thank you for signing in. Your user ID is </span>
+        <span id="user-id-text"></span>.
       </p>
     </div>
     <div id="google-sign-in-button" class="g-signin2"></div>
-    <button id="google-sign-out-button" class="custom-button">Sign out from Google</button>
-    <button id="guest-button" class="custom-button">Continue as guest</button>
+    <button data-i18n="sign-out-google" id="google-sign-out-button" class="custom-button">Sign out from Google</button>
+    <button data-i18n="continue-as-guest" id="guest-button" class="custom-button">Continue as guest</button>
   </div>
   <div id="video-test-dialog" class="custom-dialog-large" title="Autoplay" data-role="none">
-    <p>Video autoplay is disabled. Please enable it.</p>
-    <button id="play-video-button" class="custom-button">Enable video autoplay</button>
+    <p data-i18n="video-autoplay-disabled">Video autoplay is disabled. Please enable it.</p>
+    <button data-i18n="enable-video-autoplay" id="play-video-button" class="custom-button">Enable video autoplay</button>
   </div>
   <div id="tutorial-prompt-dialog" class="custom-dialog-large" title="Tutorial" data-role="none">
-    <p>Found smoke labeling difficult? Try our tutorial!</p>
-    <button id="take-tutorial-button" class="custom-button">Take Tutorial</button>
+    <p data-i18n="label-5">Found smoke labeling difficult? Try our tutorial!</p>
+    <button data-i18n="take-tutorial" id="take-tutorial-button" class="custom-button">Take Tutorial</button>
   </div>
 </body>
 
