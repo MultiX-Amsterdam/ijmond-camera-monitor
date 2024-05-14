@@ -29,6 +29,7 @@
     // Load the menu and then update it for a logged-in user
     $(".menu-container").load("menu.html", function() {
       updateMenuForLoggedInUser();
+      window.updateContent();
 
       document.getElementById('lang-en').addEventListener('click', () => changeLanguage('en'));
       document.getElementById('lang-gr').addEventListener('click', () => changeLanguage('gr'));

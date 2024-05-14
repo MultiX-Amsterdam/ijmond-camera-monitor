@@ -33,10 +33,10 @@ def give_tutorial_achievement(user_id, action_type):
     Assigns an achievement to a logged-in user for completing a tutorial, based on the action type.
     If the user has already received the achievement, it increments the times_received.
     Achievements for action types:
-    - 0: Achievement with ID 5 (tutorial finisher)
+    - 0: Achievement with ID 1 (tutorial finisher)
     - 1: No achievement, you did not pass the last batch
-    - 2,3: Since you were shown hints, you get the achievement with ID 5 only (tutorial finisher)
-    - 4: Achievements with IDs 5 and 6 (tutorial finisher tutorial pro, since no hints were usen)
+    - 2,3: Since you were shown hints, you get the achievement with ID 1 only (tutorial finisher)
+    - 4: Achievements with IDs 1 and 2 (tutorial finisher tutorial pro, since no hints were usen)
     """
 
     # When we have a guest we have None as the ID. To prevent errors and achievement handover to guests, we do this check

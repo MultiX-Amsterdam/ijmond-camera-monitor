@@ -31,8 +31,12 @@ from models.model_operations.video_operations import get_statistics
 from models.model_operations.label_operations import update_labels
 from models.model_operations.view_operations import create_views_from_video_batch
 from models.model_operations.tutorial_operations import create_tutorial, give_tutorial_achievement
+from models.model_operations.game_operations import save_game_action
+from models.model_operations.game_operations import give_game_achievement
+from models.model_operations.game_operations import save_game_question
 from models.model_operations.achievement_operations import get_all_achievements
 from models.model_operations.explanation_operations import get_all_model_data
+from models.model_operations.explanation_operations import insert_model_data
 from models.schema import videos_schema_is_admin
 from models.schema import videos_schema_with_detail
 from models.schema import videos_schema
@@ -647,11 +651,92 @@ def get_achievements():
 @bp.route("/get_model_data", methods=["GET"])
 def get_model_data():
     """
-    Retrieve weekly model data
+    Retrieve model data
     
     Returns
     -------
-    A list of weekly model data.
+    A list of model data.
     """
     model_data = get_all_model_data()
     return jsonify({"model_data": model_data})
+
+@bp.route("/insert_model_data", methods=["POST"])
+def model_data():
+    """
+    Insert model data
+    """
+    request_json = request.get_json()
+    if request_json is None:
+        raise InvalidUsage("Missing json", status_code=400)
+    if "f1" not in request_json:
+        raise InvalidUsage("Missing field: f1", status_code=400)
+    if "mcc" not in request_json:
+        raise InvalidUsage("Missing field: mcc", status_code=400)
+    if "precision" not in request_json:
+        raise InvalidUsage("Missing field: precision", status_code=400)
+    if "recall" not in request_json:
+        raise InvalidUsage("Missing field: recall", status_code=400)
+    if "tp" not in request_json:
+        raise InvalidUsage("Missing field: tp", status_code=400)
+    if "tn" not in request_json:
+        raise InvalidUsage("Missing field: tn", status_code=400)
+    if "fp" not in request_json:
+        raise InvalidUsage("Missing field: fp", status_code=400)
+    if "fn" not in request_json:
+        raise InvalidUsage("Missing field: fn", status_code=400)
+    try:
+        f1 = request_json["f1"]
+        mcc = request_json["mcc"]
+        precision = request_json["precision"]
+        recall = request_json["recall"]
+        tp = request_json["tp"]
+        tn = request_json["tn"]
+        fp = request_json["tp"]
+        fn = request_json["fn"]
+
+        insert_model_data(f1, mcc, precision, recall, tp, tn, fp, fn)
+        return make_response("", 204)
+    
+    except Exception as ex:
+        raise InvalidUsage(ex.args[0], status_code=400)
+
+@bp.route("/add_game_record", methods=["POST"])
+def add_game_record():
+    """Add game record to the database."""
+    request_json = request.get_json()
+
+    if request_json is None:
+        raise InvalidUsage("Missing json", status_code=400)
+    if "action_type" not in request_json:
+        raise InvalidUsage("Missing field: action_type", status_code=400)
+    if "client_id" not in request_json:
+        raise InvalidUsage("Missing field: user_token", status_code=400)
+    try:
+        # Add game record
+        action_type = request_json["action_type"]
+        client_id = request_json["client_id"]
+        save_game_action(get_user_by_client_id(client_id).id, action_type)
+        return make_response("", 204)
+    except Exception as ex:
+        raise InvalidUsage(ex.args[0], status_code=400)
+    
+@bp.route("/game_achievement", methods=["POST"])
+def game_achievement():
+    """Add game achievements to the user."""
+    request_json = request.get_json()
+    action_type = request_json["action_type"]
+    client_id = request_json["client_id"]
+
+    give_game_achievement(client_id, action_type)
+    return make_response("", 204)
+
+@bp.route("/game_question", methods=["POST"])
+def game_question():
+    """Add a record regarding specific questions of the quiz to the database."""
+    request_json = request.get_json()
+    client_id = request_json["client_id"]
+    question_num = request_json["question_num"]
+    mistakes_num = request_json["mistakes_num"]
+
+    save_game_question(get_user_by_client_id(client_id).id, question_num, mistakes_num)
+    return make_response("", 204)

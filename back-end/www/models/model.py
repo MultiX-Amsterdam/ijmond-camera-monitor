@@ -499,3 +499,68 @@ class Tasks(db.Model):
         ) % (
             self.id, self.task_id
         )
+
+class Games(db.Model):
+    """
+    Class with the games that the user has played in the Performance page
+
+    Attributes
+    ----------
+    id : int
+        Unique identifier (primary key).
+    user_id : int
+        The user ID in the User table (foreign key).
+    action_type : int
+        The action type for the tutorial.
+        -1 => did not finish the game.
+        0 => finished the game with mistakes.
+        1 => finished the game with no mistakes.
+    time : int
+        The epochtime (in seconds) when the user starts or finishes the game. 
+        The time is if they start the game if the action_type is -1
+        Otherwise it means they ended the game   
+    """
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    action_type = db.Column(db.Integer, nullable=False)
+    time = db.Column(db.Integer, default=get_current_time())
+
+    def __repr__(self):
+        return (
+            "<Games id=%r user_id=%r action_type=%r time=%r>"
+        ) % (
+            self.id, self.user_id, self.action_type, self.time
+        )
+    
+class GameMistakes(db.Model):
+    """
+    Class that logs the mistakes a user has done at the questions while playing the quiz game(s)
+
+    Attributes
+    ----------
+    id : int
+        Unique identifier (primary key).
+    user_id : int
+        The user ID in the User table (foreign key).
+    game_id : int
+        The game ID in the Games table (foreign key).
+    question: int
+        The question number concerning that specific game.
+    mistakes: int
+        The number of mistakes the user has done in that question.
+    time : int
+        The epochtime (in seconds) when the user connects to the server.    
+    """
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    game_id = db.Column(db.Integer, db.ForeignKey('games.id'), nullable=False)
+    question = db.Column(db.Integer)
+    mistakes = db.Column(db.Integer)
+    time = db.Column(db.Integer, default=get_current_time())
+
+    def __repr__(self):
+        return (
+            "<GameMistakes id=%r user_id=%r game_id=%r question=%r mistakes=%r time=%r>"
+        ) % (
+            self.id, self.user_id, self.game_id, self.question, self.mistakes, self.time
+        )

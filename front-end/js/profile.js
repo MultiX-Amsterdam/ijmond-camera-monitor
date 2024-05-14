@@ -170,6 +170,14 @@
                     achievementName = window.i18n.t('achievements-list.tutorial-pro.name', { season: achievement.name.split(' ')[1]});
                     description = window.i18n.t('achievements-list.tutorial-pro.description');
                 }
+            } else if (achievement.name.split(' ')[0] == 'Quiz') {
+                if (achievement.name.split(' ')[1] == 'Finisher') {
+                    achievementName = window.i18n.t('achievements-list.quiz-finisher.name', { season: achievement.name.split(' ')[1]});
+                    description = window.i18n.t('achievements-list.quiz-finisher.description');
+                } else {
+                    achievementName = window.i18n.t('achievements-list.quiz-pro.name', { season: achievement.name.split(' ')[1]});
+                    description = window.i18n.t('achievements-list.quiz-pro.description');
+                }
             }
 
             let userAchievement = userAchievements.find(ua => ua.name === achievement.name); // find if the achievement has been earned by the user

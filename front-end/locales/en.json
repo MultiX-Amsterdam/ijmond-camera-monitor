@@ -5,6 +5,7 @@
     "leaderboard": "Leaderboard",
     "performance": "Performance",
     "faq": "FAQ",
+    "questionnaire": "Questionnaire",
     "video-autoplay-disabled": "Video autoplay is disabled. Please enable it.",
     "enable-video-autoplay": "Enable video autoplay",
     "start-labeling": "Start Labeling",
@@ -117,6 +118,14 @@
             "name":"Tutorial Pro",
             "description":"You finished the tutorial with no hints"
         },
+        "quiz-finisher":{
+            "name":"Quiz Finisher",
+            "description":"You finished the Quiz"
+        },
+        "quiz-pro":{
+            "name":"Quiz Pro",
+            "description":"You finished the Quiz with no mistakes"
+        },
         "season-champion":{
             "name":"Season {{season}} Champion",
             "description":"You are the Champion of the Season"
@@ -138,6 +147,8 @@
     "select-season":"Select a Season",
     "season":"Season ",
 
+    "begin-message":"Please scroll down if you want to follow our tutorial. Click the button to skip to the end of the page if not.",
+    "skip-tutorial":"Skip Tutorial",
 
     "performance-intro1": "The performance of the model changes after re-training and modifications",
     "performance-intro2": "It is thus very important for us to know exactly how our model is performing through <span class='custom-text-info-dark-theme' id='time-text'>time</span> to understand what went wrong and when",
@@ -189,6 +200,71 @@
     "precisionrecall-6": "If a doctor is <span class='red-text'>too strict</span> or careful in their diagnoses, many sick patients might not be diagnosed",
     "precisionrecall-7": "Vice versa, a <span class='red-text'>less strict</span> doctor will diagnose more people, but might misdiagnose some healthy people as well",
 
-    "f1-intro1": "So if we want to achieve both high <span class=;custom-text-info-dark-theme'>precision</span> and high <span class='custom-text-info-dark-theme'>recall</span>, how can we balance the scales?",
-    "f1-intro2": "Can we <span class='custom-text-info-dark-theme'>combine</span> these two into one metric that represents both?"
+    "f1-intro1": "So if we want to achieve both high <span class=;custom-text-info-dark-theme'>precision</span> and high <span class='custom-text-info-dark-theme'>recall</span>, how can we <span class='balance-scales'>balance the scales?</span>",
+    "f1-intro2": "As we saw, increasing <span class='custom-text-info-dark-theme'>precision</span> reduces <span class='custom-text-info-dark-theme'>recall</span>",
+    "f1-intro3": "On the other hand, emphasis on <span class='custom-text-info-dark-theme'>recall</span> reduces <span class='custom-text-info-dark-theme'>precision</span>",
+    "f1-intro4": "The answer is the <span class='custom-text-info-dark-theme'>F1-Score</span>",
+    "f1-intro5-1": "This is the first metric we are using. It takes both <span class='custom-text-info-dark-theme'>Precision</span> and <span class='custom-text-info-dark-theme'>Recall</span> into consideration, and helps us understand how well the model did in doing its task",
+    "f1-intro5-2": "It does that by making sure there is a balance between those two; if one of them is <span class='custom-text-info-dark-theme'>low</span>, the F1 will be lower as well",
+    "f1-intro5-3": "If both of them are <span class='custom-text-info-dark-theme'>high</span>, then the value will be high",
+    "f1-intro5-4": "You can observe that by watching the value at the F1 chalice while changing the Precision and Recall values!",
+
+    "mcc-intro-1": "<span class='custom-text-info-dark-theme'>F1-Score</span> is one of the most used metrics to measure the quality in machine learning. However, it has one small issue",
+    "mcc-intro-2": "<span class='custom-text-info-dark-theme'>F1-Score</span> does <span class='custom-text-info-dark-theme'>not</span> consider the opposite case from what we are guessing, and it is biased in particular cases;",
+    "mcc-intro-3": "Consider the doctor-patient scenario, but this time we do care about the mistakes made by the doctor, and understanding who is truly healthy as well",
+    "mcc-intro-4": "This is extremely important in cases like our toxic emission model. It is very crucial to understand how the model is doing in finding the videos that <span class='red-text'>do not</span> have smoke too, as errors could be <span class='red-text'>very</span> costly.",
+    "mcc-intro-5": "To solve that, we are considering <span class='custom-text-info-dark-theme'>MCC</span>: our second and final metric",
+    "mcc-intro-6": "MCC ranges from -1 to 1, with -1 essentially meaning that we are getting the <span class='custom-text-info-dark-theme'>opposite of what we should</span>, 0 meaning we have somewhat <span class='custom-text-info-dark-theme'>random results</span>, and 1 meaning we get <span class='custom-text-info-dark-theme'>perfect matches</span>",
+    "mcc-intro-7": "To demonstrate this, let's present the following scenario: an epidemic left us with 10 patients, from which <span class='red-text'>8 are actually sick</span>, and <span class='green-text'>two are healthy</span>",
+    "mcc-intro-8": "<span class='mcc-intro-8-1'>This time, the doctor diagnoses <span class='green-text'>6 out of 8 sick patients succesfully</span>, </span><span class='mcc-intro-8-2'>but <span class='orange-text'>misdiagnoses two healthy patients as sick</span></span> <span class='mcc-intro-8-3'>and <span class='orange-text'>two sick patients as healthy</span>: </span><span class='mcc-intro-8-4'>The border shows which the doctor has diagnosed as <span class='red-text'>sick</span>. The <span class='orange-text'>orange people</span> means that the doctor is wrong and the <span class='green-text'>green people</span> means they are correct</span>",
+    "mcc-intro-9": "You can see, our scores are really good for F1, precision, and recall, which might have led us to think this doctor is doing a good job",
+    "mcc-intro-10": "However, with an MCC of -0.25, we can understand that this doctor cannot be trusted, which is not what the other metrics suggested, as MCC is also considering how the doctor is doing with healthy patients",
+    "tp-mcc": "<span class='green-text'>Correctly Sick: </span>6",
+    "tn-mcc": "<span class='green-text'>Correctly Healthy: </span>0",
+    "fp-mcc": "<span class='red-text'>Falsely Sick: </span>2",
+    "fn-mcc": "<span class='red-text'>Falsely Healthy: </span>2",
+    "precision-mcc": "<span class='custom-text-info-dark-theme'>Precision: </span>0.75",
+    "recall-mcc": "<span class='custom-text-info-dark-theme'>Recall: </span>0.75",
+    "f1-mcc": "<span class='custom-text-info-dark-theme'>F1-Score: </span>0.75",
+    "mcc": "<span class='custom-text-info-dark-theme'>MCC: </span>-0.25",
+
+    "smoke-recap-1": "Congrats! We now succesfully walked through all the metrics.",
+    "smoke-recap-2": "Let's do a recap and <span class='custom-text-info-dark-theme'>connect</span> them to our use case, the <span class='custom-text-info-dark-theme'>toxic smoke emissions model</span>, via a quiz game!",
+    "next_quiz": "Next <i class='fas fa-arrow-right'></i>",
+    "smoke-recap-3": "Congrats! You finished the quiz. Move on by scrolling to the rest of the tutorial.",
+
+    "diagram-explain1": "With the metrics done, we will now move to the last part of this story; <span class='custom-text-info-dark-theme'>how do we keep track of the metrics</span>",
+    "diagram-explain2": "We test our model on a set of specific videos we handpicked, from which we know which ones have smoke or not",
+    "explanation1": "Users <span class='custom-text-info-dark-theme'>Label</span> Smoke",
+    "explanation2": "Model Gets <span class='custom-text-info-dark-theme'>Retrained</span>",
+    "explanation3": "<span class='custom-text-info-dark-theme'>Testing</span> Against our Benchmark Videos",
+    "explanation4": "<span class='custom-text-info-dark-theme'>Visualizing</span> and Evaluating Metrics",
+    "diagram-explain3-1": "In this way, we can keep track of the <span class='custom-text-info-dark-theme'>F1-Score</span> and <span class='custom-text-info-dark-theme'>MCC</span> every time the model gets retrained using your labeling contribution",
+    "diagram-explain3-2": "In other words, we understand if the newly trained model is <span class='custom-text-info-dark-theme'>better</span> than the one before, or not",
+
+    "diagram-explain4-1": "To visualize this progress, we use <span class='custom-text-info-dark-theme'>graphs</span>, depicting the change of our two metrics over time",
+    "diagram-explain4-2": "For the horizontal axis we use <span class='custom-text-info-dark-theme'>Time</span>, and for the vertical axis we use the <span class='custom-text-info-dark-theme'>values</span> of MCC and F1-Score",
+    "diagram-explain4-3": "Check out the example yourself by hovering on the points to see the metrics' values! You can also see the dates we chose at <span class='custom-text-info-dark-theme'>17/05/2024</span> highlighted against the others. This is the <span class='custom-text-info-dark-theme'>end of the tutorial</span>. After experimenting with the graph, you can scroll to the date picker, to see <span class='custom-text-info-dark-theme'>real results</span>",
+
+    "select-date": "Pick a date...",
+    "switch-view": "Switch View",
+    "performance-good": "Both metrics are <span class='custom-text-info-dark-theme'>high</span>. The model is doing a <span class='custom-text-info-dark-theme'>good work</span> detecting smoke instances.",
+    "performance-random": "It seems like something is <span class='custom-text-info-dark-theme'>wrong</span> with the model; its performance is close to generate <span class='custom-text-info-dark-theme'>random</span> predictions.",
+    "performance-trust-issue": "The model should <span class='custom-text-info-dark-theme'>not be trusted</span>. Almost always it is either predicting smoke instances <span class='custom-text-info-dark-theme'>randomly</span>, or the <span class='custom-text-info-dark-theme'>opposite</span> of what it should be.",
+    "performance-mcc-low": "We should be <span class='custom-text-info-dark-theme'>skeptical</span> about the model's performance, as the MCC is lower than the F1-Score.",
+    "performance-unexpected": "The model generated <span class='custom-text-info-dark-theme'>unexpected</span> results, as the F1-Score should not be lower than the MCC.",
+    "predicted-smoke": "Predicted Smoke",
+    "predicted-no-smoke": "Predicted No Smoke",
+    "smoke": "Smoke",
+    "no-smoke": "No Smoke",
+
+    "detection-smoke-nosmoke-good": "We can see that in our test the model detected a <span class='custom-text-info-dark-theme'>decent</span> number of smoke and non-smoke instances correctly",
+    "detection-smoke-good": "We can see that in our test the model did a <span class='custom-text-info-dark-theme'>good job</span> detecting smoke instances, but <span class='custom-text-info-dark-theme'>not so well</span> in detecting no smoke",
+    "detection-nosmoke-good": "We can see that in our test the model did a <span class='custom-text-info-dark-theme'>good job</span> detecting no smoke instances, but <span class='custom-text-info-dark-theme'>not so well</span> in detecting smoke",
+    "detection-smoke-nosmoke-bad": "We can see that in our test the model did <span class='custom-text-info-dark-theme'>not do a good job</span> on both smoke and non-smoke instances. We should be skeptical.",
+    "better-lasttime-smoke-nosmoke": "The model performed <span class='green-text'>better</span> in our tests than the previous one for <span class='green-text'>both</span> smoke and non-smoke instances",
+    "better-lasttime-smoke": "The model performed <span class='green-text'>better</span> in our tests than the previous one for <span class='green-text'>smoke instances</span>",
+    "better-lasttime-nosmoke": "The model performed <span class='green-text'>better</span> in our tests than the previous one for <span class='green-text'>no smoke instances</span>",
+    "worse-lasttime-smoke-nosmoke": "The model performed <span class='red-text'>worse</span> in our tests than the previous one for <span class='red-text'>both</span> smoke and non-smoke instances",
+    "no-data": "There are no previous models to compare this one against"
 }
