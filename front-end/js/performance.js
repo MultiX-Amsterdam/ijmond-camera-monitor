@@ -5,14 +5,22 @@ import { gameData_gr } from "./game_data_1_gr.js";
 (function(){
     "use strict";
 
-
-
     var util = new edaplotjs.Util();
     var api_url_root = util.getRootApiUrl();
     var wrong_answers_total = 0;
     var wrong_answer_current = 0;
     var client_id = '';
     var explanationChart = null;
+
+    // Always start at the beginning of the page on reload
+    window.addEventListener("DOMContentLoaded", () => {
+        setTimeout(() => {
+            const hash = '#start';
+            window.location.hash = "";
+            window.location.hash = hash;
+            $('#loading-overlay').hide(); // Hide the loading
+        }, 1000);
+    });
 
     /**
      * Fetches the Model's scores necessary to populate the page.
@@ -784,10 +792,10 @@ import { gameData_gr } from "./game_data_1_gr.js";
             scrollTrigger: {
                 trigger: "#section0",
                 start: "top top",
-                end: "+=4000",
+                // end: "+=4000",
                 toggleActions: "play none none reverse",
-                pin: true,
-                scrub: true,
+                // pin: true,
+                // scrub: true,
                 markers: true
             }
         });
@@ -1413,8 +1421,6 @@ import { gameData_gr } from "./game_data_1_gr.js";
                     end: "bottom bottom",
                     scrub: true,
                     toggleActions: "play none resume reverse",
-                    // pin: true,
-                    // pinSpacing: false,
                     markers: true
                 }
             });
@@ -1433,7 +1439,6 @@ import { gameData_gr } from "./game_data_1_gr.js";
             const placeholder = window.i18n.t('select-date');
             document.querySelector('.flatpickr').placeholder = placeholder;
     
-            // tl.from("#section11", { autoAlpha: 0 });
         } catch (error) {
             console.error('Failed to load scores:', error);
         }
@@ -1463,7 +1468,6 @@ import { gameData_gr } from "./game_data_1_gr.js";
         section10_2(); // Introduction of the Graph Logic before the Final Quiz, Part 2/2
         section11(); // Show user the calendar to select date + Show F1-Score, MCC graph, Flow Chart with TP,FP,TN,FN, and textual comparison between other models + Context
 
-        $('#loading-overlay').hide(); // Hide the loading
     }
 
     // Grab the user ID and then init() due to the scope limitations
