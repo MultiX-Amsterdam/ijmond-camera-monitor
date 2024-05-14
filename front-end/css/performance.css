@@ -1000,14 +1000,15 @@ body, html {
   align-self: center;
   grid-area: 2 / 1 / 2 / 4;
   justify-self: center;
+  position: relative;
 }
 
 #fptext {
-  transform: translate(-56%, -70%);
+  transform: translate(-55%, -90%);
 }
 
 #fntext {
-  transform: translate(-56%, -150%);
+  transform: translate(-56%, -10%);
 }
 
 .tparrow-container {
