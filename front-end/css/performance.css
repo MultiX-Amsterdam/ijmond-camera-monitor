@@ -15,6 +15,10 @@ body, html {
   overflow: hidden;
 }
 
+.custom-text-info-dark-theme {
+  color: #3182BD!important;
+}
+
 /* Loading */
 .loading-overlay {
   display: flex; 
@@ -919,12 +923,14 @@ body, html {
 }
 
 .diagram-container {
+  z-index: 99;
   width: 80vw;
   height: 500px;
 }
 
 @media (max-width: 1000px) {
   .diagram-container  {
+    z-index: 99;
     width: 90vw;
     height: 500px;
   }
@@ -932,6 +938,7 @@ body, html {
 
 @media (max-width: 600px) {
   .diagram-container  {
+    z-index: 99;
     width: 90vw;
     height: 350px;
   }
