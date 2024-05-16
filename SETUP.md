@@ -1,3 +1,6 @@
+**INSTRUCTIONS**
+For the questionnaire we use Qualtrics. It is the optimal tool as it allows us to pass parameters from our app to the questionnaire we designed via the tool. While the feature is already implemented if you want to pass the user_id parameter, you can use the instructions from this link https://www.qualtrics.com/support/survey-platform/survey-module/survey-flow/standard-elements/passing-information-through-query-strings/ , to understand how to support extra parameters.
+
 **HOW TO INSTALL**
 
 Insert Achievements in the DB manually: 1st enter the Tutorial Finisher, then the Pro, then the Quiz Finisher, and then the Pro. You can use whichever name you wish, but the order is important due to the use of their ID in the SQL scripts. The Season Champion Achievements are added automatically.
