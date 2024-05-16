@@ -1066,6 +1066,7 @@ body, html {
 }
 
 #date-picker {
+  z-index: 99999;
   grid-area: 2 / 1;
 }
 

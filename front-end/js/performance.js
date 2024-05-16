@@ -792,11 +792,7 @@ import { gameData_gr } from "./game_data_1_gr.js";
             scrollTrigger: {
                 trigger: "#section0",
                 start: "top top",
-                // end: "+=4000",
-                toggleActions: "play none none reverse",
-                // pin: true,
-                // scrub: true,
-                markers: true
+                toggleActions: "play none none reverse"
             }
         });
 
@@ -814,8 +810,7 @@ import { gameData_gr } from "./game_data_1_gr.js";
                 end: "+=100%",
                 toggleActions: "play none none reverse",
                 pin: true,
-                scrub: true,
-                markers: true
+                scrub: true
             }
         });
 
@@ -838,8 +833,7 @@ import { gameData_gr } from "./game_data_1_gr.js";
                 trigger: "#section2",
                 start: "top top",
                 toggleActions: "play none none reverse",
-                pin: true,
-                markers: true
+                pin: true
             }
         });
 
@@ -864,7 +858,6 @@ import { gameData_gr } from "./game_data_1_gr.js";
                 toggleActions: "play none none reverse",
                 pin: true,
                 scrub: true,
-                markers: true,
                 onEnterBack: () => chartDemonstrationChange(story, 0),
                 onUpdate: self => {
                     chartDemonstrationChange(story, self.progress);
@@ -905,8 +898,7 @@ import { gameData_gr } from "./game_data_1_gr.js";
                 end: "+=5500",
                 scrub: true,
                 toggleActions: "play none none reverse",
-                pin: true,
-                markers: true
+                pin: true
             }
         });
 
@@ -988,8 +980,7 @@ import { gameData_gr } from "./game_data_1_gr.js";
                 scrub: true,
                 end: "+=2000",
                 toggleActions: "play none resume reverse",
-                pin: true,
-                markers: true
+                pin: true
             }
         });
 
@@ -1045,8 +1036,7 @@ import { gameData_gr } from "./game_data_1_gr.js";
                 scrub: true,
                 end: "+=2000",
                 toggleActions: "play none resume reverse",
-                pin: true,
-                markers: true
+                pin: true
             }
         });
 
@@ -1110,8 +1100,7 @@ import { gameData_gr } from "./game_data_1_gr.js";
                 scrub: true,
                 end: "+=4000",
                 toggleActions: "play none resume reverse",
-                pin: true,
-                markers: true
+                pin: true
             }
         });
 
@@ -1172,8 +1161,7 @@ import { gameData_gr } from "./game_data_1_gr.js";
                 scrub: true,
                 end: "+=5000",
                 toggleActions: "play none resume reverse",
-                pin: true,
-                markers: true
+                pin: true
             }
         });
     
@@ -1292,8 +1280,7 @@ import { gameData_gr } from "./game_data_1_gr.js";
                 scrub: true,
                 end: "+=2000",
                 toggleActions: "play none resume reverse",
-                pin: true,
-                markers: true
+                pin: true
             }
         });
 
@@ -1320,8 +1307,7 @@ import { gameData_gr } from "./game_data_1_gr.js";
                 end: "+=3000",
                 toggleActions: "play none resume reverse",
                 onEnter: loadGame(gameData, client_id),
-                pin: true,
-                markers: true
+                pin: true
             }
         });
 
@@ -1345,8 +1331,7 @@ import { gameData_gr } from "./game_data_1_gr.js";
                 scrub: true,
                 end: "+=3000",
                 toggleActions: "play none resume reverse",
-                pin: true,
-                markers: true
+                pin: true
             }
         });
 
@@ -1387,8 +1372,7 @@ import { gameData_gr } from "./game_data_1_gr.js";
                 scrub: true,
                 end: "+=3000",
                 toggleActions: "play none resume reverse",
-                pin: true,
-                markers: true
+                pin: true
             }
         });
 
@@ -1420,8 +1404,7 @@ import { gameData_gr } from "./game_data_1_gr.js";
                     start: "top top",
                     end: "bottom bottom",
                     scrub: true,
-                    toggleActions: "play none resume reverse",
-                    markers: true
+                    toggleActions: "play none resume reverse"
                 }
             });
     
