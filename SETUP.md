@@ -26,8 +26,8 @@ sudo rabbitmqctl set_permissions -p myvhost myuser ".*" ".*" ".*"
 loopback_users.guest = false
 listeners.tcp.default = 5672
 consumer_timeout = 31622400000
-in /etc/rabbitmq/rabbitmq.conf . The conf does not exist; we add it first.
 ```
+in /etc/rabbitmq/rabbitmq.conf . The conf does not exist; we add it first.
 
 5) Start rabbitmq-server: ``sudo systemctl start rabbitmq-server`` (``sudo systemctl status rabbitmq-server`` to make sure it's starting)
 
