@@ -1447,8 +1447,8 @@ import { gameData_gr } from "./game_data_1_gr.js";
         section8(); // MCC - Why do we use it, introduce it
         section9_1(); // Introduction to our Metric Recap Game
         section9_2(client_id) // The Metric Recap Game
-        section10_1(); // Introduction of the Graph Logic before the Final Quiz, Part 1/2
-        section10_2(); // Introduction of the Graph Logic before the Final Quiz, Part 2/2
+        section10_1(); // Explanation of the model performance pipeline/steps
+        section10_2(); // Example of the chart regarding model performance visualization
         section11(); // Show user the calendar to select date + Show F1-Score, MCC graph, Flow Chart with TP,FP,TN,FN, and textual comparison between other models + Context
 
     }
