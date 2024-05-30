@@ -100,11 +100,13 @@
         let rank = 1;
         let currentUserDisplayed = false;
 
-        data.every(entry => { // Top 10 users in points, stop at the 10th that is not a guest
+        console.log(data)
+
+        data.forEach(entry => { // Top 10 users in points, stop at the 10th that is not a guest
             if(rank === 11) {return false}
 
             let isGoogle = (entry.client_id).split('.')[0] === 'google'; // We need to make sure we store only the signed-in users; part of enabling gamification.
-            
+
             if(entry.client_type == 3 && isGoogle) {
                 const isCurrentUser = (entry.client_id).split('.')[1] === currentUserId; 
                 currentUserDisplayed = currentUserDisplayed || isCurrentUser;
@@ -112,15 +114,23 @@
                 const row = leaderboardBody.insertRow();
                 
                 if (rank === 1) {
-                row.classList.add('first-place-highlight', 'animate__animated'); // Style the first place
+                    row.classList.add('first-place-highlight', 'animate__animated'); // Style the first place
 
-                if (isCurrentUser) {
-                    row.classList.add('current-user'); // Additional class for current user
-                }
+                    if (isCurrentUser) {
+                        row.classList.add('current-user'); // Additional class for current user
+                    }
                 } else if (rank === 2){
                     row.classList.add('second-place-highlight', 'animate__animated'); // Style the second place
+
+                    if (isCurrentUser) {
+                        row.classList.add('current-user'); // Additional class for current user
+                    }
                 } else if (rank === 3){
                     row.classList.add('third-place-highlight', 'animate__animated'); // Style the third place
+
+                    if (isCurrentUser) {
+                        row.classList.add('current-user'); // Additional class for current user
+                    }
                 } else {
                     const contextClass = isCurrentUser ? 'current-user' : ''; // If it's not in top-three, use a table success class
                     row.className = contextClass;
@@ -142,7 +152,7 @@
             
             if (currentUserEntry !== undefined) {
                 const row = leaderboardBody.insertRow();
-                row.insertCell(0).textContent = rank;
+                row.insertCell(0).textContent = rank += 1;
                 row.insertCell(1).textContent = currentUserEntry.id;
                 row.insertCell(2).textContent = currentUserEntry.score;
                 row.insertCell(3).textContent = currentUserEntry.raw_score;
