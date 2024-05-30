@@ -25,44 +25,50 @@
             .then(data => {
 
                 const lastSeason = data.seasons[data.seasons.length-1]
-                const timeNow = Math.floor(Date.now() / 1000);
-                let isSeason = '';
-                let interval = 0;
-
-                if (timeNow <= lastSeason.season_end && timeNow >= lastSeason.season_start) {
-                    isSeason = 'countdownFinish';
-                    interval = lastSeason.season_end;
-                } else if (timeNow < lastSeason.season_start) {
-                    isSeason = 'countdownStart';
-                    interval = lastSeason.season_start;
-                }
-
-                if (isSeason) {
-                    // Update every second
-                    const x = setInterval(function() {
-                        const now = Math.floor(Date.now() / 1000);
-                        const distance = interval - now;
+                if (lastSeason !== undefined) {
+                    const timeNow = Math.floor(Date.now() / 1000);
+                    let isSeason = '';
+                    let interval = 0;
     
-                        // Time calculations for days, hours, minutes and seconds
-                        const days = Math.floor(distance / (60 * 60 * 24));
-                        const hours = Math.floor((distance % (60 * 60 * 24)) / (60 * 60));
-                        const minutes = Math.floor((distance % (60 * 60)) / 60);
-                        const seconds = Math.floor(distance % 60);
+                    if (timeNow <= lastSeason.season_end && timeNow >= lastSeason.season_start) {
+                        isSeason = 'countdownFinish';
+                        interval = lastSeason.season_end;
+                    } else if (timeNow < lastSeason.season_start) {
+                        isSeason = 'countdownStart';
+                        interval = lastSeason.season_start;
+                    }
     
-                        // Output the result in an element with id="seasonCountdown"
-                        seasonCountdown.innerHTML = `${days}${window.i18n.t('days')} ${hours}${window.i18n.t('hours')} ${minutes}${window.i18n.t('minutes')} ${seconds}${window.i18n.t('seconds')} ` + (isSeason === 'countdownFinish' ? window.i18n.t('until-season-ends') : window.i18n.t('until-season-begins'));
-                        
-                        // If the countdown is over, stop the countdown and set the text accordingly
-                        if (distance < 0 && isSeason == 'countdownFinish') {
-                            clearInterval(x);
-                            seasonCountdown.innerHTML = window.i18n.t('no-active-season');
-                        } else if (distance < 0 && isSeason == 'countdownStart'){
-                            clearInterval(x);
-                            seasonCountdown.innerHTML = populateCheckSeasons();
-                        }
-                    }, 1000);
+                    if (isSeason) {
+                        // Update every second
+                        const x = setInterval(function() {
+                            const now = Math.floor(Date.now() / 1000);
+                            const distance = interval - now;
+        
+                            // Time calculations for days, hours, minutes and seconds
+                            const days = Math.floor(distance / (60 * 60 * 24));
+                            const hours = Math.floor((distance % (60 * 60 * 24)) / (60 * 60));
+                            const minutes = Math.floor((distance % (60 * 60)) / 60);
+                            const seconds = Math.floor(distance % 60);
+        
+                            // Output the result in an element with id="seasonCountdown"
+                            seasonCountdown.innerHTML = `${days}${window.i18n.t('days')} ${hours}${window.i18n.t('hours')} ${minutes}${window.i18n.t('minutes')} ${seconds}${window.i18n.t('seconds')} ` + (isSeason === 'countdownFinish' ? window.i18n.t('until-season-ends') : window.i18n.t('until-season-begins'));
+                            
+                            // If the countdown is over, stop the countdown and set the text accordingly
+                            if (distance < 0 && isSeason == 'countdownFinish') {
+                                clearInterval(x);
+                                seasonCountdown.innerHTML = window.i18n.t('no-active-season');
+                            } else if (distance < 0 && isSeason == 'countdownStart'){
+                                clearInterval(x);
+                                seasonCountdown.innerHTML = populateCheckSeasons();
+                            }
+                        }, 1000);
+                    } else {
+                        // If not within a season or before a season starts, keep the initial message
+                        seasonCountdown.classList.add("text-white", "font-weight-bold");
+                        seasonCountdown.innerHTML = window.i18n.t('no-active-season');
+                    }
                 } else {
-                    // If not within a season or before a season starts, keep the initial message
+                    // Keep the initial message if we have never specified a season before as well
                     seasonCountdown.classList.add("text-white", "font-weight-bold");
                     seasonCountdown.innerHTML = window.i18n.t('no-active-season');
                 }
