@@ -30,7 +30,7 @@ export const gameData_gr = [
         ],
         "explanation": `
             <h3 class='precrec-explain1'><span class='green-text'>Σωστά!</span> Στο σενάριο ανίχνευσης καπνού, η εύρεση ισορροπίας μεταξύ <span class="custom-text-info-dark-theme">Precision</span> και <span class="custom-text-info-dark-theme">Recall</span> είναι εξαιρετικά σημαντική</h3>
-            <h4 class='precrec-explain2'><span class="custom-text-info-dark-theme">Το Precision</span> για το μοντέλο μας αφορά τον αριθμό των σωστών προβλέψεων καπνού στα βίντεο από όλες τις προβλέψεις καπνού: σωστές ή όχι. Το <span class='red-text'>κόκκινο περίγραμμα</span> σηματοδοτεί τις σωστές και το <span class='orange-text'>πορτοκαλί</span> τις λανθασμένες προβλέψεις</h4>
+            <h4 class='precrec-explain2'><span class="custom-text-info-dark-theme">Το Precision</span> για το μοντέλο μας αφορά τον αριθμό των σωστών προβλέψεων καπνού στα βίντεο από όλες τις προβλέψεις καπνού: σωστές ή όχι. Το <span class='red-text'>κόκκινο περίγραμμα</span> σηματοδοτεί τις σωστές και το <span class='purple-text'>πορτοκαλί</span> τις λανθασμένες προβλέψεις</h4>
             <div class="stagger-images-prec">
                 <img class='prec-explain-img' src="../img/smoke/smoke1.png">
                 <img class='prec-explain-img' src="../img/smoke/smoke2.png">
@@ -90,7 +90,7 @@ export const gameData_gr = [
 
                 <div class='f1mcc-box'>
                     <h4><span class="green-text">Σωστά με Καπνό</span>: 4</h4>
-                    <h4><span class="orange-text">Λανθασμένα με Καπνό</span>: 1</h4>
+                    <h4><span class="purple-text">Λανθασμένα με Καπνό</span>: 1</h4>
                     <h4><span class="green-text">Σωστά Χωρίς Καπνό</span>: 0</h4>
                     <h4><span class="red-text">Λανθασμένα Χωρίς Καπνό</span>: 2</h4>
 

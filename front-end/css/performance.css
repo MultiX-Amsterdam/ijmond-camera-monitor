@@ -16,7 +16,7 @@ body, html {
 }
 
 .custom-text-info-dark-theme {
-  color: #3182BD!important;
+  color: #62B7F5!important;
 }
 
 /* Loading */
@@ -49,15 +49,15 @@ body, html {
 }
 
 .red-text {
-  color:#d73027;
+  color:#E84040;
 }
 
 .green-text {
-  color:#7fbf7b;
+  color:#B0FBAD;
 }
 
-.orange-text {
-  color: #fc8d59;
+.purple-text {
+  color: #7773EC;
 }
 
 .red-fill {

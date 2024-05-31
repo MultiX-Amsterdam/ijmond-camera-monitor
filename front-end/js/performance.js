@@ -919,10 +919,10 @@ import { gameData_gr } from "./game_data_1_gr.js";
         for (let i = 0; i <= 3; i++) {
             if (i == 0) {
                 tl.to(container.getElementsByClassName('img-fluid')[i], 
-                { filter: 'brightness(0) saturate(100%) invert(19%) sepia(92%) saturate(2914%) hue-rotate(351deg) brightness(95%) contrast(85%)' }, '>2');
+                { filter: 'brightness(0) saturate(100%) invert(29%) sepia(78%) saturate(4337%) hue-rotate(345deg) brightness(111%) contrast(82%)' }, '>2');
             } else {
                 tl.to(container.getElementsByClassName('img-fluid')[i], 
-                { filter: 'brightness(0) saturate(100%) invert(19%) sepia(92%) saturate(2914%) hue-rotate(351deg) brightness(95%) contrast(85%)' });
+                { filter: 'brightness(0) saturate(100%) invert(29%) sepia(78%) saturate(4337%) hue-rotate(345deg) brightness(111%) contrast(82%)' });
             }
         }
         tl.to(container, { y: -sectionHeight/4, duration: 1 }, ">");
@@ -933,10 +933,10 @@ import { gameData_gr } from "./game_data_1_gr.js";
         for (let i = 0; i <= 9; i++) {
             if ((i >= 8 && i <= 9) || i == 3) {
                 tl.to(container.getElementsByClassName('img-fluid')[i], 
-                { filter: 'brightness(0) saturate(100%) invert(67%) sepia(81%) saturate(446%) hue-rotate(337deg) brightness(95%) contrast(98%)' });
+                { filter: 'brightness(0) saturate(100%) invert(42%) sepia(27%) saturate(3056%) hue-rotate(219deg) brightness(104%) contrast(85%)' });
             } else {
                 tl.to(container.getElementsByClassName('img-fluid')[i], 
-                { filter: 'brightness(0) saturate(100%) invert(66%) sepia(38%) saturate(379%) hue-rotate(69deg) brightness(96%) contrast(92%)' });
+                { filter: 'brightness(0) saturate(100%) invert(90%) sepia(15%) saturate(881%) hue-rotate(60deg) brightness(102%) contrast(97%)' });
             }
         }
 
@@ -998,7 +998,7 @@ import { gameData_gr } from "./game_data_1_gr.js";
         for (let i = 0; i <= 9; i++) {
             if (i >= 0 && i <= 1) {
                 tl.to(container.getElementsByClassName('img-fluid')[i], 
-                { filter: 'brightness(0) saturate(100%) invert(19%) sepia(92%) saturate(2914%) hue-rotate(351deg) brightness(95%) contrast(85%)', duration: 0.5 });
+                { filter: 'brightness(0) saturate(100%) invert(29%) sepia(78%) saturate(4337%) hue-rotate(345deg) brightness(111%) contrast(82%)', duration: 0.5 });
             }
         }
 
@@ -1063,7 +1063,7 @@ import { gameData_gr } from "./game_data_1_gr.js";
         for (let i = 0; i <= 9; i++) {
             if ((i == 1) || (i == 6) || (i == 8) || (i == 9)) {
                 tl.to(container.getElementsByClassName('img-fluid')[i], 
-                { filter: 'brightness(0) saturate(100%) invert(19%) sepia(92%) saturate(2914%) hue-rotate(351deg) brightness(95%) contrast(85%)', duration: 0.5 });
+                { filter: 'brightness(0) saturate(100%) invert(29%) sepia(78%) saturate(4337%) hue-rotate(345deg) brightness(111%) contrast(82%)', duration: 0.5 });
             }
         }
 
@@ -1224,14 +1224,14 @@ import { gameData_gr } from "./game_data_1_gr.js";
         tl.from(".mcc-intro-7", { autoAlpha: 0 });
         for (let i = 0; i <= 7; i++) {
             tl.to(container.getElementsByClassName('img-fluid')[i], 
-            { filter: 'brightness(0) saturate(100%) invert(19%) sepia(92%) saturate(2914%) hue-rotate(351deg) brightness(95%) contrast(85%)' });
+            { filter: 'brightness(0) saturate(100%) invert(29%) sepia(78%) saturate(4337%) hue-rotate(345deg) brightness(111%) contrast(82%)' });
         }
 
         // Tell the viewer how many the doctor has guessed right from the sick ones and color them green. Draw the border
         tl.from(".mcc-intro-8-1", { autoAlpha: 0 });
         for (let i = 0; i <= 5; i++) {
             tl.to(container.getElementsByClassName('img-fluid')[i], 
-            { filter: 'brightness(0) saturate(100%) invert(66%) sepia(38%) saturate(379%) hue-rotate(69deg) brightness(96%) contrast(92%)' });
+            { filter: 'brightness(0) saturate(100%) invert(90%) sepia(15%) saturate(881%) hue-rotate(60deg) brightness(102%) contrast(97%)' });
         }
         tl.to(".border-1", { autoAlpha: 1 });
 
@@ -1239,7 +1239,7 @@ import { gameData_gr } from "./game_data_1_gr.js";
         tl.from(".mcc-intro-8-2", { autoAlpha: 0 });
         for (let i = 8; i <= 9; i++) {
             tl.to(container.getElementsByClassName('img-fluid')[i], 
-            { filter: 'brightness(0) saturate(100%) invert(67%) sepia(81%) saturate(446%) hue-rotate(337deg) brightness(95%) contrast(98%)' });
+            { filter: 'brightness(0) saturate(100%) invert(42%) sepia(27%) saturate(3056%) hue-rotate(219deg) brightness(104%) contrast(85%)' });
         }
         tl.to(".border-2", { autoAlpha: 1 });
 
@@ -1247,7 +1247,7 @@ import { gameData_gr } from "./game_data_1_gr.js";
         tl.from(".mcc-intro-8-3", { autoAlpha: 0 }, '>2');
         for (let i = 6; i <= 8; i++) {
             tl.to(container.getElementsByClassName('img-fluid')[i], 
-            { filter: 'brightness(0) saturate(100%) invert(67%) sepia(81%) saturate(446%) hue-rotate(337deg) brightness(95%) contrast(98%)' });
+            { filter: 'brightness(0) saturate(100%) invert(42%) sepia(27%) saturate(3056%) hue-rotate(219deg) brightness(104%) contrast(85%)' });
         }
 
         // Explain the colors and the border

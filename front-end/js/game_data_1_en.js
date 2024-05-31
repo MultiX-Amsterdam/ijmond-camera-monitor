@@ -30,7 +30,7 @@ export const gameData_en = [
         ],
         "explanation": `
             <h3 class='precrec-explain1'><span class='green-text'>Correct!</span> At our smoke detection scenario, finding the balance between <span class="custom-text-info-dark-theme">Precision</span> and <span class="custom-text-info-dark-theme">Recall</span> is extremely important</h3>
-            <h4 class='precrec-explain2'><span class="custom-text-info-dark-theme">Precision</span> for our model concerns the number of correct guesses of smoke in videos out of all the guesses of smoke: correct or not The <span class='red-text'>red border</span> signifies the correct and the <span class='orange-text'>orange</span> the wrong prediction</h4>
+            <h4 class='precrec-explain2'><span class="custom-text-info-dark-theme">Precision</span> for our model concerns the number of correct guesses of smoke in videos out of all the guesses of smoke: correct or not The <span class='red-text'>red border</span> signifies the correct and the <span class='purple-text'>purple</span> the wrong prediction</h4>
             <div class="stagger-images-prec">
                 <img class='prec-explain-img' src="../img/smoke/smoke1.png">
                 <img class='prec-explain-img' src="../img/smoke/smoke2.png">
@@ -90,7 +90,7 @@ export const gameData_en = [
 
                 <div class='f1mcc-box'>
                     <h4><span class="green-text">Correct Smoke</span>: 4</h4>
-                    <h4><span class="orange-text">False Smoke</span>: 1</h4>
+                    <h4><span class="purple-text">False Smoke</span>: 1</h4>
                     <h4><span class="green-text">Correct Non-Smoke</span>: 0</h4>
                     <h4><span class="red-text">False Non-Smoke</span>: 2</h4>
 
