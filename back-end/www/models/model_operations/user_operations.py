@@ -1,7 +1,6 @@
 """Functions to operate the user table."""
 
 import datetime
-from sqlalchemy import or_
 from models.model import db
 from models.model import User
 from models.model import Connection
@@ -89,6 +88,7 @@ def get_past_user_scores(client_id):
         Connection.user_id == user_id
     ).order_by(Batch.return_time.asc()).all()
 
+
     if not batches:
         app.logger.info("No batches found for user_id: {}".format(user_id))
         return []
@@ -110,5 +110,13 @@ def get_past_user_scores(client_id):
 
     # Convert the dictionary to a sorted list of daily scores
     sorted_daily_scores = sorted(scores_by_date.values(), key=lambda x: x['date'])
+    app.logger.info("SORTED: %r", sorted_daily_scores)
+
+    index = 0
+    for daily_score in sorted_daily_scores:
+        if (index != 0):
+            daily_score['score'] = daily_score['score'] - sorted_daily_scores[index-1]['score']
+            daily_score['raw_score'] =  daily_score['raw_score'] - sorted_daily_scores[index-1]['raw_score']
+        index += 1
 
     return sorted_daily_scores
