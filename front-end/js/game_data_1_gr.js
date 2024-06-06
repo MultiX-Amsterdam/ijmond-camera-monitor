@@ -30,7 +30,7 @@ export const gameData_gr = [
         ],
         "explanation": `
             <h3 class='precrec-explain1'><span class='green-text'>Σωστά!</span> Στο σενάριο ανίχνευσης καπνού, η εύρεση ισορροπίας μεταξύ <span class="custom-text-info-dark-theme">Precision</span> και <span class="custom-text-info-dark-theme">Recall</span> είναι εξαιρετικά σημαντική</h3>
-            <h4 class='precrec-explain2'><span class="custom-text-info-dark-theme">Το Precision</span> για το μοντέλο μας αφορά τον αριθμό των σωστών προβλέψεων καπνού στα βίντεο από όλες τις προβλέψεις καπνού: σωστές ή όχι. Το <span class='red-text'>κόκκινο περίγραμμα</span> σηματοδοτεί τις σωστές και το <span class='purple-text'>πορτοκαλί</span> τις λανθασμένες προβλέψεις</h4>
+            <h4 class='precrec-explain2'><span class="custom-text-info-dark-theme">Το Precision</span> για το μοντέλο μας αφορά τον αριθμό των σωστών προβλέψεων καπνού στα βίντεο από όλες τις προβλέψεις καπνού: σωστές ή όχι. Το <span class='red-text'>περίγραμμα</span> σηματοδοτεί τις σωστές και <span class='purple-text'>αυτό το χρώμα</span> τις λανθασμένες προβλέψεις</h4>
             <div class="stagger-images-prec">
                 <img class='prec-explain-img' src="../img/smoke/smoke1.png">
                 <img class='prec-explain-img' src="../img/smoke/smoke2.png">
@@ -46,7 +46,7 @@ export const gameData_gr = [
                 </div>
             </div>
 
-            <h4 class='precrec-explain3'><span class="custom-text-info-dark-theme">Το Recall</span> από την άλλη αφορά τον αριθμό των ανιχνεύσεων καπνού που υπάρχουν και που πραγματικά βρήκαμε. Το <span class='red-text'>κόκκινο περίγραμμα</span> σηματοδοτεί τις περιπτώσεις που το μοντέλο αναγνώρισε</h4>
+            <h4 class='precrec-explain3'><span class="custom-text-info-dark-theme">Το Recall</span> από την άλλη αφορά τον αριθμό των ανιχνεύσεων καπνού που υπάρχουν και που πραγματικά βρήκαμε. Το <span class='red-text'>περίγραμμα</span> σηματοδοτεί τις περιπτώσεις που το μοντέλο αναγνώρισε</h4>
             <div class="stagger-images-rec">
                 <img class='rec-explain-img' src="../img/smoke/smoke2.png">
                 <img class='rec-explain-img' src="../img/smoke/smoke3.png">

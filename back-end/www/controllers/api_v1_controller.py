@@ -711,11 +711,14 @@ def add_game_record():
         raise InvalidUsage("Missing field: action_type", status_code=400)
     if "client_id" not in request_json:
         raise InvalidUsage("Missing field: user_token", status_code=400)
+    if "game_num" not in request_json:
+        raise InvalidUsage("Missing field: game_num", status_code=400)
     try:
         # Add game record
         action_type = request_json["action_type"]
         client_id = request_json["client_id"]
-        save_game_action(get_user_by_client_id(client_id).id, action_type)
+        game_num = request_json["game_num"]
+        save_game_action(get_user_by_client_id(client_id).id, action_type, game_num)
         return make_response("", 204)
     except Exception as ex:
         raise InvalidUsage(ex.args[0], status_code=400)

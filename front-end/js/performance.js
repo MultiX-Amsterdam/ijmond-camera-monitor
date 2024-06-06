@@ -29,27 +29,34 @@ import { gameData_gr } from "./game_data_1_gr.js";
         try {
             const response = await fetch(`${api_url_root}/get_model_data`);
             const data = await response.json();
-            const labels = [];
-            const mcc = [];
-            const f1 = [];
-            const precision = [];
-            const recall = [];
-            const tp = [];
-            const tn = [];
-            const fp = [];
-            const fn = [];
-
-            data.model_data.forEach(entry => {
-                labels.push(new Date(entry.date)); // Assuming 'date' needs to be converted to Date object
-                f1.push(entry.f1);
-                mcc.push(entry.mcc);
-                recall.push(entry.recall);
-                precision.push(entry.precision);
-                tp.push(entry.tp);
-                tn.push(entry.tn);
-                fp.push(entry.fp);
-                fn.push(entry.fn);
-            });
+    
+            // Combine data into a single array of objects
+            const combinedArray = data.model_data.map(entry => ({
+                label: new Date(entry.date), // Convert string date to Date object
+                mcc: entry.mcc,
+                f1: entry.f1,
+                precision: entry.precision,
+                recall: entry.recall,
+                tp: entry.tp,
+                tn: entry.tn,
+                fp: entry.fp,
+                fn: entry.fn
+            }));
+    
+            // Sort the array by date in ascending order
+            combinedArray.sort((a, b) => a.label - b.label);
+    
+            // Decompose the array back into individual metrics
+            const labels = combinedArray.map(item => item.label);
+            const mcc = combinedArray.map(item => item.mcc);
+            const f1 = combinedArray.map(item => item.f1);
+            const precision = combinedArray.map(item => item.precision);
+            const recall = combinedArray.map(item => item.recall);
+            const tp = combinedArray.map(item => item.tp);
+            const tn = combinedArray.map(item => item.tn);
+            const fp = combinedArray.map(item => item.fp);
+            const fn = combinedArray.map(item => item.fn);
+    
             return {
                 labels: labels,
                 mcc: mcc,
@@ -65,7 +72,7 @@ import { gameData_gr } from "./game_data_1_gr.js";
             console.error('Error fetching data:', error);
             throw error;
         }
-    }
+    }    
 
     /**
      * Displays either the chart or the confusion matrix
@@ -78,6 +85,7 @@ import { gameData_gr } from "./game_data_1_gr.js";
         if (isChecked) {
             gsap.timeline()
             .to("#backchange-bar", { autoAlpha: 0 })
+            .to('.container', { autoAlpha: 0 })
             .to("#visualize-chart", { autoAlpha: 0 })
             .to("#visualize-explanation", { autoAlpha: 0 },'<')
 
@@ -106,6 +114,7 @@ import { gameData_gr } from "./game_data_1_gr.js";
             .to(".fpfnarrow-container", { autoAlpha: 0 }, '<')
             .to("#confusionmatrix-explanation", { autoAlpha: 0 })
 
+            .to(".container", { autoAlpha: 1 })
             .to("#visualize-chart", { autoAlpha: 1 })
             .to("#visualize-explanation", { autoAlpha: 1 })
             .to("#backchange-bar", { autoAlpha: 1 });
@@ -113,7 +122,7 @@ import { gameData_gr } from "./game_data_1_gr.js";
     }       
     
     /**
-     * Fetches the Model's scores necessary to populate the page.
+     * Generates both visualizations, no matter which one is chosen to be displayed
      * @param {any} data - Data to populate our visualizations
      * @param {int} selectedIndex - The date chosen by the user
     */
@@ -152,9 +161,9 @@ import { gameData_gr } from "./game_data_1_gr.js";
             if (tp > tpPrev && tn > tnPrev) {
                 document.getElementById('time-eval').innerHTML = i18next.t('better-lasttime-smoke-nosmoke');
             } else if (tp <= tpPrev && tn > tnPrev) {
-                document.getElementById('time-eval').innerHTML = i18next.t('better-lasttime-smoke');
-            } else if (tp > tpPrev && tn <= tnPrev) {
                 document.getElementById('time-eval').innerHTML = i18next.t('better-lasttime-nosmoke');
+            } else if (tp > tpPrev && tn <= tnPrev) {
+                document.getElementById('time-eval').innerHTML = i18next.t('better-lasttime-smoke');
             } else {
                 document.getElementById('time-eval').innerHTML = i18next.t('worse-lasttime-smoke-nosmoke');
             }
@@ -180,7 +189,7 @@ import { gameData_gr } from "./game_data_1_gr.js";
             explanationKey = "performance-random";
         } else if (mcc < 0) {
             explanationKey = "performance-trust-issue";
-        } else if (mcc <= mccThreshold && f1 > f1Threshold) {
+        } else if (mcc <= mccThreshold && f1 >= f1Threshold) {
             explanationKey = "performance-mcc-low";
         } else {
             explanationKey = "performance-unexpected";
@@ -205,6 +214,7 @@ import { gameData_gr } from "./game_data_1_gr.js";
             gsap.to(".correct-smoke-container", { autoAlpha: 0 }, '<');
             gsap.to(".predicted-nosmoke-container", { autoAlpha: 0 }, '<');
             gsap.to(".noncorrect-smoke-container", { autoAlpha: 0 }, '<');
+            gsap.to(".container", { autoAlpha: 0 }, '<');
             gsap.to("#visualize-chart", { autoAlpha: 0 }, '<');
             gsap.to("#visualize-explanation", { autoAlpha: 0 }, '<');
             gsap.to("#backchange-bar", { autoAlpha: 0 },'<');
@@ -216,6 +226,7 @@ import { gameData_gr } from "./game_data_1_gr.js";
 
         gsap.to("#date-picker", { autoAlpha: 0 });
         gsap.to("#backchange-bar", { autoAlpha: 1 });
+        gsap.to(".container", { autoAlpha: 1 });
         gsap.to("#visualize-chart", { autoAlpha: 1 });
         gsap.to("#visualize-explanation", { autoAlpha: 1 });
     }
@@ -230,6 +241,7 @@ import { gameData_gr } from "./game_data_1_gr.js";
     */
     function createChart(chartElem, labels, f1Data, mccData, highlightIndex) {
         const ctx = document.getElementById(chartElem).getContext('2d');
+        
         return new Chart(ctx, {
             // The type of chart we want to create
             type: 'line',
@@ -296,6 +308,7 @@ import { gameData_gr } from "./game_data_1_gr.js";
                 }
             }
         });
+        
     }    
 
     /**
@@ -646,7 +659,7 @@ import { gameData_gr } from "./game_data_1_gr.js";
         tl.to(explanationContainer, { autoAlpha: 1 });
 
         if (index == 0) {
-            saveGame(-1, client_id); // We start the game in our DB
+            saveGame(-1, client_id, 1); // We start the game in our DB
             saveResult(client_id, 0); // We save the number of mistakes the user has done
             wrong_answer_current = 0;
 
@@ -691,7 +704,7 @@ import { gameData_gr } from "./game_data_1_gr.js";
                     { borderWidth: '5px', border: 'solid #d73027', duration: 0.5 }, '<');
                 } else {
                     tl.to(explanationContainer.getElementsByClassName('prec-explain-img')[i], 
-                    { borderWidth: '5px', border: 'solid #fc8d59', duration: 0.5 }, '<');
+                    { borderWidth: '5px', border: 'solid #7773EC', duration: 0.5 }, '<');
                 }
             }
 
@@ -705,7 +718,7 @@ import { gameData_gr } from "./game_data_1_gr.js";
             tl.to(nextButton, { autoAlpha: 1, duration: 0.5 });
 
         } else if (index == 2) {
-            saveGame(1, client_id); // We finish the game in our DB
+            saveGame(1, client_id, 1); // We finish the game in our DB
             saveResult(client_id, 2);
             wrong_answer_current = 0;
 
@@ -733,7 +746,7 @@ import { gameData_gr } from "./game_data_1_gr.js";
                     { borderWidth: '5px', border: 'solid #7fbf7b', duration: 0.5 }, '<');
                 } else if (i == 4) {
                     tl.to(explanationContainer.getElementsByClassName('f1mcc-explain-img')[i], 
-                    { borderWidth: '5px', border: 'solid #fc8d59', duration: 0.5 }, '<');
+                    { borderWidth: '5px', border: 'solid #7773EC', duration: 0.5 }, '<');
                 } else {
                     tl.to(explanationContainer.getElementsByClassName('f1mcc-explain-img')[i], 
                     { borderWidth: '5px', border: 'solid #d73027', duration: 0.5 }, '<');
@@ -749,15 +762,17 @@ import { gameData_gr } from "./game_data_1_gr.js";
 
     /**
      * Populate the explanation container
-     * @param {any} start_or_end - We understand if the user started the game, or finishing it; start is -1, finishing is 0, no mistakes finishing is 1
+     * @param {integer} start_or_end - We understand if the user started the game, or finishing it; start is -1, finishing is 1
      * @param {string} client_id - The user's token: google client ID if signed in, or Google Analytics Guest token if not
+     * @param {integer} game_id - The number of the game played at the moment (only one game is available now)
     */
-    function saveGame(start_or_end, client_id) {
-        let action_type = start_or_end === -1 ? -1 : (wrong_answers_total > 1 ? 0 : 1);
+    function saveGame(start_or_end, client_id, game_num) {
+        let action_type = start_or_end === -1 ? -1 : (wrong_answers_total > 0 ? 0 : 1); // Action type is 0 if finished, -1 if not finished and 1 if finished without mistakes
 
         util.postJSON(api_url_root + "add_game_record", {
             "action_type": action_type,
-            "client_id": client_id
+            "client_id": client_id,
+            "game_num": game_num
         });
     
         if (action_type !== -1) {  // Only post to game_achievement if action_type is not -1, hence if game is finished

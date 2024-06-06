@@ -249,7 +249,7 @@
     "select-date": "Pick a date...",
     "switch-view": "Switch View",
     "performance-good": "Both metrics are <span class='custom-text-info-dark-theme'>high</span>. The model is doing a <span class='custom-text-info-dark-theme'>good work</span> detecting smoke instances.",
-    "performance-random": "It seems like something is <span class='custom-text-info-dark-theme'>wrong</span> with the model; its performance is close to generate <span class='custom-text-info-dark-theme'>random</span> predictions.",
+    "performance-random": "It seems like something is <span class='custom-text-info-dark-theme'>wrong</span> with the model; its performance is close to generating <span class='custom-text-info-dark-theme'>random</span> predictions.",
     "performance-trust-issue": "The model should <span class='custom-text-info-dark-theme'>not be trusted</span>. Almost always it is either predicting smoke instances <span class='custom-text-info-dark-theme'>randomly</span>, or the <span class='custom-text-info-dark-theme'>opposite</span> of what it should be.",
     "performance-mcc-low": "We should be <span class='custom-text-info-dark-theme'>skeptical</span> about the model's performance, as the MCC is lower than the F1-Score.",
     "performance-unexpected": "The model generated <span class='custom-text-info-dark-theme'>unexpected</span> results, as the F1-Score should not be lower than the MCC.",

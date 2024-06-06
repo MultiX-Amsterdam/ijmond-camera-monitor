@@ -30,7 +30,7 @@ export const gameData_en = [
         ],
         "explanation": `
             <h3 class='precrec-explain1'><span class='green-text'>Correct!</span> At our smoke detection scenario, finding the balance between <span class="custom-text-info-dark-theme">Precision</span> and <span class="custom-text-info-dark-theme">Recall</span> is extremely important</h3>
-            <h4 class='precrec-explain2'><span class="custom-text-info-dark-theme">Precision</span> for our model concerns the number of correct guesses of smoke in videos out of all the guesses of smoke: correct or not The <span class='red-text'>red border</span> signifies the correct and the <span class='purple-text'>purple</span> the wrong prediction</h4>
+            <h4 class='precrec-explain2'><span class="custom-text-info-dark-theme">Precision</span> for our model concerns the number of correct guesses of smoke in videos out of all the guesses of smoke: correct or not The <span class='red-text'>border</span> signifies the correct and <span class='purple-text'>this color</span> the wrong prediction</h4>
             <div class="stagger-images-prec">
                 <img class='prec-explain-img' src="../img/smoke/smoke1.png">
                 <img class='prec-explain-img' src="../img/smoke/smoke2.png">
@@ -46,7 +46,7 @@ export const gameData_en = [
                 </div>
             </div>
 
-            <h4 class='precrec-explain3'><span class="custom-text-info-dark-theme">Recall</span> on the other hand concerns the number of smoke detections existing that we actually found. The <span class='red-text'>red border</span> signifies the ones that the model identified</h4>
+            <h4 class='precrec-explain3'><span class="custom-text-info-dark-theme">Recall</span> on the other hand concerns the number of smoke detections existing that we actually found. The <span class='red-text'>border</span> signifies the ones that the model identified</h4>
             <div class="stagger-images-rec">
                 <img class='rec-explain-img' src="../img/smoke/smoke2.png">
                 <img class='rec-explain-img' src="../img/smoke/smoke3.png">

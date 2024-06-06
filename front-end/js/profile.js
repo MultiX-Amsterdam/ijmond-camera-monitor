@@ -90,21 +90,10 @@
                       color: 'white'
                     }
                   }
-                },
-
-                onClick: (e) => {
-                    const points = chart.getElementsAtEventForMode(e, 'nearest', { intersect: true }, true);
-    
-                    if (points.length) {
-                        const firstPoint = points[0];
-                        const label = chart.data.labels[firstPoint.index];
-                        const value = chart.data.datasets[firstPoint.datasetIndex].data[firstPoint.index];
-                        console.log(`Clicked on label: ${label} with value: ${value}`);
-                    }
                 }
             }
         });
-    }    
+    }
 
     /**
      * Populate profile table with name, user score, raw score, consecutive days active, and with the achievements they earned.

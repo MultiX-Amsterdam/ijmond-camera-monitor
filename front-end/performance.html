@@ -332,8 +332,12 @@
                 <h5 data-i18n="diagram-explain4-2" class="diagram-explain4-2">For the horizontal axis we use <span class="custom-text-info-dark-theme">Time</span>, and for the vertical axis we use the <span class="custom-text-info-dark-theme">values</span> of MCC and F1-Score</h5>
                 <h5 data-i18n="diagram-explain4-3" class="diagram-explain4-3">Check out the example yourself by hovering on the points to see the metrics' values! You can also see the dates we chose at <span class="custom-text-info-dark-theme">17/05/2024</span> highlighted against the others. This is the <span class="custom-text-info-dark-theme">end of the tutorial</span>. After experimenting with the graph, you can scroll to the date picker, to see <span class="custom-text-info-dark-theme">real results</span></h5>
             </div>
-            <div class="diagram-container">
-                <canvas id="scoreChart"></canvas>
+            <div class="container">
+                <div class="card text-black mb-3 diagram-container">
+                    <div class="card-body">
+                        <canvas id="scoreChart" width="400" height="200"></canvas>
+                    </div>
+                </div>
             </div>
         </section>
 
@@ -348,8 +352,12 @@
                 <i id="backarrow" class="fa fa-arrow-left" aria-hidden="true"></i>
             </div>
             <input id="date-picker" type="text" placeholder="Select Date..." class="flatpickr flatpickr-input"/>
-            <div class="diagram-container">
-                <canvas id="visualize-chart"></canvas>
+            <div class="container">
+                <div class="card text-black diagram-container">
+                    <div class="card-body">
+                        <canvas id="visualize-chart"></canvas>
+                    </div>
+                </div>
             </div>
             <div class="flowchart-container">
                 <div class="predicted-smoke-container">

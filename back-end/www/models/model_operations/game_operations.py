@@ -12,10 +12,10 @@ def save_game_question(user_id, question_num, mistakes_num):
     db.session.add(gameMistake)
     db.session.commit()
 
-def save_game_action(user_id, action_type):
+def save_game_action(user_id, action_type, game_num):
     """Save the user's game action."""
     if (action_type == -1):
-        game = Games(user_id=user_id, action_type=action_type)
+        game = Games(user_id=user_id, action_type=action_type, game_num=game_num)
         db.session.add(game)
         db.session.commit()
     else:

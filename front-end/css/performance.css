@@ -919,28 +919,34 @@ body, html {
 }
 
 #scoreChart {
-  width: 100% !important;
+  display: block;
+  width: 100% !important; /* important to override inline styles if necessary */
+  height: auto !important; /* maintain aspect ratio */
+}
+
+.container {
+  width: 75%;
+  height: 100%;
+  /* other styles */
 }
 
 .diagram-container {
   z-index: 99;
-  width: 80vw;
-  height: 500px;
 }
 
 @media (max-width: 1000px) {
-  .diagram-container  {
-    z-index: 99;
-    width: 90vw;
-    height: 500px;
+  #scoreChart {
+    display: block;
+    width: 100% !important; /* important to override inline styles if necessary */
+    height: auto !important; /* maintain aspect ratio */
   }
 }
 
 @media (max-width: 600px) {
-  .diagram-container  {
-    z-index: 99;
-    width: 90vw;
-    height: 350px;
+  #scoreChart {
+    display: block;
+    width: 100% !important; /* important to override inline styles if necessary */
+    height: 200px !important; /* maintain aspect ratio */
   }
 }
 
@@ -967,8 +973,16 @@ body, html {
   width: 100%;
 }
 
-#section11 > .diagram-container {
+#section11 > .container {
+  height: fit-content;
+  opacity: 0;
   grid-area: 2 / 1;
+}
+
+@media (max-width: 1200px) {
+  .container {
+    width: 100%;
+  }
 }
 
 .flowchart-container {
@@ -1076,8 +1090,9 @@ body, html {
 }
 
 #visualize-chart {
-  width: 100% !important;
-  opacity: 0;
+  display: block;
+  width: 100% !important; /* important to override inline styles if necessary */
+  height: auto !important; /* maintain aspect ratio */
 }
 
 #backarrow {

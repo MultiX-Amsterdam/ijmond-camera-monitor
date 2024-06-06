@@ -510,6 +510,8 @@ class Games(db.Model):
         Unique identifier (primary key).
     user_id : int
         The user ID in the User table (foreign key).
+    game_num: int
+        The game number concerning the specific game played.
     action_type : int
         The action type for the tutorial.
         -1 => did not finish the game.
@@ -521,15 +523,16 @@ class Games(db.Model):
         Otherwise it means they ended the game   
     """
     id = db.Column(db.Integer, primary_key=True)
+    game_num = db.Column(db.Integer, nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     action_type = db.Column(db.Integer, nullable=False)
     time = db.Column(db.Integer, default=get_current_time())
 
     def __repr__(self):
         return (
-            "<Games id=%r user_id=%r action_type=%r time=%r>"
+            "<Games id=%r game_num=%r user_id=%r action_type=%r time=%r>"
         ) % (
-            self.id, self.user_id, self.action_type, self.time
+            self.id, self.game_num, self.user_id, self.action_type, self.time
         )
     
 class GameMistakes(db.Model):
