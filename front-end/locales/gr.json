@@ -178,7 +178,7 @@
     "accuracy-1": "Η <span class='custom-text-info-dark-theme'>Accuracy</span> του γιατρού σε αυτό το σενάριο υπολογίζεται ως <span class='green-text'>τις σωστές διαγνώσεις</span> / <span class='custom-text-info-dark-theme'>όλες τις διαγνώσεις</span>",
     "accuracy-2": "Άρα, η Accuracy του γιατρού είναι <span class='green-text'>7</span> / <span class='custom-text-info-dark-theme'>10</span> = 0.7 ή 70 %",
 
-    "accuracy-bad-1": "Μπορεί να νομίζουμε ότι αυτός ο γιατρός δεν είναι τόσο κακός, αλλά η <span class='custom-text-info-dark-theme'>Precision</span> μπορεί να μας ξεγελάσει",
+    "accuracy-bad-1": "Μπορεί να νομίζουμε ότι αυτός ο γιατρός δεν είναι τόσο κακός, αλλά η <span class='custom-text-info-dark-theme'>Accuracy</span> μπορεί να μας ξεγελάσει",
     "accuracy-bad-2": "Ας δούμε γιατί:",
     "accuracy-bad-3": "Αυτή τη φορά έχουμε μόνο <span class='red-text'>2 άρρωστα άτομα</span>",
     "accuracy-bad-4": "Ο γιατρός, γνωστός για τις ανορθόδοξες μεθόδους του, λέει πως όλα τα άτομα είναι <span class='custom-text-info-dark-theme'>υγιή</span>",

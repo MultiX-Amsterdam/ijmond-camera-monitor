@@ -110,13 +110,21 @@ def get_past_user_scores(client_id):
 
     # Convert the dictionary to a sorted list of daily scores
     sorted_daily_scores = sorted(scores_by_date.values(), key=lambda x: x['date'])
-    app.logger.info("SORTED: %r", sorted_daily_scores)
 
-    index = 0
+    cumulative_score = 0
+    cumulative_raw_score = 0
+
     for daily_score in sorted_daily_scores:
-        if (index != 0):
-            daily_score['score'] = daily_score['score'] - sorted_daily_scores[index-1]['score']
-            daily_score['raw_score'] =  daily_score['raw_score'] - sorted_daily_scores[index-1]['raw_score']
-        index += 1
+        # Calculate the new score and raw score by subtracting the cumulative totals
+        new_score = daily_score['score'] - cumulative_score
+        new_raw_score = daily_score['raw_score'] - cumulative_raw_score
+
+        # Update the day's score and raw score to the newly calculated values
+        daily_score['score'] = new_score
+        daily_score['raw_score'] = new_raw_score
+
+        # Update the cumulative totals
+        cumulative_score += new_score
+        cumulative_raw_score += new_raw_score
 
     return sorted_daily_scores
