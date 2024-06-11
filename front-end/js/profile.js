@@ -28,12 +28,58 @@
     }
 
     /**
+     * Fills the missing dates and populates them with zeros
+     * @param {list} labels - Contains which are the last 7 days
+     * @param {list} scoreData - Contains the scores of the user
+     * @param {list} rawScoreData - Contains the raw scores of the user
+    */
+    function getCompleteDataset(labels, scores, rawScores) {
+        const scoreMap = new Map();
+        const rawScoreMap = new Map();
+        labels.forEach((date, index) => {
+            scoreMap.set(date.getTime(), scores[index]);
+            rawScoreMap.set(date.getTime(), rawScores[index]);
+        });
+    
+        // Find the range of dates
+        let startDate = new Date(Math.min(...labels.map(date => date.getTime())));
+        let endDate = new Date(Math.max(...labels.map(date => date.getTime())));
+    
+        let completeLabels = [];
+        let completeScores = [];
+        let completeRawScores = [];
+    
+        // Populate data for each day in the range
+        for (let dt = new Date(startDate); dt <= endDate; dt.setDate(dt.getDate() + 1)) {
+            let time = dt.getTime();
+            completeLabels.push(new Date(dt)); // Push the date object directly
+            if (scoreMap.has(time)) {
+                completeScores.push(scoreMap.get(time));
+                completeRawScores.push(rawScoreMap.get(time));
+            } else {
+                completeScores.push(0); // Fill with zero if no data exists
+                completeRawScores.push(0);
+            }
+        }
+    
+        return { completeLabels, completeScores, completeRawScores };
+    }
+
+    /**
      * Creates the chart with X axis being the last 7 entries (days) in the DB records of the user, and Y being scores (raw and normal).
      * @param {list} labels - Contains which are the last 7 days
      * @param {list} scoreData - Contains the scores of the user
      * @param {list} rawScoreData - Contains the raw scores of the user
     */
     function createChart(labels, scoreData, rawScoreData) {
+        console.log(labels)
+        console.log(scoreData)
+
+        let { completeLabels, completeScores, completeRawScores } = getCompleteDataset(labels, scoreData, rawScoreData);
+
+        console.log(completeLabels)
+        console.log(completeScores)
+
         const ctx = document.getElementById('scoreChart').getContext('2d');
         const chart = new Chart(ctx, {
             // The type of chart we want to create
@@ -41,18 +87,18 @@
     
             // Settings
             data: {
-                labels: labels,
+                labels: completeLabels,
                 datasets: [{
                     label: window.i18n.t('score'),
                     backgroundColor: 'rgb(255, 99, 132)',
                     borderColor: 'rgb(255, 99, 132)',
-                    data: scoreData,
+                    data: completeScores,
                     fill: false,
                 }, {
                     label: window.i18n.t('raw-score'),
                     backgroundColor: 'rgb(54, 162, 235)',
                     borderColor: 'rgb(54, 162, 235)',
-                    data: rawScoreData,
+                    data: completeRawScores,
                     fill: false,
                 }]
             },
