@@ -1,0 +1,408 @@
+<!doctype html>
+<html>
+
+<head>
+    <title name="start">Performance</title>
+    <meta charset="utf-8" name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" media="screen" rel="stylesheet" type="text/css" />
+    <link href="css/frame.css" media="screen" rel="stylesheet" type="text/css" />
+    <link href="css/controls.css" media="screen" rel="stylesheet" type="text/css" />
+    <link href="css/widgets.css" media="screen" rel="stylesheet" type="text/css" />
+    <link href="css/custom.css" media="screen" rel="stylesheet" type="text/css" />
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans+Condensed:300,700' rel='stylesheet' type='text/css'>
+    <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700" rel="stylesheet">
+    <!-- Start for Google Sign-In -->
+    <script src="js/scripts/gsi-client.js"></script>
+    <script src="js/scripts/jwt-decode.js"></script>
+    <!-- End for Google Sign-In -->
+    <script src="js/scripts/jquery.min.js"></script>
+    <script src="js/scripts/jquery-ui.min.js"></script>
+    <script src="js/widgets.js"></script>
+    <script src="js/GoogleAnalyticsTracker.js"></script>
+    <script src="js/GoogleAccountDialog.js"></script>
+
+    <!-- i18n -->
+    <script type="module" src="js/i18n-setup.js"></script>
+    <script src="js/scripts/i18next.js"></script>
+    <script src="js/scripts/i18nextHttpBackend.min.js"></script>
+    <!-- i18n End -->
+
+    <!-- Chart -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/luxon@^2.0.0"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-luxon@^1.0.0"></script>
+    <!-- Chart End -->
+
+    <!-- Flatpickr -->
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <script src="https://npmcdn.com/flatpickr/dist/l10n/gr.js"></script>
+    <link rel="stylesheet" type="text/css" href="https://npmcdn.com/flatpickr/dist/themes/airbnb.css">
+    <!-- Flatpickr End -->
+
+    <script type="module" src="js/menu.js"></script>
+    <script type="module" src="js/game_data_1_en.js"></script>
+    <script type="module" src="js/game_data_1_gr.js"></script>
+    <script type="module" src="js/performance.js"></script>
+
+    <style>
+        .menu-performance {
+          color: rgb(255, 255, 255) !important;
+          opacity: 1 !important;
+          font-weight: 700 !important;
+        }
+    </style>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.bundle.min.js"></script>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/performance.css" media="screen" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+</head>
+<body>
+    <div class="menu-container"></div>
+
+    <div id="loading-overlay" class="loading-overlay">
+        <div class="loading-text"></div>
+    </div>
+
+    <div id="app-container">
+
+        <section name="section0" id="section0" class="full-page">
+            <h3 data-i18n="begin-message">Please scroll down if you want to follow our tutorial. Click the button to skip to the end of the page if not.</h3>
+            <a href="performance.html#section11" type="button" class="btn btn-outline-primary" data-i18n="skip-tutorial">Skip Tutorial</a>
+
+            <div class="fa fa-angle-double-down scroll-down" id="scroll-icon"><span data-i18n="scroll-down">Scroll down</span></div>
+        </section>
+
+        <section id="section1" class="full-page">
+            <div>
+                <h1 data-i18n="performance-intro1">The performance of the model changes after re-training and modifications</h1>
+                <p data-i18n="performance-intro2">It is thus very important for us to know exactly how our model is performing through <span class="custom-text-info-dark-theme" id="time-text">time</span>
+                   to understand what went wrong and when</p>
+            </div>
+            <div id="timeline-container">
+                <span data-i18n="time" id="time" style="opacity: 0;">Time</span>
+                <div id="timeline"></div>
+                <div data-i18n="january" class="timeline-marker" style="position: absolute; left: 10%;">Jan</div>
+                <div data-i18n="february" class="timeline-marker" style="position: absolute; left: 30%;">Feb</div>
+                <div data-i18n="march" class="timeline-marker" style="position: absolute; left: 50%;">Mar</div>
+                <div data-i18n="april" class="timeline-marker" style="position: absolute; left: 70%;">Apr</div>
+                <div data-i18n="may" class="timeline-marker" style="position: absolute; left: 90%;">May</div>
+            </div>
+
+        </section>
+
+        <section id="section2" class="full-page">
+            <div>
+                <h1 data-i18n="metrics-intro1">We store information regarding the AI model that is trained with <span class="custom-text-info-dark-theme">your contribution</span></h1>
+                <h3 data-i18n="metrics-intro2">But what are we using to measure that performance?</h3>
+            </div>
+        </section>
+        
+        <section id="section3" class="full-page">
+            <div>
+                <h1 data-i18n="metrics-intro3">The answer to the question is <span class="custom-text-info-dark-theme">metrics</span></h1>
+                <p data-i18n="metrics-intro4"><span class="custom-text-info-dark-theme">Metrics</span> are measurements used to count and compare different things in various fields</p>
+            </div>
+
+            <p data-i18n="metrics-intro5">You may have even seen and used metrics in your daily life</p>
+
+            <div class = "metrics-example"></div>
+            <p class = "change-text" data-i18n="metrics-intro6">from your job, where we use revenues as a metric to measure success</p>
+            <p class = "change-text2" data-i18n="metrics-intro7">to employee satisfaction, where we have questionnaires and pie charts to quantify and measure it</p>
+        </section>
+
+        <section id="section4" class="full-page">
+            <div class="metrics-explain-intro">
+                <h2 data-i18n="scenario-intro1">There are a lot of metrics that we are using for machine learning models.</h2>
+                <p data-i18n="scenario-intro2">To explain the most important ones, and the ones that we picked, we will make a scenario.</p>
+            </div>
+
+            <div class="doc-explain">
+                <h2 data-i18n="scenario-intro3">We have <span class="custom-text-info-dark-theme">10 people</span> below that visited a doctor. The doctor will have to examine them and give a diagnosis</h2>
+                <p data-i18n="scenario-intro4" class="doc-explain2">In a similar fashion, our model will examine the videos and depending on how well it is trained it will predict which of those videos contain smoke; so the same idea and metrics stand</p>
+            </div>
+
+            <div id="people"></div>
+
+            <div class="steps">
+                <h3 data-i18n="scenario-intro5" class="step1">The people with <span class="red-text">this color </span>are the ones that are actually sick</h3>
+                <h3 data-i18n="scenario-intro6" class="step2">We can see from the <span class="red-text">sick patients</span> the doctor has diagnosed <span class="green-text">three</span> succesfully and misdiagnosed <span class="purple-text">one</span> as healthy. From the <span class="custom-text-info-dark-theme">healthy patients</span> they diagnosed <span class="green-text">four</span> healthy patients succesfully and misdiagnosed <span class="purple-text">two</span> as unhealthy</h3>
+                <h3 data-i18n="accuracy-1" class="step3">The <span class="custom-text-info-dark-theme">accuracy</span> of the doctor in this scenario is calculated as <span class="green-text">correct diagnoses</span> / <span class="custom-text-info-dark-theme">all diagnoses</span></h3>
+                <h3 data-i18n="accuracy-2" class="step4">So, the accuracy is <span class="green-text">7</span> / <span class="custom-text-info-dark-theme">10</span> = 0.7 or 70 percent</h3>
+            </div>
+        </section>
+
+        <section id="section5" class="full-page">
+            <div class="accuracy-not-working">
+                <h2 data-i18n="accuracy-bad-1">While we may think that this doctor is not that bad, <span class="custom-text-info-dark-theme">accuracy</span> can be a misleading metric</h2>
+                <h4 data-i18n="accuracy-bad-2">Here's why:</h4>
+            </div>
+
+            <div id="people2"></div>
+            <div class="steps-5">
+                <h3 data-i18n="accuracy-bad-3" class="step1-5">This time, we have only <span class="red-text">2 sick patients</span></h3>
+                <h4 data-i18n="accuracy-bad-4" class="step2-5">Our doctor, who has a reputation for their unconventional methods, diagnoses everyone as <span class="custom-text-info-dark-theme">healthy</span></h4>
+                <h4 data-i18n="accuracy-bad-5" class="step3-5">This doctor will have an accuracy of <span class="custom-text-info-dark-theme">80%</span>, even higher than the other doctor</h4>
+                <h4 data-i18n="accuracy-bad-6" class="step4-5">However, we know that this doctor is no better than a random person, as they completely missed diagnosing any sick people</h4>
+            </div>
+        </section>
+
+        <section id="section6" class="full-page">
+            <div class="precision-recall-intro">
+                <h2 data-i18n="precisionrecall-1">We will now move on to a duet of metrics: a rather <span class="red-text">incompatible</span> one</h2>
+                <h4 data-i18n="precisionrecall-2">Let's display them and show what we mean:</h4>
+            </div>
+
+            <div id="people3"></div>
+
+            <div class="explanation-containers">
+                <div class="card card1">
+                    <div class="card-body card-body1">
+                        <h4 data-i18n="precisionrecall-3">Of all the diagnosed sick patients, how many are actually sick? This is the <span class="custom-text-info-dark-theme">precision</span></h4>
+                        <h4 data-i18n="precisionrecall-4">Of all the diagnosed sick patients, how many are actually found? This is the <span class="custom-text-info-dark-theme">recall</span></h4>
+                        <h4 data-i18n="precisionrecall-5">These two have a maximum of 1. However, like <span class="red-text">tug-of-war</span>, they can never both be 1. Check it out using the slider yourself!</h4>
+                    </div>
+                </div>
+
+                <div class="card card2">
+                    <div class="card-body card-body2">
+                        <div class="card-info1">
+                            <h4 id="tp"><span class="green-text">Correctly Sick:</span> X</h4>
+                            <h4 id="tn"><span class="green-text">Correctly Healthy:</span> X</h4>
+                            <h4 id="fp"><span class="red-text">Falsely Sick:</span> X</h4>
+                            <h4 id="fn"><span class="red-text">Falsely Healthy:</span> X</h4>
+                            <h4 id="precision"><span class="custom-text-info-dark-theme">Precision:</span> X</h4>
+                            <h4 id="recall"><span class="custom-text-info-dark-theme">Recall:</span> X</h4>
+                        </div>
+
+                        <div class="card-info2">
+                            <h4 data-i18n="precisionrecall-6">If a doctor is <span class="red-text">too strict</span> or careful in their diagnoses, many sick patients might not be diagnosed</h4>
+                            <h4 data-i18n="precisionrecall-7">Vice versa, a <span class="red-text">less strict</span> doctor will diagnose more people, but might misdiagnose some healthy people as well</h4>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+
+        <section id="section7" class="full-page">
+            <h3 class="f1-intro1" data-i18n="f1-intro1">So if we want to achieve both high <span class="custom-text-info-dark-theme">precision</span> and high <span class="custom-text-info-dark-theme">recall</span>, how can we <span class="balance-scales">balance the scales?</span></h3>
+
+            <div class="scales">
+                <img class="scale-base" src="img/scale-base.png">
+                <img class="scale-horizontal" src="img/scale-horizontal.png">
+                <div class="card card3">
+                    <div class="card-body card-body3">
+                        <h4 data-i18n="f1-intro2">As we saw, increasing <span class="custom-text-info-dark-theme">precision</span> reduces <span class="custom-text-info-dark-theme">recall</span></h4>
+                    </div>
+                </div>
+                
+                <div class="container-precision">
+                    <p class="purple-text">Precision: <span id="precision-value" >0.50</span></p>
+                    <input type="range" id="precision-slider" class="slider-precision" min="0" max="1" step="0.01" value="0.5">
+                </div>
+
+                <div class="f1-score-display">
+                    <p>F1 Score: <span id="f1-score">0.50</span></p>
+                </div>
+
+                <div class="container-recall">
+                    <p class="purple-text">Recall: <span id="recall-value" >0.50</span></p>
+                    <input type="range" id="recall-slider" class="slider-recall" min="0" max="1" step="0.01" value="0.5">
+                </div>
+
+                <div class="card card4">
+                    <div class="card-body card-body4">
+                        <h4 data-i18n="f1-intro3">On the other hand, emphasis on <span class="custom-text-info-dark-theme">recall</span> reduces <span class="custom-text-info-dark-theme">precision</span></h4>
+                    </div>
+                </div>
+                <div class="card card5">
+                    <div class="card-body card-body5">
+                        <h4 data-i18n="f1-intro4">The answer is the <span class="custom-text-info-dark-theme">F1-Score</span></h4>
+                    </div>
+                </div>
+                <div class="card card6">
+                    <div class="card-body card-body6">
+                        <h5 data-i18n="f1-intro5-1">This is the first metric we are using. It takes both <span class="custom-text-info-dark-theme">Precision</span> and <span class="custom-text-info-dark-theme">Recall</span> into consideration, and helps us understand how well the model did in doing its task</h4>
+                        <h6 data-i18n="f1-intro5-2">It does that by making sure there is a balance between those two; if one of them is <span class="custom-text-info-dark-theme">low</span>, the F1 will be lower as well</h3>
+                        <h6 data-i18n="f1-intro5-3">If both of them are <span class="custom-text-info-dark-theme">high</span>, then the value will be high</h3>
+                        <h6 data-i18n="f1-intro5-4">You can observe that by watching the value at the F1 chalice while changing the Precision and Recall values!</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="section8" class="full-page">
+            <h3 class="mcc-intro-1" data-i18n="mcc-intro-1"><span class="custom-text-info-dark-theme">F1-Score</span> is one of the most used metrics to measure the quality in machine learning. However, it has one small issue</h3>
+
+            <div id="people4">
+                <div class="border-1"></div>
+                <div class="border-2"></div>
+            </div>
+
+            <div class="card card7">
+                <div class="card-body card-body7">
+                    <h4 class="mcc-intro-2" data-i18n="mcc-intro-2">F1-Score does <span class="custom-text-info-dark-theme">not</span> consider the opposite case from what we are guessing, and it is biased in particular cases;</h4>
+                    <h4 class="mcc-intro-3" data-i18n="mcc-intro-3">Consider the doctor-patient scenario, but this time we do care about the mistakes made by the doctor, and understanding who is truly healthy as well </h4>
+                    <h4 class="mcc-intro-4" data-i18n="mcc-intro-4">This is extremely important in cases like our toxic emission model. It is very crucial to understand how the model is doing in finding the videos that <span class="red-text">do not</span> have smoke too, as errors could be <span class="red-text">very</span> costly.</h4>
+                </div>
+            </div>
+
+            <div class="card card8">
+                <div class="card-body card-body8">
+                    <h4 class="mcc-intro-5" data-i18n="mcc-intro-5">To solve that, we are considering <span class="custom-text-info-dark-theme">MCC</span>: our second and final metric</h4>
+                    <h4 class="mcc-intro-6" data-i18n="mcc-intro-6">MCC ranges from -1 to 1, with -1 essentially meaning that we are getting the <span class="custom-text-info-dark-theme">opposite of what we should</span>, 0 meaning we have somewhat <span class="custom-text-info-dark-theme">random results</span>, and 1 meaning we get <span class="custom-text-info-dark-theme">perfect matches</span></h4>
+                </div>
+            </div>
+
+            <div class="card card9">
+                <div class="card-body card-body9">
+                    <div class="card-info-mcc-1">
+                        <h4 data-i18n="tp-mcc"><span class="green-text">Correctly Sick: </span>6</h4>
+                        <h4 data-i18n="tn-mcc"><span class="green-text">Correctly Healthy: </span>0</h4>
+                        <h4 data-i18n="fp-mcc"><span class="purple-text">Falsely Sick: </span>2</h4>
+                        <h4 data-i18n="fn-mcc"><span class="purple-text">Falsely Healthy: </span>2</h4>
+                        <h4 data-i18n="precision-mcc"><span class="custom-text-info-dark-theme">Precision: </span>0.75</h4>
+                        <h4 data-i18n="recall-mcc"><span class="custom-text-info-dark-theme">Recall: </span>0.75</h4>
+                        <h4 data-i18n="f1-mcc"><span class="custom-text-info-dark-theme">F1-Score: </span>0.75</h4>
+                        <h4 data-i18n="mcc"><span class="custom-text-info-dark-theme">MCC: </span>-0.25</h4>
+                    </div>
+
+                    <div class="card-info-mcc-2">
+                        <h4 class="mcc-intro-7" data-i18n="mcc-intro-7">To demonstrate this, let's present the following scenario: an epidemic left us with 10 patients, from which <span class="red-text">8 are actually sick</span>, and <span class="green-text">two are healthy</span></h4>
+                        <h5 class="mcc-intro-8" data-i18n="mcc-intro-8"><span class="mcc-intro-8-1">This time, the doctor diagnoses <span class="green-text">6 out of 8 sick patients succesfully</span></span>, <span class="mcc-intro-8-2">but <span class="purple-text">misdiagnoses two healthy patients as sick</span></span> <span class="mcc-intro-8-3">and <span class="purple-text">two sick patients as healthy</span>:</span><span class="mcc-intro-8-4">The border shows which the doctor has diagnosed as <span class="red-text">sick</span>. <span class="purple-text">People with this color</span> mean that the doctor is wrong and people with <span class="green-text">this color</span> mean they are correct</span></h4>
+                        <h5 class="mcc-intro-9" data-i18n="mcc-intro-9">You can see, our scores are really good for F1, accuracy, precision, and recall, which might have led us to think this doctor is doing a good job</h5>
+                        <h5 class="mcc-intro-10" data-i18n="mcc-intro-10">However, with an MCC of -0.25, we can understand that this doctor cannot be trusted, which is not what the other metrics suggested, as MCC is also considering how the doctor is doing with healthy patients</h5>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="section9-1" class="full-page">
+            <h3 class="smoke-recap-1" data-i18n="smoke-recap-1">Congrats! We now succesfully walked through all the metrics.</h3>
+            <h4 class="smoke-recap-2" data-i18n="smoke-recap-2">Let's do a recap and <span class="custom-text-info-dark-theme">connect</span> them to our use case, the <span class="custom-text-info-dark-theme">toxic smoke emissions model</span>, via a quiz game!</h4>
+        </section>
+
+        <section id="section9-2" class="full-page">
+            <div id="quiz-grid">
+                <div id="question-container">
+                    <!-- Question and potential images, charts etc go here -->
+                </div>
+                <div id="answer-options" class="d-flex flex-column justify-content-around align-items-center">
+                    <!-- Answer buttons will be dynamically inserted here -->
+                </div>
+                <button id="next-question" class="btn btn-outline-primary btn-lg mt-3">
+                    <span data-i18n="next_quiz">Next <i class="fas fa-arrow-right"></i></span>
+                </button>
+                <h4 data-i18n="smoke-recap-3" class="game-1-finished">Congrats! You finished the quiz. Move on by scrolling to the rest of the tutorial.</h4>
+                <div id="explanation-container">
+                    <!-- Explanation goes here -->
+                </div>
+            </div>
+        </section>
+
+        <section id="section10-1" class="full-page">
+            <div class="diagram-explain-packet">
+                <h4 data-i18n="diagram-explain1" class="diagram-explain1">With the metrics done, we will now move to the last part of this story; <span class="custom-text-info-dark-theme">how do we keep track of the metrics</span></h4>
+                <h5 data-i18n="diagram-explain2" class="diagram-explain2">We test our model on a set of specific videos we handpicked, from which we know which ones have smoke or not</h5>
+            </div>
+
+            <div class="circle-assemble">
+                <h4 data-i18n="explanation1" class="explanation1">Users <span class="custom-text-info-dark-theme">Label</span> Smoke</h4>
+                <h4 data-i18n="explanation2" class="explanation2">Model Gets <span class="custom-text-info-dark-theme">Retrained</span></h4>
+                <h4 data-i18n="explanation3" class="explanation3"><span class="custom-text-info-dark-theme">Testing</span> Against our Benchmark Videos</h4>
+                <h4 data-i18n="explanation4" class="explanation4"><span class="custom-text-info-dark-theme">Visualizing</span> and Evaluating Metrics</h4>
+
+                <img class="circle1" src="img/circle/00.png">
+                <img class="circle2" src="img/circle/10.png">
+                <img class="circle3" src="img/circle/11.png">
+                <img class="circle4" src="img/circle/01.png">
+            </div>
+
+            <div class="diagram-explain-packet1">
+                <h4 data-i18n="diagram-explain3-1" class="diagram-explain3-1">In this way, we can keep track of the <span class="custom-text-info-dark-theme">F1-Score</span> and <span class="custom-text-info-dark-theme">MCC</span> every time the model gets retrained using your labeling contribution</h4>
+                <h5 data-i18n="diagram-explain3-2" class="diagram-explain3-2">In other words, we understand if the newly trained model is <span class="custom-text-info-dark-theme">better</span> than the one before, or not</h5>
+            </div>
+        </section>
+
+        <section id="section10-2" class="full-page">
+            <div class="diagram-explain-packet">
+                <h4 data-i18n="diagram-explain4-1" class="diagram-explain4-1">To visualize this progress, we use <span class="custom-text-info-dark-theme">graphs</span>, depicting the change of our two metrics over time</h4>
+                <h5 data-i18n="diagram-explain4-2" class="diagram-explain4-2">For the horizontal axis we use <span class="custom-text-info-dark-theme">Time</span>, and for the vertical axis we use the <span class="custom-text-info-dark-theme">values</span> of MCC and F1-Score</h5>
+                <h5 data-i18n="diagram-explain4-3" class="diagram-explain4-3">Check out the example yourself by hovering on the points to see the metrics' values! You can also see the dates we chose at <span class="custom-text-info-dark-theme">17/05/2024</span> highlighted against the others. This is the <span class="custom-text-info-dark-theme">end of the tutorial</span>. After experimenting with the graph, you can scroll to the date picker, to see <span class="custom-text-info-dark-theme">real results</span></h5>
+            </div>
+            <div class="container">
+                <div class="card text-black mb-3 diagram-container">
+                    <div class="card-body">
+                        <canvas id="scoreChart" width="400" height="200"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section name="section11" id="section11" class="full-page">
+            <div id="backchange-bar">
+                <div id="switchview" class="custom-control custom-switch">
+                    <input type="checkbox" class="custom-control-input" id="switch-visualizer">
+                    <label data-i18n="switch-view" class="custom-control-label" for="switch-visualizer">
+                      Switch View
+                    </label>
+                </div>
+                <i id="backarrow" class="fa fa-arrow-left" aria-hidden="true"></i>
+            </div>
+            <input id="date-picker" type="text" placeholder="Select Date..." class="flatpickr flatpickr-input"/>
+            <div class="container">
+                <div class="card text-black diagram-container">
+                    <div class="card-body">
+                        <canvas id="visualize-chart"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="flowchart-container">
+                <div class="predicted-smoke-container">
+                    <img class="predicted-smoke" src="img/flowchart/box.png">
+                    <div data-i18n="predicted-smoke" class="centered">Predicted Smoke</div>
+                </div>
+                <div class="tparrow-container">
+                    <img class="tparrow" src="img/flowchart/tparrow.png">
+                    <div id="tptext" class="centered">TP Arrow</div>
+                </div>
+                <div class="fpfnarrow-container">
+                    <img class="fpfnarrow" src="img/flowchart/fpfnarrow.png">
+                    <div id="fptext" class="centered">FP Arrow</div>
+                    <div id="fntext" class="centered">FN Arrow</div>
+                </div>
+                <div class="correct-smoke-container">
+                    <img class="correct-smoke" src="img/flowchart/box.png">
+                    <div data-i18n="smoke" class="centered">Smoke</div>
+                </div>
+                <div class="noncorrect-smoke-container">
+                    <img class="noncorrect-smoke" src="img/flowchart/box.png">
+                    <div data-i18n="no-smoke" class="centered">No Smoke</div>
+                </div>
+                <div class="predicted-nosmoke-container">
+                    <img class="predicted-nosmoke" src="img/flowchart/box.png">
+                    <div data-i18n="predicted-no-smoke" class="centered">Predicted No Smoke</div>
+                </div>
+                <div class="tnarrow-container">
+                    <img class="tnarrow" src="img/flowchart/tnarrow.png">
+                    <div id="tntext" class="centered">TN Arrow</div>
+                </div>
+            </div>
+            
+            <h4 id="visualize-explanation"></h4>
+            <div id="confusionmatrix-explanation">
+                <h5 id="performance-eval"></h5>
+                <h5 id="time-eval"></h5>
+            </div>
+        </section>
+    </div>
+
+    <script src="js/Util.js"></script>
+    <script src="js/scripts/gsap.min.js"></script>
+    <script src="js/scripts/ScrollTrigger.min.js"></script>
+    <script src="js/scripts/Flip.min.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,78 @@
+<!doctype html>
+<html>
+
+<head>
+    <title>Profile</title>
+    <meta charset="utf-8" name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" media="screen" rel="stylesheet" type="text/css" />
+    <link href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css" media="screen" rel="stylesheet" type="text/css" />
+    <link href="css/frame.css" media="screen" rel="stylesheet" type="text/css" />
+    <link href="css/controls.css" media="screen" rel="stylesheet" type="text/css" />
+    <link href="css/widgets.css" media="screen" rel="stylesheet" type="text/css" />
+    <link href="css/custom.css" media="screen" rel="stylesheet" type="text/css" />
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans+Condensed:300,700' rel='stylesheet' type='text/css'>
+    <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700" rel="stylesheet">
+    <!-- Start for Google Sign-In -->
+    <script src="https://accounts.google.com/gsi/client"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jwt-decode@3/build/jwt-decode.min.js"></script>
+    <!-- End for Google Sign-In -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+    <script src="js/widgets.js"></script>
+    <script src="https://unpkg.com/i18next@23.11.2/dist/umd/i18next.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/i18next-http-backend/2.5.1/i18nextHttpBackend.min.js" integrity="sha512-pPM6tiFuZQha3Fb8COApKU0hIPIs1Nr+Cis8/KbHLN4jTNrluDiMc1Y4lRCk3yEdh/ZxH3E2zGXBiXmbgARP+w==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script type="module" src="js/i18n-setup.js"></script>
+    <script src="js/Util.js"></script>
+    <script src="js/GoogleAnalyticsTracker.js"></script>
+    <script src="js/GoogleAccountDialog.js"></script>
+    <script src="js/VideoTestDialog.js"></script>
+    <script type="module" src="js/menu.js"></script>
+    <script type="module" src="js/profile.js"></script>
+    <!-- Chart -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/luxon@^2.0.0"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-luxon@^1.0.0"></script>
+    <!-- Chart End -->
+
+    <style>
+        .menu-profile {
+          color: rgb(255, 255, 255) !important;
+          opacity: 1 !important;
+          font-weight: 700 !important;
+        }
+    </style>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.bundle.min.js"></script>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/profile.css" media="screen" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+</head>
+<body>
+    <div class="menu-container"></div>
+    <div id="loading-overlay" class="loading-overlay">
+        <div class="loading-text"></div>
+    </div>
+    <div class="container mt-5">
+
+        <!-- Statistics Section -->
+        <div class="card text-black mb-3" id="statistics-section">
+            <div class="card-header text-white font-weight-bold" data-i18n="statistics">Statistics</div>
+            <div class="card-body">
+                <canvas id="scoreChart" width="400" height="200"></canvas>
+                <div class="chart-scores">
+                    <h5 class="card-title"><span data-i18n="score">Score: </span><span id="user-score">0 </span></h5>
+                    <h5 class="card-title"><span data-i18n="raw-score">Raw Score: </span><span id="user-raw-score">0</span></h5>
+                </div>
+            </div>
+        </div>
+
+        <!-- Achievements Section -->
+        <div class="card text-black mb-3" id="achievements-section">
+            <div class="card-header text-white font-weight-bold" data-i18n="achievements">Achievements</div>
+            <div class="card-body">
+                <p class="card-text" id="achievements" data-i18n="achievements-text">Your achievements will be displayed here.</p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

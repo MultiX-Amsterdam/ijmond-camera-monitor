@@ -12,6 +12,7 @@ from models.schema import ma
 from util.util import InvalidUsage
 
 
+
 class RequestFormatter(logging.Formatter):
     """The formatter for logging."""
     def format(self, record):
@@ -79,7 +80,6 @@ def handle_invalid_usage(error):
     response.status_code = error.status_code
     return response
 
-
 # Initialize the Web Server Gateway Interface
 app = Flask(__name__)
 
@@ -104,7 +104,6 @@ db.init_app(app)
 
 # Initialize app with schema
 ma.init_app(app)
-
 
 @app.after_request
 def after_request(response):

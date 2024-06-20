@@ -2,7 +2,7 @@
 <html>
 
 <head>
-  <title>IJmondCAM</title>
+  <title>FAQ</title>
   <meta charset="utf-8" name="viewport" content="width=device-width, initial-scale=1">
   <link href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" media="screen" rel="stylesheet" type="text/css" />
   <link href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css" media="screen" rel="stylesheet" type="text/css" />
@@ -13,13 +13,22 @@
   <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
   <link href='https://fonts.googleapis.com/css?family=Open+Sans+Condensed:300,700' rel='stylesheet' type='text/css'>
   <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700" rel="stylesheet">
+  <!-- Start for Google Sign-In -->
+  <script src="https://accounts.google.com/gsi/client"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jwt-decode@3/build/jwt-decode.min.js"></script>
+  <!-- End for Google Sign-In -->
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
   <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
   <script src="js/widgets.js"></script>
+  <script src="https://unpkg.com/i18next@23.11.2/dist/umd/i18next.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/i18next-http-backend/2.5.1/i18nextHttpBackend.min.js" integrity="sha512-pPM6tiFuZQha3Fb8COApKU0hIPIs1Nr+Cis8/KbHLN4jTNrluDiMc1Y4lRCk3yEdh/ZxH3E2zGXBiXmbgARP+w==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script type="module" src="js/i18n-setup.js"></script>
   <script src="js/Util.js"></script>
   <script src="js/GoogleAnalyticsTracker.js"></script>
-  <script src="js/faq.js"></script>
-  <script src="js/menu.js"></script>
+  <script src="js/GoogleAccountDialog.js"></script>
+  <script type="module" src="js/menu.js"></script>
+  <script type="module" src="js/faq.js"></script>
+
   <style>
     .menu-faq {
       color: rgb(255, 255, 255) !important;
@@ -36,18 +45,18 @@
       <div class="content-table flex-column">
         <div class="flex-row">
           <div class="flex-item flex-column">
-            <p class="text">
+            <p data-i18n="faq-desc" class="text">
               We answered frequently asked questions below.
             </p>
             <a class="jump" name="q1"></a>
             <p class="text no-bottom-margin add-top-margin">
-              <span>
+              <span data-i18n="q1">
                 Q1: How do you use all these labeled data?
               </span>
             </p>
             <hr>
             <ul>
-              <li>
+              <li data-i18n="a1">
                 We will use the data to train an AI model for recognizing smoke emissions based on <a href="https://github.com/CMU-CREATE-Lab/deep-smoke-machine" target="_blank">our previous work</a>.
                 The model will be a deep neural network that can learn how to classify videos into two categories: having smoke or no smoke.
                 Then, we will use the model to recognize smoke for many dates and camera views on <a href="https://spotdegifwolk.nl/" target="_blank">Frisse Wind's camera</a>.
@@ -55,39 +64,39 @@
             </ul>
             <a class="jump" name="q2"></a>
             <p class="text no-bottom-margin add-top-margin">
-              <span>
+              <span data-i18n="q2">
                 Q2: Why do you need help from volunteers?
               </span>
             </p>
             <hr>
             <ul>
-              <li>
+              <li data-i18n="a2">
                 While deep neural networks have been proven useful in various applications (e.g., object recognition), training such networks requires a considerable amount of labeled data.
                 Annotating all the data will take hundreds of hours for one researcher, which is why we need help from volunteers.
               </li>
             </ul>
             <a class="jump" name="q3"></a>
             <p class="text no-bottom-margin add-top-margin">
-              <span>
+              <span data-i18n="q3">
                 Q3: Why is it important to recognize and visualize smoke emissions?
               </span>
             </p>
             <hr>
             <ul>
-              <li>
+              <li data-i18n="a3">
                 Our <a href="https://arxiv.org/pdf/1804.03293.pdf" target="_blank">previous work in air quality monitoring</a> shows that visualizing evidence of smoke emissions can influence the attitude of regulators.
                 Also, using such visual data increased the community's confidence when addressing air pollution.
               </li>
             </ul>
             <a class="jump" name="q4"></a>
             <p class="text no-bottom-margin add-top-margin">
-              <span>
+              <span data-i18n="q4">
                 Q4: Where do these video clips come from?
               </span>
             </p>
             <hr>
             <ul>
-              <li>
+              <li data-i18n="a4">
                 We selected and cropped several windows into videos from the <a href="https://www.youtube.com/@frissewindnu" target="_blank">Frisse Wind's YouTube channel</a>.
                 The original camera footage is on <a href="https://spotdegifwolk.nl/" target="_blank">Frisse Wind's tool</a>.
               </li>
@@ -95,26 +104,26 @@
             <a class="image adaptive-image no-top-margin cam-0-image" href="img/cam_0.png"></a>
             <a class="jump" name="q5"></a>
             <p class="text no-bottom-margin add-top-margin">
-              <span>
+              <span data-i18n="q5">
                 Q5: Why did my labels not pass the quality check? How did you define the quality?
               </span>
             </p>
             <hr>
             <ul>
-              <li>
+              <li data-i18n="a5">
                 For each batch (16 videos) on the page, the system randomly placed several videos with known answers, also called gold standards.
                 A batch will pass the quality check if you label these gold standards correctly.
               </li>
             </ul>
             <a class="jump" name="q6"></a>
             <p class="text no-bottom-margin add-top-margin">
-              <span>
+              <span data-i18n="q6">
                 Q6: How does the system know if smoke emission is present in a video?
               </span>
             </p>
             <hr>
             <ul>
-              <li>
+              <li data-i18n="a6">
                 The system defines the final label by aggregating answers from citizens and researchers.
                 At least two volunteers or one researcher will review each video.
                 If the answers from the two volunteers agree, the system marks the video according to the agreement.
@@ -123,13 +132,13 @@
             </ul>
             <a class="jump" name="q7"></a>
             <p class="text no-bottom-margin add-top-margin">
-              <span>
+              <span data-i18n="q7">
                 Q7: Why sometimes does a dialog box pop up and ask me to enable video autoplay?
               </span>
             </p>
             <hr>
             <ul>
-              <li>
+              <li data-i18n="a7">
                 During labeling, videos need to play automatically.
                 If a mobile device has data saver enabled, videos will stop autoplay.
                 Also, some mobile devices pause videos after waking up from sleeping mode.
@@ -138,38 +147,38 @@
             </ul>
             <a class="jump" name="q8"></a>
             <p class="text no-bottom-margin add-top-margin">
-              <span>
+              <span data-i18n="q8">
                 Q8: Why do I sometimes see similar videos? Were they the same?
               </span>
             </p>
             <hr>
             <ul>
-              <li>
+              <li data-i18n="a8">
                 Videos that have closer times (e.g., 8 and 8:10 am) can look similar due to the same weather and lighting conditions.
                 Also, gold standard videos for the quality check can appear again if you label many batches.
               </li>
             </ul>
             <a class="jump" name="q9"></a>
             <p class="text no-bottom-margin add-top-margin">
-              <span>
+              <span data-i18n="q9">
                 Q9: Can I build a similar system with your code?
               </span>
             </p>
             <hr>
             <ul>
-              <li>
+              <li data-i18n="a9">
                 This project is <a href="https://github.com/MultiX-Amsterdam/ijmond-camera-monitor" target="_blank">open-sourced on GitHub</a>. Please feel free to reuse the code.
               </li>
             </ul>
             <a class="jump" name="q10"></a>
             <p class="text no-bottom-margin add-top-margin">
-              <span>
+              <span data-i18n="q10">
                 Q10: Are there other actions that I can take to advocate for better air quality?
               </span>
             </p>
             <hr>
             <ul>
-              <li>
+              <li data-i18n="a10">
                 We recommend checking <a href="https://www.frissewind.nu/" target="_blank">Frisse Wind's website</a> to understand opportunities for air quality advocacy,
                 the <a href="https://odnzkg.nl/faq-handhaving-tata-steel-kooksgasfabrieken/" target="_blank">environmental services's action</a> in addressing the air pollution concerns,
                 the <a href="https://hollandse-luchten.org/" target="_blank">Hollandse Luchten network</a> to understand local citizen science activities in monitoring air quality,
@@ -179,26 +188,26 @@
             </ul>
             <a class="jump" name="q11"></a>
             <p class="text no-bottom-margin add-top-margin">
-              <span>
+              <span data-i18n="q11">
                 Q11: Why does this tool not support devices older than Android 7 and iOS 11?
               </span>
             </p>
             <hr>
             <ul>
-              <li>
+              <li data-i18n="a11">
                 When labeling smoke, this tool shows 16 videos at the same time.
                 Older devices have difficulties in playing these videos, which results in poor user experiences.
               </li>
             </ul>
             <a class="jump" name="q12"></a>
             <p class="text no-bottom-margin add-top-margin">
-              <span>
+              <span data-i18n="q12">
                 Q12: Why are there no nighttime videos to label?
               </span>
             </p>
             <hr>
             <ul>
-              <li>
+              <li data-i18n="a12">
                 Smoke emissions in nighttime videos (captured by commercial digital cameras) are tough for the computer to recognize due to insufficient light.
                 We want to focus on training the computer to recognize daytime smoke emissions first.
               </li>

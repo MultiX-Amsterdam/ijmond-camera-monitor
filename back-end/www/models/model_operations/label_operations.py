@@ -5,6 +5,7 @@ from models.model import Label
 from models.model import Video
 from models.model import User
 from models.model import Batch
+from models.model import Season,SeasonScore
 from app.app import app
 from util.util import get_current_time
 from config.config import config
@@ -32,6 +33,47 @@ def remove_label(label_id):
         raise Exception("No label found in the database to delete.")
     db.session.delete(label)
     db.session.commit()
+
+def update_season_score(user_id, score, raw_score, batch_time):
+    """
+    Update the Season Score of the users, if the season has not yet finished.
+
+    Parameters
+    ----------
+    user_id : int
+        The user id (defined in the user table).
+    score : int
+        The score to be added in the season score table.
+    raw_score : int
+        The raw_score to be added in the season score table.
+    batch_time : int
+        The epochtime (in seconds) of the batch.
+    """
+    latest_season = Season.query.order_by(Season.end_date.desc()).first()
+    if latest_season is None:
+        app.logger.error("No active season found.")
+        return
+
+    if batch_time > latest_season.end_date:
+        app.logger.info("The batch time exceeds the latest season's end date. No update made.")
+        return
+
+    user_season = SeasonScore.query.filter_by(user_id=user_id, season_id=latest_season.id).first()
+
+    if not user_season:
+        user_season = SeasonScore(user_id=user_id, season_id=latest_season.id, score=0, raw_score=0)
+        db.session.add(user_season)
+        app.logger.info("New season score entry created for user.")
+
+    user_season.score += score
+    user_season.raw_score += raw_score
+
+    try:
+        db.session.commit()
+        app.logger.info("Season score updated successfully.")
+    except Exception as e:
+        db.session.rollback()
+        app.logger.error(f"Failed to update season score: {str(e)}")
 
 
 def update_labels(labels, user_id, connection_id, batch_id, client_type):
@@ -77,6 +119,8 @@ def update_labels(labels, user_id, connection_id, batch_id, client_type):
             batch.user_score = user.score
             batch.user_raw_score = user.raw_score
         app.logger.info("Update batch: %r" % batch)
+    else:
+        batch = None
     # Add labeling history and update the video label state
     # If the batch score is 0, do not update the label history since this batch is not reliable
     user_score = None
@@ -111,6 +155,11 @@ def update_labels(labels, user_id, connection_id, batch_id, client_type):
                 app.logger.warning("No next state for video: %r" % video)
     # Update database
     db.session.commit()
+
+    # Update the season score of the user (if a season is active)
+    if batch and batch_score is not None:
+        update_season_score(user_id, batch.score, batch.num_unlabeled, batch.return_time)
+
     return {"batch": batch_score, "user": user_score, "raw": user_raw_score}
 
 

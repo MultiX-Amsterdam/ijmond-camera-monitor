@@ -37,7 +37,7 @@
         gid = "G-LPXWSNJ4W9";
       } else if (urlHostName.indexOf("localhost") !== -1) {
         // developement back-end
-        gid = "G-2J4HLRWPJE";
+        gid = "G-2P3T4E2DEL";
       }
       return gid;
     }

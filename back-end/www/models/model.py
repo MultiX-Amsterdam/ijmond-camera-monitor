@@ -297,6 +297,101 @@ class View(db.Model):
             self.id, self.connection_id, self.video_id, self.query_type, self.time
         )
 
+class Achievement(db.Model):
+    """
+    Class representing an achievement.
+    
+    Attributes
+    ----------
+    id : int
+        Unique identifier (primary key).
+    name : str
+        The name of the achievement.
+    description : str
+        A short description of the achievement.
+    """
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(255), nullable=False)
+    description = db.Column(db.String(255), nullable=True)
+
+    def __repr__(self):
+        return f"<Achievement id={self.id}, name={self.name}, description={self.description}>"
+
+class AchievementRecords(db.Model):
+    """
+    Class representing the achievements earned by users.
+    
+    Attributes
+    ----------
+    id : int
+        Unique identifier (primary key).
+    user_id : int
+        The user ID in the User table (foreign key).
+    achievement_id : int
+        The achievement ID in the Achievement table (foreign key).
+    date: date
+        Date of receiving the achievement.
+    """
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    achievement_id = db.Column(db.Integer, db.ForeignKey('achievement.id'), nullable=False)
+    date = db.Column(db.Date, nullable=False)
+
+    user = db.relationship('User', backref=db.backref('achievement_users', lazy=True))
+    achievement = db.relationship('Achievement', backref=db.backref('achievement_users', lazy=True))
+
+    def __repr__(self):
+        return f"<AchievementUser id={self.id}, user_id={self.user_id}, achievement_id={self.achievement_id}, date={self.date}>"
+
+class Season(db.Model):
+    """
+    Class representing the labeling game's season. The start and the end is specified by the user, and through this period
+    users can earn scores and compete for the achievement of the season's champion.
+    
+    Attributes
+    ----------
+    id : int
+        Unique identifier (primary key).
+    start_date : int
+        The epochtime (in seconds) of the start date of the season.
+    end_date : int
+        The epochtime (in seconds) of the end date of the season.
+    """
+    id = db.Column(db.Integer, primary_key=True)
+    start_date = db.Column(db.Integer, nullable=False)
+    end_date = db.Column(db.Integer, nullable=False)
+
+    def __repr__(self):
+        return f"<Season id={self.id}, start_date={self.start_date}, end_date={self.end_date}>"
+
+class SeasonScore(db.Model):
+    """
+    Class representing the labeling game season's score earned by labelling in a specific season.
+    
+    Attributes
+    ----------
+    id : int
+        Unique identifier (primary key).
+    season_id : int
+        The ID of the season at the moment (foreign key).
+    user_id : int
+        The user ID in the User table (foreign key).
+    score : int
+        The achievement ID in the Achievement table (foreign key).
+    raw_score : int
+        The achievement ID in the Achievement table (foreign key).
+    """
+    id = db.Column(db.Integer, primary_key=True)
+    season_id = db.Column(db.Integer, db.ForeignKey('season.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    raw_score = db.Column(db.Integer, default=0)
+    score = db.Column(db.Integer, default=0)
+
+    season = db.relationship('Season', backref=db.backref('season_score', lazy=True))
+    user = db.relationship('User', backref=db.backref('season_score', lazy=True))
+
+    def __repr__(self):
+        return f"<SeasonScore season_id={self.season_id} user_id={self.user_id}, raw_score = {self.raw_score}, score={self.score}>"
 
 class Tutorial(db.Model):
     """
@@ -335,4 +430,140 @@ class Tutorial(db.Model):
             "<Tutorial id=%r connection_id=%r action_type=%r query_type=%r time=%r>"
         ) % (
             self.id, self.connection_id, self.action_type, self.query_type, self.time
+        )
+
+class ModelScores(db.Model):
+    """
+    Class representing different metrics for the model along with actual and predicted scores.
+
+    Attributes
+    ----------
+    id : int
+        Unique identifier (primary key).
+    f1 : float
+        The f1-score of the model. (0,1)
+    mcc : float
+        The Matthews correlation coefficient (MCC) of the model. (-1,1)
+    precision: float
+        The precision of the model. (0,1)
+    recall: float
+        The recall of the model. (0,1)
+    tp : int
+        The number of true positives after running the benchmark
+    tn : int
+        The number of true negatives after running the benchmark
+    fp : int
+        The number of false positives after running the benchmark
+    fn : int
+        The number of false negatives after running the benchmark
+    date : date
+        The date of the specific entry.
+    """
+    id = db.Column(db.Integer, primary_key=True)
+
+    f1 = db.Column(db.Float, nullable=False)
+    mcc = db.Column(db.Float, nullable=False)
+    precision = db.Column(db.Float, nullable=False)
+    recall = db.Column(db.Float, nullable=False)
+    tp = db.Column(db.Integer, nullable = False)
+    tn = db.Column(db.Integer, nullable = False)
+    fp = db.Column(db.Integer, nullable = False)
+    fn = db.Column(db.Integer, nullable = False)
+
+    date = db.Column(db.Date, nullable=False)
+
+    def __repr__(self):
+        return (
+            "<ModelScores id=%r f1=%r mcc=%r precision=%r recall=%r tp=%r tn=%r fp=%r fn=%r date=%r>"
+        ) % (
+            self.id, self.f1, self.mcc, self.precision, self.recall, self.tp, self.tn, self.fp, self.fn, self.date
+        )
+    
+class Tasks(db.Model):
+    """
+    Class with the tasks and their respective IDs; useful for rescheduling (revoke the task and then reschedule it)
+
+    Attributes
+    ----------
+    id : int
+        Unique identifier (primary key).
+    task_id : string
+        The ID of the task, as obtained by Celery after scheduling it
+    """
+    id = db.Column(db.Integer, primary_key=True)
+    task_id = db.Column(db.String(255), nullable=False)
+    
+    def __repr__(self):
+        return (
+            "<Tasks id=%r task_id=%r>"
+        ) % (
+            self.id, self.task_id
+        )
+
+class Games(db.Model):
+    """
+    Class with the games that the user has played in the Performance page
+
+    Attributes
+    ----------
+    id : int
+        Unique identifier (primary key).
+    user_id : int
+        The user ID in the User table (foreign key).
+    game_num: int
+        The game number concerning the specific game played.
+    action_type : int
+        The action type for the tutorial.
+        -1 => did not finish the game.
+        0 => finished the game with mistakes.
+        1 => finished the game with no mistakes.
+    time : int
+        The epochtime (in seconds) when the user starts or finishes the game. 
+        The time is if they start the game if the action_type is -1
+        Otherwise it means they ended the game   
+    """
+    id = db.Column(db.Integer, primary_key=True)
+    game_num = db.Column(db.Integer, nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    action_type = db.Column(db.Integer, nullable=False)
+    time = db.Column(db.Integer, default=get_current_time())
+
+    def __repr__(self):
+        return (
+            "<Games id=%r game_num=%r user_id=%r action_type=%r time=%r>"
+        ) % (
+            self.id, self.game_num, self.user_id, self.action_type, self.time
+        )
+    
+class GameMistakes(db.Model):
+    """
+    Class that logs the mistakes a user has done at the questions while playing the quiz game(s)
+
+    Attributes
+    ----------
+    id : int
+        Unique identifier (primary key).
+    user_id : int
+        The user ID in the User table (foreign key).
+    game_id : int
+        The game ID in the Games table (foreign key).
+    question: int
+        The question number concerning that specific game.
+    mistakes: int
+        The number of mistakes the user has done in that question.
+    time : int
+        The epochtime (in seconds) when the user connects to the server.    
+    """
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    game_id = db.Column(db.Integer, db.ForeignKey('games.id'), nullable=False)
+    question = db.Column(db.Integer)
+    mistakes = db.Column(db.Integer)
+    time = db.Column(db.Integer, default=get_current_time())
+
+    def __repr__(self):
+        return (
+            "<GameMistakes id=%r user_id=%r game_id=%r question=%r mistakes=%r time=%r>"
+        ) % (
+            self.id, self.user_id, self.game_id, self.question, self.mistakes, self.time
         )

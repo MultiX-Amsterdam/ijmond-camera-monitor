@@ -14,3 +14,6 @@ back-end/www/reload
 **/secret/
 *.sql
 dataset/**/videos/
+
+# For the cron jobs to be pushed to Git
+!/back-end/www/cron/*.sql

@@ -1,0 +1,144 @@
+body {
+    background-color: #343a40;
+}
+
+h5 {
+    font-size: 0.90rem;
+}
+
+/* Chart Styles */
+
+.container {
+    width: 100%;
+    /* other styles */
+}
+
+.chart-scores {
+    display: ruby;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 10px; /* creates space between the items */
+    padding: 10px;
+    color: white;
+    top: 40px;
+    right: 0;
+    position: absolute;
+    z-index: 2;
+}
+  
+#scoreChart {
+    display: block;
+    width: 100% !important; /* important to override inline styles if necessary */
+    height: auto !important; /* maintain aspect ratio */
+}
+
+.chart-scores {
+    padding: 10px; /* Adjust padding as needed */
+    text-align: right; /* Align text to the right */
+    /* other styles */
+}
+
+/* -------- */
+
+
+/* Profile Greeting */
+#profile-name {
+    color: #f8f9fa;
+    margin-bottom: 30px;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+}
+
+/* Card Styling */
+
+.card {
+    border: none;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    margin-bottom: 20px;
+    animation: fadeInUp 0.8s; /* Smooth appearance */
+}
+
+.card-header {
+    background: linear-gradient(60deg, #4e54c8, #8f94fb);
+    font-size: 1.2rem;
+}
+
+.card-body {
+    background-color: #424242;
+    color: #ffffff;
+}
+/* ------ */
+
+/* Modal */
+
+.modal-header {
+    background: linear-gradient(60deg, #4e54c8, #8f94fb);
+}
+
+.modal-content {
+    background-color: #424242;
+}
+
+.modal-title {
+    font-weight: bold;
+}
+
+.modal-btn {
+    background: linear-gradient(60deg, #4e54c8, #8f94fb);
+}
+
+/*---------*/
+
+/* Achievements */
+
+#achievements {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px; 
+}
+
+.achievement {
+    display: flex;
+    align-items: center;
+    justify-content: center; 
+    width: 100%;
+    padding: 10px 0; 
+    border-bottom: 1px solid #ddd;
+}
+
+.achievement-icon {
+    margin-right: 10px;
+}
+
+.achievement-description,
+.achievement-dates {
+    margin-left: 5px; /* Space after the achievement name */
+}
+
+.achievement:last-child {
+    border-bottom: none; /* Removes the border from the last item */
+}
+
+.fas.fa-check { /* Unlocked icon style */
+    color: #28a745;
+}
+
+.fas.fa-lock { /* Locked icon style */
+    color: #6c757d;
+}
+
+/* ---------------
+
+/* Animation */
+@keyframes fadeInUp {
+    from {
+        transform: translate3d(0, 40px, 0);
+        opacity: 0;
+    }
+
+    to {
+        transform: none;
+        opacity: 1;
+    }
+}

@@ -5,7 +5,7 @@
   var video_labeling_tool;
   var google_account_dialog;
   var video_test_dialog;
-  //var tutorial_prompt_dialog;
+  var tutorial_prompt_dialog;
   var $next;
   var counter = 0;
   var max_counter = 10;
@@ -126,9 +126,9 @@
             // Fail the quality check
             $quality_check_passed_text.hide();
             consecutive_failed_batches += 1;
-            //if (consecutive_failed_batches >= 3) {
-            //  tutorial_prompt_dialog.getDialog().dialog("open");
-            //}
+            if (consecutive_failed_batches >= 3) {
+              tutorial_prompt_dialog.getDialog().dialog("open");
+            }
           } else {
             // Pass the quality check
             $quality_check_passed_text.show();
@@ -160,11 +160,18 @@
         video_labeling_tool.updateUserIdByGoogleIdToken(google_id_token, {
           success: function (obj) {
             onUserIdChangeSuccess(obj.userId());
-            $sign_in_prompt.find("span").text("Sign Out");
+            $sign_in_prompt.find("span").text(window.i18n.t('sign-out'));
             if ($sign_in_prompt.hasClass("pulse-white")) {
               $sign_in_prompt.removeClass("pulse-white")
             }
             $user_score_container.show();
+
+            // Check if the profile icon already exists
+            if ($('#profile-icon-link').length === 0) {
+              // Create and insert the profile icon
+              var profileIconHtml = '<a href="profile.html" id="profile-icon-link" class="menu-profile"><i class="fas fa-user-circle" aria-hidden="true"></i></a>';
+              $(".menu-items").prepend(profileIconHtml);
+            }
           },
           error: function (xhr) {
             console.error("Error when updating user id by using google token!");
@@ -174,10 +181,11 @@
       },
       sign_out_success: function () {
         window.localStorage.removeItem("user_data");
+        $('#profile-icon-link').remove();
         video_labeling_tool.updateUserIdByClientId(ga_tracker.getClientId(), {
           success: function (obj) {
             onUserIdChangeSuccess(obj.userId());
-            $sign_in_prompt.find("span").text("Sign In");
+            $sign_in_prompt.find("span").text(window.i18n.t('sign-in'));
             if (!$sign_in_prompt.hasClass("pulse-white")) {
               $sign_in_prompt.addClass("pulse-white")
             }
@@ -196,9 +204,9 @@
     });
     $user_score_container = $("#user-score-container");
     video_test_dialog = new edaplotjs.VideoTestDialog();
-    //tutorial_prompt_dialog = new edaplotjs.TutorialPromptDialog({
-    //  video_labeling_tool: video_labeling_tool
-    //});
+    tutorial_prompt_dialog = new edaplotjs.TutorialPromptDialog({
+     video_labeling_tool: video_labeling_tool
+    });
     ga_tracker = new edaplotjs.GoogleAnalyticsTracker({
       ready: function (ga_obj) {
         google_account_dialog.isAuthenticatedWithGoogle({
@@ -234,5 +242,10 @@
     });
   }
 
-  $(init);
+
+    if(!window.i18n.isInitialized) {
+      window.i18n.on('initialized', init);
+    } else {
+      init();
+    }
 })();

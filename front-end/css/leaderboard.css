@@ -1,0 +1,134 @@
+#leaderboard {
+    border-collapse: separate;
+    border-spacing: 0;
+    border-radius: 8px;
+    overflow: hidden; 
+}
+
+#leaderboard th {
+    text-align: center;
+}
+
+#leaderboard td {
+    text-align: center;
+    vertical-align: middle;
+}
+
+.icon-button {
+    vertical-align: middle; /* Align the icon vertically in the middle */
+    display: inline-block; /* Display as inline-block to allow vertical alignment */
+    /* Adjust margin or padding as needed to align with your text */
+}
+
+/* Custom styles for buttons */
+#sortByScore, #sortByRawScore {
+    width: 30px; /* Set a fixed width for buttons */
+}
+
+.current-user {
+    background: linear-gradient(to right, rgba(25, 135, 84, 0.85), rgba(25, 135, 84, 0.85)), linear-gradient(to right, #4e54c8, #8f94fb);
+}
+
+.first-place-highlight {
+    background: linear-gradient(to right, #4e54c8, #8f94fb);
+    color: white; /* White text color */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3); /* Shadow for 3D effect */
+    position: relative; /* Needed for pseudo-element */
+}
+
+/* Additional style for the current user in the first place */
+.first-place-highlight.current-user {
+    background: linear-gradient(to right, rgba(25, 135, 84, 0.85), rgba(25, 135, 84, 0.85)), linear-gradient(to right, #4e54c8, #8f94fb);
+}
+
+/* Style for the second-place entry */
+.second-place-highlight {
+    color: white; /* White text color */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3); /* Shadow for 3D effect */
+    position: relative; /* Needed for pseudo-element */
+}
+
+/* Style for the third-place entry */
+.third-place-highlight {
+    color: white; /* White text color */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3); /* Shadow for 3D effect */
+    position: relative; /* Needed for pseudo-element */
+}
+  
+/* Pseudo-element for the ribbon */
+.first-place-highlight::after {
+    content: '🥇';
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 24px;
+}
+
+.second-place-highlight::after {
+    content: '🥈';
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 24px;
+}
+
+.third-place-highlight::after {
+    content: '🥉';
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 24px; 
+}
+
+@media (max-width: 450px) {
+    .first-place-highlight::after {
+        content: '🥇';
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 15px;
+    }
+    
+    .second-place-highlight::after {
+        content: '🥈';
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 15px;
+    }
+    
+    .third-place-highlight::after {
+        content: '🥉';
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 15px; 
+    }
+  }
+
+/* Position the ranking filters */
+.ranking-filters {
+    right: 15px; /* Adjust as needed based on your layout */
+    top: 15px; /* Adjust as needed based on your layout */
+    text-align: right;
+}
+
+/* Style for the ranking filter links */
+.ranking-filter {
+    color: #FFFFFF; /* or any color you want */
+    margin-left: 10px; /* Space out the links */
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.ranking-filter:hover,
+.ranking-filter:focus {
+    text-decoration: underline;
+    color: #DDDDDD; /* Lighter color on hover/focus for better UX */
+}
