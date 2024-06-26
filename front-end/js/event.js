@@ -72,8 +72,10 @@
     var s = v["camera_str"]; // camera name string
     var d = v["date_str"]; // date string
     var t = 0; // starting time
+    var bt = v["share_date_str"] // begin time
+    var et = bt // begin time
     t = Math.round(t * 1000) / 1000
-    var href = "https://breathecam.multix.io/#v=960,540,0,pts&t=" + t + "&ps=25&d=" + d + "&s=" + s;
+    var href = "https://breathecam.multix.io/#v=960,540,0,pts&t=" + t + "&bt=" + bt + "&et=" + et + "&ps=25&d=" + d + "&s=" + s;
     $($i.get(2)).html("<a target='_blank' href='" + href + "'>Link to Camera Viewer</a>");
     // Update image
     var $img = $item.find("img");
@@ -353,7 +355,12 @@
         for (let i = 0; i < events.length; i++) {
           const e = events[i];
           if (e["annotated_frame_uri"]) {
-            const corrected_epochtime = correctTimestamp((e["video_epoch_time_start"] + e["segment_frame_start"] * 1.25) * 1000)
+            const time_str = e["approximate_detection_timestamp"];
+            const moment_obj = moment.utc(time_str, "YYYY-MM-DD HH:mm:ss.SSSSSS");
+            moment_obj.subtract(40, "seconds"); // substract some time to go back a little bit
+            const share_date_str = moment_obj.format("YYYYMMDDHHmmss");
+            const epochTime = (new Date(time_str + "Z")).getTime();
+            const corrected_epochtime = correctTimestamp(epochTime);
             const date_obj = new Date(corrected_epochtime);
             const date_str = date_obj.toISOString().split("T")[0];
             if (!event_dict_by_date[date_str]) {
@@ -371,7 +378,8 @@
               "annotated_frame_url_part": e["annotated_frame_uri"],
               "date_obj": date_obj,
               "date_str": date_str,
-              "camera_str": camera_str
+              "camera_str": camera_str,
+              "share_date_str": share_date_str
             });
           }
         }
