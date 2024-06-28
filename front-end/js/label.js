@@ -160,7 +160,7 @@
         video_labeling_tool.updateUserIdByGoogleIdToken(google_id_token, {
           success: function (obj) {
             onUserIdChangeSuccess(obj.userId());
-            $sign_in_prompt.find("span").text("Sign Out");
+            $sign_in_prompt.find("span").text("Uitloggen");
             if ($sign_in_prompt.hasClass("pulse-white")) {
               $sign_in_prompt.removeClass("pulse-white")
             }
