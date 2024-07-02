@@ -504,15 +504,13 @@
       $(".intro-text").show();
     }
     initDownloadButton();
-    google_account_dialog = new edaplotjs.GoogleAccountDialog({
-      no_ui: true
-    });
+    google_account_dialog = new edaplotjs.GoogleAccountDialog();
     initConfirmDialog();
     if (util.browserSupported()) {
       showGalleryLoadingMsg();
       var ga_tracker = new edaplotjs.GoogleAnalyticsTracker({
         ready: function (ga_obj) {
-          google_account_dialog.silentSignInWithGoogle({
+          google_account_dialog.isAuthenticatedWithGoogle({
             success: function (is_signed_in, google_id_token) {
               if (is_signed_in) {
                 util.login({

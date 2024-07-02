@@ -25,6 +25,7 @@
   }
 
   function init() {
+    var google_account_dialog = new edaplotjs.GoogleAccountDialog();
     var ga_tracker = new edaplotjs.GoogleAnalyticsTracker();
     window.addEventListener("hashchange", handleHashChange, false);
     handleHashChange();

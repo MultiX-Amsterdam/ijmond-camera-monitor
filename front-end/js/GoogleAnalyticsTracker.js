@@ -92,9 +92,9 @@
         dataLayer.push(arguments);
       };
       gtag("js", new Date());
-      // To comply with GDPR, we will not store the IP addresses
-      // Also, we do not want GA to send page_view automatically
-      // We also need to define custom dimensions so that we can use them in any event
+      // To comply with GDPR, we will not store the IP addresses.
+      // Also, we do not want GA to send page_view automatically.
+      // We also need to define custom dimensions so that we can use them in any event.
       gtag("config", GA_MEASUREMENT_ID, {
         "anonymize_ip": true,
         "send_page_view": false,
@@ -103,6 +103,18 @@
           "dimension2": "custom_session_id",
           "dimension3": "custom_timestamp"
         }
+      });
+      // To comply with GDPR, we need to disable all the consent by default.
+      // We will only enable some features when users specifically give consent.
+      gtag("consent", "default", {
+        "ad_storage": "denied",
+        "ad_user_data": "denied",
+        "ad_personalization": "denied",
+        "analytics_storage": "denied",
+        "functionality_storage": "denied",
+        "personalization_storage": "denied",
+        "security_storage": "granted", // necessary cookies for security purposes
+        "wait_for_update": 500
       });
       gtag("get", GA_MEASUREMENT_ID, "client_id", function (gaClientId) {
         clientId = "ga." + gaClientId;
@@ -114,6 +126,23 @@
           sendEvent("page_view");
         });
       });
+      //printConsentState("analytics_storage");
+    }
+
+    /**
+     * Print the consent state of a field.
+     * @private
+     * @param {string} field - the gtag consent field.
+     */
+    function printConsentState(field) {
+      var state = window.google_tag_data.ics.getConsentState("analytics_storage");
+      if (state == 1) {
+        console.log("Consent state of \"" + field + "\": granted");
+      } else if (state == 2) {
+        console.log("Consent state of \"" + field + "\": denied");
+      } else {
+        console.log("Consent state of \"" + field + "\": no specification");
+      }
     }
 
     /**
@@ -122,7 +151,7 @@
      */
     function handleGoogleTrackerError() {
       if (!isReadyEventCalled) {
-        // This means that a third party plugin blocks the tracker (e.g., duckduckgo) or the tracking protection is on
+        // This means that a third party plugin blocks the tracker (e.g., duckduckgo) or the tracking protection is on.
         console.warn("The Google Analytics tracker may be blocked. Use the system created uid for the client id instead.");
         if (typeof ready === "function") ready(thisObj);
         isReadyEventCalled = true;
@@ -207,6 +236,7 @@
      */
     function GoogleAnalyticsTracker() {
       loadGoogleTracker();
+      handleGoogleTrackerError();
       // Use a timeout event to make sure that the ready event will be triggered
       setTimeout(handleGoogleTrackerError, 3000);
     }

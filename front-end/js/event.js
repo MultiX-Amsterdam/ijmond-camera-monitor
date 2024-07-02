@@ -391,6 +391,9 @@
     $(window).resize(function () {
       updateEventTimeLine();
     });
+
+    var google_account_dialog = new edaplotjs.GoogleAccountDialog();
+    var ga_tracker = new edaplotjs.GoogleAnalyticsTracker();
   }
 
   $(init);

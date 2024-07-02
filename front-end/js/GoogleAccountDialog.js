@@ -12,6 +12,7 @@
     var util = new edaplotjs.Util();
     settings = safeGet(settings, {});
     var $account_dialog;
+    var $sign_in_prompt;
     var $google_sign_out_button;
     var $google_sign_in_button;
     var $guest_button;
@@ -35,15 +36,22 @@
       if (no_ui) {
         return;
       }
-      $account_dialog = widgets.createCustomDialog({
-        selector: "#account-dialog",
-        show_cancel_btn: false,
-        width: 270
+      $.get("GoogleAccountDialog.html", function (data) {
+        $(document.body).append(data);
+        $account_dialog = widgets.createCustomDialog({
+          selector: "#account-dialog",
+          show_cancel_btn: false,
+          width: 270
+        });
+        $(document.body).on("click", "#sign-in-prompt", function () {
+          $account_dialog.dialog("open");
+        });
+        initGoogleSignIn();
       });
-      initGoogleSignIn();
     }
 
     function initGoogleSignIn() {
+      $sign_in_prompt = $("#sign-in-prompt");
       $sign_in_text = $("#sign-in-text");
       $hello_text = $("#hello-text");
       $user_name_text = $("#user-name-text");
@@ -77,6 +85,9 @@
     }
 
     function onGoogleSignOutSuccess() {
+      // If something was stored in the "user_data" field, it will be removed.
+      // This is designed for storing anonymous user data across pages.
+      window.localStorage.removeItem("user_data");
       $google_sign_out_button.hide();
       $google_sign_in_button.show();
       $guest_button.show();
@@ -87,6 +98,12 @@
       var $visible = $content.find(":visible");
       $hidden.show();
       $visible.hide();
+      if (typeof $sign_in_prompt !== "undefined") {
+        $sign_in_prompt.find("span").text("Inloggen");
+        if (!$sign_in_prompt.hasClass("pulse-white")) {
+          $sign_in_prompt.addClass("pulse-white")
+        }
+      }
       if (typeof sign_out_success === "function") {
         sign_out_success();
       }
@@ -123,6 +140,12 @@
       if (typeof $account_dialog !== "undefined") {
         $account_dialog.dialog("close");
       }
+      if (typeof $sign_in_prompt !== "undefined") {
+        $sign_in_prompt.find("span").text("Uitloggen");
+        if ($sign_in_prompt.hasClass("pulse-white")) {
+          $sign_in_prompt.removeClass("pulse-white")
+        }
+      }
       if (typeof sign_in_success === "function") {
         sign_in_success(google_id_token);
       }
@@ -148,10 +171,6 @@
       }
     };
     this.isAuthenticatedWithGoogle = isAuthenticatedWithGoogle;
-
-    this.silentSignInWithGoogle = function (callback) {
-      isAuthenticatedWithGoogle(callback);
-    };
 
     this.getDialog = function () {
       return $account_dialog;

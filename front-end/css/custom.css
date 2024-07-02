@@ -9,7 +9,7 @@ body,
 }
 
 .content {
-  max-width: 700px !important;
+  max-width: 900px !important;
 }
 
 .content p a,
@@ -19,7 +19,11 @@ body,
 }
 
 .menu {
-  max-width: 700px !important;
+  max-width: 900px !important;
+}
+
+.menu-table {
+  padding: 12px 10px !important;
 }
 
 .content-table {
@@ -493,7 +497,7 @@ body,
   min-height: 300px;
 }
 
-@media screen and (min-width: 700px) {
+@media screen and (min-width: 900px) {
   .gallery .gallery-videos a {
     flex: 1 0 25% !important;
     max-width: 25% !important;
@@ -505,7 +509,7 @@ body,
   }
 }
 
-@media screen and (min-width: 300px) and (max-width: 700px) {
+@media screen and (min-width: 300px) and (max-width: 900px) {
   .gallery .gallery-videos a {
     flex: 1 0 50% !important;
     max-width: 50% !important;
