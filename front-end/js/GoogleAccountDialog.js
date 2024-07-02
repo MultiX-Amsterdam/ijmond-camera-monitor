@@ -163,9 +163,13 @@
       var is_signed_in = google_id_token == null ? false : true;
       if (is_signed_in) {
         onGoogleSignInSuccess(google_id_token);
-        callback["success"](is_signed_in, google_id_token);
+        if (typeof callback["success"] === "function") {
+          callback["success"](is_signed_in, google_id_token);
+        }
       } else {
-        callback["success"](is_signed_in);
+        if (typeof callback["success"] === "function") {
+          callback["success"](is_signed_in);
+        }
       }
     };
     this.isAuthenticatedWithGoogle = isAuthenticatedWithGoogle;
