@@ -236,7 +236,7 @@
      */
     function GoogleAnalyticsTracker() {
       loadGoogleTracker();
-      handleGoogleTrackerError();
+      //handleGoogleTrackerError();
       // Use a timeout event to make sure that the ready event will be triggered
       setTimeout(handleGoogleTrackerError, 3000);
     }
