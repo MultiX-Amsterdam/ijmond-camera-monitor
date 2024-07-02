@@ -19,7 +19,6 @@
     var $sign_in_text;
     var $hello_text;
     var $user_name_text;
-    var $use_id_text;
     var widgets = new edaplotjs.Widgets();
     var sign_in_success = settings["sign_in_success"];
     var sign_out_success = settings["sign_out_success"];
@@ -55,7 +54,6 @@
       $sign_in_text = $("#sign-in-text");
       $hello_text = $("#hello-text");
       $user_name_text = $("#user-name-text");
-      $use_id_text = $("#user-id-text");
       $google_sign_out_button = $("#google-sign-out-button");
       $google_sign_in_button = $("#google-sign-in-button");
       $guest_button = $("#guest-button");
@@ -174,16 +172,6 @@
 
     this.getDialog = function () {
       return $account_dialog;
-    };
-
-    this.updateUserId = function (user_id) {
-      if (typeof $use_id_text !== "undefined") {
-        if (typeof user_id !== "undefined") {
-          $use_id_text.text(user_id);
-        } else {
-          $use_id_text.text("(unknown)");
-        }
-      }
     };
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////

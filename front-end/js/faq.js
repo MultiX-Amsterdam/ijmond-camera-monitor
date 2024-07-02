@@ -26,7 +26,11 @@
 
   function init() {
     var google_account_dialog = new edaplotjs.GoogleAccountDialog();
-    var ga_tracker = new edaplotjs.GoogleAnalyticsTracker();
+    var ga_tracker = new edaplotjs.GoogleAnalyticsTracker({
+      ready: function () {
+        google_account_dialog.isAuthenticatedWithGoogle();
+      }
+    });
     window.addEventListener("hashchange", handleHashChange, false);
     handleHashChange();
   }

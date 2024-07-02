@@ -1,14 +1,15 @@
 <div id="account-dialog" class="custom-dialog-large" title="Account" data-role="none">
   <p id="sign-in-text">
-    Sign in to track your personal records.
-    We store only the anonymous user ID ("sub" field of <a href="https://developers.google.com/identity/gsi/web/reference/js-reference#credential">Google Identity API</a>), which has no personal information.
+    Sign in to track your personal records and contributions.
   </p>
   <div id="hello-text">
     <p>
       Hi <span id="user-name-text"></span>, thank you for signing in.
-      Your user ID is <span id="user-id-text"></span>.
     </p>
   </div>
+  <p>
+    We store only the anonymous user ID (the "sub" field from <a href="https://developers.google.com/identity/gsi/web/reference/js-reference#credential">Google Identity API</a>), which has no personal information.
+  </p>
   <div id="google-sign-in-button" class="g-signin2"></div>
   <button id="google-sign-out-button" class="custom-button">Sign out from Google</button>
   <button id="guest-button" class="custom-button">Continue as guest</button>
