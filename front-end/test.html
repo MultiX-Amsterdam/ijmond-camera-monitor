@@ -1,20 +1,69 @@
-<!doctype html>
-<html>
-
+<!DOCTYPE html>
+<html lang="en">
 <head>
-  <title>IJmondCAM</title>
-  <meta charset="utf-8" name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video Boxes</title>
+    <style>
+        .video-container {
+            position: relative;
+            display: inline-block;
+        }
+        .box {
+            position: absolute;
+            border: 2px solid red;
+        }
+    </style>
 </head>
-
 <body>
-  <video autoplay loop muted playsinline playsInline disableRemotePlayback controls>
-    <source src="https://ijmondcam.multix.io/videos/hoogovens/3fN6dk8fPxE/3fN6dk8fPxE-0.mp4" type="video/mp4">
-  </video>
-  <br>
-  <video autoplay loop muted playsinline playsInline disableRemotePlayback controls>
-    <source src="https://ijmondcam.multix.io/videos/hoogovens/3fN6dk8fPxE/3fN6dk8fPxE-1.mp4" type="video/mp4">
-  </video>
-  <br>
-</body>
+    <a href="javascript:void(0)" class="flex-column video-container">
+        <video autoplay="" preload="" loop="" muted="" playsinline="" disableremoteplayback="" src="https://ijmondcam.multix.io/videos/kooksfabriek_2/fxVvldB73WE/fxVvldB73WE-1.mp4"></video>
+        <div>2</div>
+        <div class="border-box"></div>
+    </a>
+    <a href="javascript:void(0)" class="flex-column video-container">
+        <video autoplay="" preload="" loop="" muted="" playsinline="" disableremoteplayback="" src="https://ijmondcam.multix.io/videos/kooksfabriek_2/fxVvldB73WE/fxVvldB73WE-1.mp4"></video>
+        <div>2</div>
+        <div class="border-box"></div>
+    </a>
+    <a href="javascript:void(0)" class="flex-column video-container">
+        <video autoplay="" preload="" loop="" muted="" playsinline="" disableremoteplayback="" src="https://ijmondcam.multix.io/videos/kooksfabriek_2/fxVvldB73WE/fxVvldB73WE-1.mp4"></video>
+        <div>2</div>
+        <div class="border-box"></div>
+    </a>
+    <a href="javascript:void(0)" class="flex-column video-container">
+        <video autoplay="" preload="" loop="" muted="" playsinline="" disableremoteplayback="" src="https://ijmondcam.multix.io/videos/kooksfabriek_2/fxVvldB73WE/fxVvldB73WE-1.mp4"></video>
+        <div>2</div>
+        <div class="border-box"></div>
+    </a>
+    <!-- Repeat similar HTML structure for other videos -->
 
+    <script>
+        // Function to create and style the box
+        function addBoxToVideo(videoContainer, boxStyle) {
+            const box = document.createElement('div');
+            box.className = 'box';
+            Object.assign(box.style, boxStyle);
+            videoContainer.appendChild(box);
+        }
+
+        // Example styles for different boxes
+        const boxStyles = [
+            { top: '10px', left: '10px', width: '100px', height: '50px', backgroundColor: 'rgba(255, 0, 0, 0.5)' },
+            { top: '500px', left: '50px', width: '150px', height: '75px', backgroundColor: 'rgba(0, 255, 0, 0.5)' },
+            { top: '600px', left: '600px', width: '150px', height: '75px', backgroundColor: 'rgba(0, 0, 255, 0.5)' },
+            { top: '600px', left: '600px', width: '150px', height: '105px', backgroundColor: 'rgba(255, 0, 255, 0.5)' },
+            // Add more styles as needed
+        ];
+
+        // Select all video containers
+        const videoContainers = document.querySelectorAll('.video-container');
+
+        // Add a box to each video with unique styles
+        videoContainers.forEach((videoContainer, index) => {
+            const boxStyle = boxStyles[index % boxStyles.length]; // Cycle through styles
+            addBoxToVideo(videoContainer, boxStyle);
+        });
+    </script>
+</body>
 </html>
