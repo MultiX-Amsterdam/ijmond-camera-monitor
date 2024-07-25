@@ -57,8 +57,8 @@
   function updateItem($item, v) {
     // Update event metadata
     var $i = $item.children(".label-control").find("i").removeClass();
-    //var format_date_str = v["date_obj"].toLocaleString("nl-NL", {
-    var format_date_str = v["date_obj"].toLocaleString("en-US", {
+    var format_date_str = v["date_obj"].toLocaleString("nl-NL", {
+    //var format_date_str = v["date_obj"].toLocaleString("en-US", {
       timeZone: "Europe/Amsterdam",
       day: 'numeric', // Day of the month (e.g., 25)
       month: 'long', // Full month name (e.g., juni)
@@ -76,7 +76,7 @@
     var et = bt // begin time
     t = Math.round(t * 1000) / 1000
     var href = "https://breathecam.multix.io/#v=960,540,0,pts&t=" + t + "&bt=" + bt + "&et=" + et + "&ps=25&d=" + d + "&s=" + s;
-    $($i.get(2)).html("<a target='_blank' href='" + href + "'>Link to Camera Viewer</a>");
+    $($i.get(2)).html("<a target='_blank' href='" + href + "'>Link naar Camerabeelden</a>");
     // Update image
     var $img = $item.find("img");
     $img.prop("src", base_url + v["annotated_frame_url_part"]);
