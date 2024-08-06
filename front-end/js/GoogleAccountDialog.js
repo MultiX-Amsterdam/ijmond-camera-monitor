@@ -12,13 +12,12 @@
     var util = new edaplotjs.Util();
     settings = safeGet(settings, {});
     var $account_dialog;
+    var $sign_in_prompt;
     var $google_sign_out_button;
     var $google_sign_in_button;
     var $guest_button;
     var $sign_in_text;
     var $hello_text;
-    var $user_name_text;
-    var $use_id_text;
     var widgets = new edaplotjs.Widgets();
     var sign_in_success = settings["sign_in_success"];
     var sign_out_success = settings["sign_out_success"];
@@ -35,19 +34,24 @@
       if (no_ui) {
         return;
       }
-      $account_dialog = widgets.createCustomDialog({
-        selector: "#account-dialog",
-        show_cancel_btn: false,
-        width: 270
+      $.get("GoogleAccountDialog.html", function (data) {
+        $(document.body).append(data);
+        $account_dialog = widgets.createCustomDialog({
+          selector: "#account-dialog",
+          show_cancel_btn: false,
+          width: 270
+        });
+        $(document.body).on("click", "#sign-in-prompt", function () {
+          $account_dialog.dialog("open");
+        });
+        initGoogleSignIn();
       });
-      initGoogleSignIn();
     }
 
     function initGoogleSignIn() {
+      $sign_in_prompt = $("#sign-in-prompt");
       $sign_in_text = $("#sign-in-text");
       $hello_text = $("#hello-text");
-      $user_name_text = $("#user-name-text");
-      $use_id_text = $("#user-id-text");
       $google_sign_out_button = $("#google-sign-out-button");
       $google_sign_in_button = $("#google-sign-in-button");
       $guest_button = $("#guest-button");
@@ -77,6 +81,9 @@
     }
 
     function onGoogleSignOutSuccess() {
+      // If something was stored in the "user_data" field, it will be removed.
+      // This is designed for storing anonymous user data across pages.
+      window.localStorage.removeItem("user_data");
       $google_sign_out_button.hide();
       $google_sign_in_button.show();
       $guest_button.show();
@@ -87,6 +94,12 @@
       var $visible = $content.find(":visible");
       $hidden.show();
       $visible.hide();
+      if (typeof $sign_in_prompt !== "undefined") {
+        $sign_in_prompt.find("span").text("Inloggen");
+        if (!$sign_in_prompt.hasClass("pulse-white")) {
+          $sign_in_prompt.addClass("pulse-white")
+        }
+      }
       if (typeof sign_out_success === "function") {
         sign_out_success();
       }
@@ -107,10 +120,6 @@
       if (typeof $google_sign_out_button !== "undefined") {
         $google_sign_out_button.show();
       }
-      if (typeof $user_name_text !== "undefined") {
-        var google_id_token_obj = jwt_decode(google_id_token);
-        $user_name_text.text(google_id_token_obj["given_name"]);
-      }
       if (typeof $hello_text !== "undefined") {
         $hello_text.show();
       }
@@ -122,6 +131,12 @@
       }
       if (typeof $account_dialog !== "undefined") {
         $account_dialog.dialog("close");
+      }
+      if (typeof $sign_in_prompt !== "undefined") {
+        $sign_in_prompt.find("span").text("Uitloggen");
+        if ($sign_in_prompt.hasClass("pulse-white")) {
+          $sign_in_prompt.removeClass("pulse-white")
+        }
       }
       if (typeof sign_in_success === "function") {
         sign_in_success(google_id_token);
@@ -142,29 +157,19 @@
       var is_signed_in = google_id_token == null ? false : true;
       if (is_signed_in) {
         onGoogleSignInSuccess(google_id_token);
-        callback["success"](is_signed_in, google_id_token);
+        if (typeof callback["success"] === "function") {
+          callback["success"](is_signed_in, google_id_token);
+        }
       } else {
-        callback["success"](is_signed_in);
+        if (typeof callback["success"] === "function") {
+          callback["success"](is_signed_in);
+        }
       }
     };
     this.isAuthenticatedWithGoogle = isAuthenticatedWithGoogle;
 
-    this.silentSignInWithGoogle = function (callback) {
-      isAuthenticatedWithGoogle(callback);
-    };
-
     this.getDialog = function () {
       return $account_dialog;
-    };
-
-    this.updateUserId = function (user_id) {
-      if (typeof $use_id_text !== "undefined") {
-        if (typeof user_id !== "undefined") {
-          $use_id_text.text(user_id);
-        } else {
-          $use_id_text.text("(unknown)");
-        }
-      }
     };
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////

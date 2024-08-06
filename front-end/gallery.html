@@ -22,12 +22,12 @@
   <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
   <script src="lib/pagination/pagination.js"></script>
   <script src="js/widgets.js"></script>
+  <script src="js/menu.js"></script>
   <script src="js/Util.js"></script>
   <script src="js/GoogleAnalyticsTracker.js"></script>
   <script src="js/GoogleAccountDialog.js"></script>
   <script src="js/VideoTestDialog.js"></script>
   <script src="js/gallery.js"></script>
-  <script src="js/menu.js"></script>
   <style>
     .menu-gallery {
       color: rgb(255, 255, 255) !important;
@@ -51,21 +51,27 @@
               You can use the token to get the metadata of labeled videos from our API calls.
             </p>
             <p class="text intro-text no-bottom-margin">
-              We greatly appreciate your effort!
-              These are the <span class="custom-text-info-dark-theme" id="video-type-text">fully labeled videos with smoke</span> (<a href="faq.html#q6" target="_blank">learn more</a>).
+              Wij willen u graag bedanken voor uw inzet!
+              Dit zijn <span class="custom-text-info-dark-theme" id="video-type-text">alle gelabelde video's met rook</span> (<a href="faq.html#q6" target="_blank">meer informatie</a>).
+               <!-- We greatly appreciate your effort!
+              These are the <span class="custom-text-info-dark-theme" id="video-type-text">fully labeled videos with smoke</span> (<a href="faq.html#q6" target="_blank">learn more</a>). -->
             </p>
             <p class="text user-text no-bottom-margin">
-              We greatly appreciate your effort!
-              The following labeled smoke videos are your personal contributions.
+              Wij willen u graag bedanken voor uw inzet!
+              De volgende gelabelde video's met rook zijn uw persoonlijke bijdragen aan het model.
+              <!-- We greatly appreciate your effort!
+              The following labeled smoke videos are your personal contributions. -->
             </p>
             <p class="text user-text no-bottom-margin">
-              Symbol <span class="custom-text-primary-dark-theme">&#10004;</span> on the top-left corner of each video means that others <span class="custom-text-primary-dark-theme">agreed</span> with your findings.
-              Videos that are not verified will not show symbols.
+              Een symbool <span class="custom-text-primary-dark-theme">&#10004;</span> in de linkerbovenhoek van elke video betekent dat anderen het eens waren met uw bevindingen.
+              Video's die niet geverifieerd zijn, zullen geen symbolen tonen.
+              <!-- Symbol <span class="custom-text-primary-dark-theme">&#10004;</span> on the top-left corner of each video means that others <span class="custom-text-primary-dark-theme">agreed</span> with your findings.
+              Videos that are not verified will not show symbols. -->
             </p>
             <div class="control-group community-control add-bottom-margin add-top-margin">
-              <a class="custom-button-flat stretch-on-mobile large" href="?method=get_pos_labels">Have Smoke</a>
-              <a class="custom-button-flat stretch-on-mobile large" href="?method=get_maybe_pos_labels">Maybe Have Smoke</a>
-              <a id="review-community" class="custom-button-flat stretch-on-mobile large" href="">My Contribution</a>
+              <a class="custom-button-flat stretch-on-mobile large" href="?method=get_pos_labels">Met Rook</a>
+              <a class="custom-button-flat stretch-on-mobile large" href="?method=get_maybe_pos_labels">Mogelijk met Rook</a>
+              <a id="review-community" class="custom-button-flat stretch-on-mobile large" href="">Mijn Bijdrage</a>
             </div>
             <div class="control-group admin-control add-bottom-margin add-top-margin">
               <div class="custom-dropdown stretch-on-mobile large">
@@ -96,8 +102,8 @@
         <div class="flex-row">
           <div class="flex-item flex-column full-width">
             <div id="page-control" class="control-group add-top-margin force-hidden">
-              <button id="page-back" class="custom-button-flat large stretch-on-mobile" disabled><img src="img/back.png"><span>Back</span></button>
-              <button id="page-next" class="custom-button-flat large stretch-on-mobile"><img src="img/next.png"><span>Next</span></button>
+              <button id="page-back" class="custom-button-flat large stretch-on-mobile" disabled><img src="img/back.png"><span>Vorige</span></button>
+              <button id="page-next" class="custom-button-flat large stretch-on-mobile"><img src="img/next.png"><span>Volgende</span></button>
               <div id="page-navigator" class="stretch-on-mobile"></div>
             </div>
           </div>
@@ -106,8 +112,14 @@
     </div>
   </div>
   <div id="video-test-dialog" class="custom-dialog-large" title="Autoplay" data-role="none">
-    <p>Video autoplay is disabled. Please enable it.</p>
-    <button id="play-video-button" class="custom-button">Enable video autoplay</button>
+    <p>
+      Automatisch afspelen van video is uitgeschakeld. Schakel deze in.
+      <!-- Video autoplay is disabled. Please enable it. -->
+    </p>
+    <button id="play-video-button" class="custom-button">
+      Video autoplay inschakelen
+      <!-- Enable video autoplay -->
+    </button>
   </div>
   <div id="set-label-confirm-dialog" title="Set Label" data-role="none">
     <p></p>

@@ -1,0 +1,81 @@
+<!doctype html>
+<html>
+
+<head>
+  <title>IJmondCAM</title>
+  <meta charset="utf-8" name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" media="screen" rel="stylesheet" type="text/css" />
+  <link href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css" media="screen" rel="stylesheet" type="text/css" />
+  <link href="lib/pagination/pagination.css" media="screen" rel="stylesheet" type="text/css" />
+  <link href="css/frame.css" media="screen" rel="stylesheet" type="text/css" />
+  <link href="css/controls.css" media="screen" rel="stylesheet" type="text/css" />
+  <link href="css/widgets.css" media="screen" rel="stylesheet" type="text/css" />
+  <link href="css/custom.css" media="screen" rel="stylesheet" type="text/css" />
+  <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+  <link href='https://fonts.googleapis.com/css?family=Open+Sans+Condensed:300,700' rel='stylesheet' type='text/css'>
+  <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700" rel="stylesheet">
+  <!-- Start for Google Sign-In -->
+  <script src="https://accounts.google.com/gsi/client"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jwt-decode@3/build/jwt-decode.min.js"></script>
+  <!-- End for Google Sign-In -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+  <script src="https://momentjs.com/downloads/moment.min.js"></script>
+  <script src="https://momentjs.com/downloads/moment-timezone-with-data.min.js"></script>
+  <script src="https://www.gstatic.com/charts/loader.js"></script>
+  <script src="lib/pagination/pagination.js"></script>
+  <script src="js/widgets.js"></script>
+  <script src="js/menu.js"></script>
+  <script src="js/Util.js"></script>
+  <script src="js/GoogleAnalyticsTracker.js"></script>
+  <script src="js/GoogleAccountDialog.js"></script>
+  <script src="js/event.js"></script>
+  <style>
+    .menu-event {
+      color: rgb(255, 255, 255) !important;
+      opacity: 1 !important;
+      font-weight: 700 !important;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="menu-container"></div>
+  <div class="content-container">
+    <div class="content">
+      <div class="content-table flex-column">
+        <div class="flex-row">
+          <div class="flex-item flex-column">
+            <p class="text">
+              Deze pagina toont gebeurtenissen waarop mogelijk <span class="custom-text-info-dark-theme">gevaarlijke rook</span> wordt uitgestoten.
+              De onderstaande tijdlijn toont gebeurtenissen met rook aan (<a href="faq.html#q13" target="_blank">lees meer</a>), waarbij de x-as het uur van de dag weergeeft.
+              Selecteer een datum
+              <select name="date-filter" id="date-filter" style="font-size: 16px;"></select>
+              om gebeurtenissen weer te geven.
+              <!-- This page shows events that are likely to have <span class="custom-text-info-dark-theme">hazardous smoke emissions</span>.
+              The timeline below shows smoke events (<a href="faq.html#q13" target="_blank">learn more</a>), where the x-axis means hour of day.
+              Select a date
+              <select name="date-filter" id="date-filter" style="font-size: 16px;"></select>
+              to show events. -->
+            </p>
+            <div id="event-timeline" class="image"></div>
+          </div>
+        </div>
+        <div class="gallery">
+          <div class="gallery-images"></div>
+        </div>
+        <div class="flex-row">
+          <div class="flex-item flex-column full-width">
+            <div id="page-control" class="control-group add-top-margin force-hidden">
+              <button id="page-back" class="custom-button-flat large stretch-on-mobile" disabled><img src="img/back.png"><span>Back</span></button>
+              <button id="page-next" class="custom-button-flat large stretch-on-mobile"><img src="img/next.png"><span>Next</span></button>
+              <div id="page-navigator" class="stretch-on-mobile"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+
+</html>

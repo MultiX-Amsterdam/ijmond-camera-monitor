@@ -11,7 +11,12 @@
       video_test_dialog.startVideoPlayTest(1000);
       is_video_autoplay_tested = true;
     }
-    var ga_tracker = new edaplotjs.GoogleAnalyticsTracker();
+    var google_account_dialog = new edaplotjs.GoogleAccountDialog();
+    var ga_tracker = new edaplotjs.GoogleAnalyticsTracker({
+      ready: function () {
+        google_account_dialog.isAuthenticatedWithGoogle();
+      }
+    });
     util.updateLabelStatistics();
   }
 

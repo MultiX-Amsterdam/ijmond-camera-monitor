@@ -13,13 +13,18 @@
   <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
   <link href='https://fonts.googleapis.com/css?family=Open+Sans+Condensed:300,700' rel='stylesheet' type='text/css'>
   <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700" rel="stylesheet">
+  <!-- Start for Google Sign-In -->
+  <script src="https://accounts.google.com/gsi/client"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jwt-decode@3/build/jwt-decode.min.js"></script>
+  <!-- End for Google Sign-In -->
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
   <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
   <script src="js/widgets.js"></script>
+  <script src="js/menu.js"></script>
   <script src="js/Util.js"></script>
   <script src="js/GoogleAnalyticsTracker.js"></script>
+  <script src="js/GoogleAccountDialog.js"></script>
   <script src="js/faq.js"></script>
-  <script src="js/menu.js"></script>
   <style>
     .menu-faq {
       color: rgb(255, 255, 255) !important;
@@ -37,180 +42,240 @@
         <div class="flex-row">
           <div class="flex-item flex-column">
             <p class="text">
-              We answered frequently asked questions below.
+              Wij hebben de veelgestelde vragen hier beneden beantwoord.
+              <!-- We answered frequently asked questions below. -->
             </p>
             <a class="jump" name="q1"></a>
             <p class="text no-bottom-margin add-top-margin">
               <span>
-                Q1: How do you use all these labeled data?
+                Q1: Hoe gebruiken jullie al deze gelabelde data?
+                <!-- Q1: How do you use all these labeled data? -->
               </span>
             </p>
             <hr>
             <ul>
               <li>
-                We will use the data to train an AI model for recognizing smoke emissions based on <a href="https://github.com/CMU-CREATE-Lab/deep-smoke-machine" target="_blank">our previous work</a>.
+                De data wordt gebruikt om een AI model te trainen op het herkennen van rook, gebaseerd op <a href="https://github.com/CMU-CREATE-Lab/deep-smoke-machine" target="_blank">ons vorige werk</a>.
+                Hierbij wordt het model een deep neural network dat leert om video's in twee categorieën te classificeren: rook of geen rook.
+                Op basis hiervan kunnen wij het model gebruiken om rook te herkennen van meerdere datums en camera's op de <a href="https://spotdegifwolk.nl/" target="_blank">camera van Frisse Wind</a>.
+                <!-- We will use the data to train an AI model for recognizing smoke emissions based on <a href="https://github.com/CMU-CREATE-Lab/deep-smoke-machine" target="_blank">our previous work</a>.
                 The model will be a deep neural network that can learn how to classify videos into two categories: having smoke or no smoke.
-                Then, we will use the model to recognize smoke for many dates and camera views on <a href="https://spotdegifwolk.nl/" target="_blank">Frisse Wind's camera</a>.
+                Then, we will use the model to recognize smoke for many dates and camera views on <a href="https://spotdegifwolk.nl/" target="_blank">Frisse Wind's camera</a>. -->
               </li>
             </ul>
             <a class="jump" name="q2"></a>
             <p class="text no-bottom-margin add-top-margin">
               <span>
-                Q2: Why do you need help from volunteers?
+                Q2: Waarom hebben jullie vrijwilligers nodig?
+                <!-- Q2: Why do you need help from volunteers? -->
               </span>
             </p>
             <hr>
             <ul>
               <li>
-                While deep neural networks have been proven useful in various applications (e.g., object recognition), training such networks requires a considerable amount of labeled data.
-                Annotating all the data will take hundreds of hours for one researcher, which is why we need help from volunteers.
+                Hoewel deep neural networks nuttig blijken te zijn rondom verschillende toepassingen (bijvoorbeeld objectherkenning), kost het trainen van zo'n model heel veel gelabelde data.
+                Om dit zelf allemaal te labelen kan één onderzoek zo honderden uren mee bezig zijn.
+                Dit is waarom we vrijwilligers nodig hebben.
+                <!-- While deep neural networks have been proven useful in various applications (e.g., object recognition), training such networks requires a considerable amount of labeled data.
+                Annotating all the data will take hundreds of hours for one researcher, which is why we need help from volunteers. -->
               </li>
             </ul>
             <a class="jump" name="q3"></a>
             <p class="text no-bottom-margin add-top-margin">
               <span>
-                Q3: Why is it important to recognize and visualize smoke emissions?
+                Q3: Waarom is het zo belangrijk om rook te visualiseren en te herkennen?
+                <!-- Q3: Why is it important to recognize and visualize smoke emissions? -->
               </span>
             </p>
             <hr>
             <ul>
               <li>
-                Our <a href="https://arxiv.org/pdf/1804.03293.pdf" target="_blank">previous work in air quality monitoring</a> shows that visualizing evidence of smoke emissions can influence the attitude of regulators.
-                Also, using such visual data increased the community's confidence when addressing air pollution.
+                Ons <a href="https://arxiv.org/pdf/1804.03293.pdf" target="_blank">eerder gedaan werk</a> rondom het monitoren van luchtkwaliteit laat zien dat het visualiseren van bewijs van rook uitstoot helpt met het krijgen van aandacht van toezichthouders.
+                Daarnaast helpt het visualiseren de gemeenschap meer vertrouwen te geven in het aanpakken van luchtvervuiling.
+                <!-- Our <a href="https://arxiv.org/pdf/1804.03293.pdf" target="_blank">previous work in air quality monitoring</a> shows that visualizing evidence of smoke emissions can influence the attitude of regulators.
+                Also, using such visual data increased the community's confidence when addressing air pollution. -->
               </li>
             </ul>
             <a class="jump" name="q4"></a>
             <p class="text no-bottom-margin add-top-margin">
               <span>
-                Q4: Where do these video clips come from?
+                Q4: Waar komen de video clips vandaan?
+                <!-- Q4: Where do these video clips come from? -->
               </span>
             </p>
             <hr>
             <ul>
               <li>
-                We selected and cropped several windows into videos from the <a href="https://www.youtube.com/@frissewindnu" target="_blank">Frisse Wind's YouTube channel</a>.
-                The original camera footage is on <a href="https://spotdegifwolk.nl/" target="_blank">Frisse Wind's tool</a>.
+                Wij hebben een aantal video's geselecteerd en bewerkt van de <a href="https://www.youtube.com/@frissewindnu" target="_blank">YouTube channel van Frisse Wind</a>.
+                De originele opnames zijn te vinden op <a href="https://spotdegifwolk.nl/" target="_blank">tool van Frisse Wind</a>.
+                <!-- We selected and cropped several windows into videos from the <a href="https://www.youtube.com/@frissewindnu" target="_blank">Frisse Wind's YouTube channel</a>.
+                The original camera footage is on <a href="https://spotdegifwolk.nl/" target="_blank">Frisse Wind's tool</a>. -->
               </li>
             </ul>
             <a class="image adaptive-image no-top-margin cam-0-image" href="img/cam_0.png"></a>
             <a class="jump" name="q5"></a>
             <p class="text no-bottom-margin add-top-margin">
               <span>
-                Q5: Why did my labels not pass the quality check? How did you define the quality?
+                Q5: Waarom zijn mijn labels niet door kwaliteitscheck heen gekomen en hoe wordt deze kwaliteit bepaald?
+                <!-- Q5: Why did my labels not pass the quality check? How did you define the quality? -->
               </span>
             </p>
             <hr>
             <ul>
               <li>
-                For each batch (16 videos) on the page, the system randomly placed several videos with known answers, also called gold standards.
-                A batch will pass the quality check if you label these gold standards correctly.
+                Voor elke batch (16 video's) op de pagina worden er door het systeem willekeurige video's geplaatst.
+                Van deze video's zijn de antwoorden al bekend, wat als maatstaf gebruikt wordt.
+                Een batch komt door de kwaliteitscheck heen als de maatstaf video's correct gelabeld zijn.
+                <!-- For each batch (16 videos) on the page, the system randomly placed several videos with known answers, also called gold standards.
+                A batch will pass the quality check if you label these gold standards correctly. -->
               </li>
             </ul>
             <a class="jump" name="q6"></a>
             <p class="text no-bottom-margin add-top-margin">
               <span>
-                Q6: How does the system know if smoke emission is present in a video?
+                Q6: Hoe weet het systeem dat er rook in de video is?
+                <!-- Q6: How does the system know if smoke emission is present in a video? -->
               </span>
             </p>
             <hr>
             <ul>
               <li>
-                The system defines the final label by aggregating answers from citizens and researchers.
+                Het systeem bepaalt een label op basis van alle gegeven labels door de onderzoekers en de burgers.
+                Elke video wordt op zijn minst bekeken door twee vrijwilligers en één onderzoeker.
+                Als de vrijwilligers hetzelfde label hebben gegeven aan de video, dan wordt dit label opgeslagen door het systeem.
+                Als dit niet zo is, wordt het proces herhaald.
+                Het resultaat wordt dus bepaald op basis van meerderheidsstemming.
+                <!-- The system defines the final label by aggregating answers from citizens and researchers.
                 At least two volunteers or one researcher will review each video.
                 If the answers from the two volunteers agree, the system marks the video according to the agreement.
-                Otherwise, another volunteer or researcher will review the video, and the result is aggregated based on majority voting.
+                Otherwise, another volunteer or researcher will review the video, and the result is aggregated based on majority voting. -->
               </li>
             </ul>
             <a class="jump" name="q7"></a>
             <p class="text no-bottom-margin add-top-margin">
               <span>
-                Q7: Why sometimes does a dialog box pop up and ask me to enable video autoplay?
+                Q7: Waarom vraagt het dialoogvenster soms of ik video autoplay wil activeren?
+                <!-- Q7: Why sometimes does a dialog box pop up and ask me to enable video autoplay? -->
               </span>
             </p>
             <hr>
             <ul>
               <li>
-                During labeling, videos need to play automatically.
+                Tijdens het labelen moeten video's automatisch worden afgespeeld.
+                Als een telefoon data saver aan heeft staan wordt dit automatisch afspelen stopgezet.
+                Daarnaast zullen sommige telefoons video's automatisch pauzeren nadat ze uit slaapmodus zijn gegaan.
+                Om autoplay weer te activeren moet de gebruiker dit activeren, vandaar het dialoogvenster.
+                <!-- During labeling, videos need to play automatically.
                 If a mobile device has data saver enabled, videos will stop autoplay.
                 Also, some mobile devices pause videos after waking up from sleeping mode.
-                To enable autoplay, browsers require user interactions, which is why the system shows the dialog box.
+                To enable autoplay, browsers require user interactions, which is why the system shows the dialog box. -->
               </li>
             </ul>
             <a class="jump" name="q8"></a>
             <p class="text no-bottom-margin add-top-margin">
               <span>
-                Q8: Why do I sometimes see similar videos? Were they the same?
+                Q8: Waarom zie ik soms video's die op elkaar lijken? Zijn dit dezelfde video's?
+                <!-- Q8: Why do I sometimes see similar videos? Were they the same? -->
               </span>
             </p>
             <hr>
             <ul>
               <li>
-                Videos that have closer times (e.g., 8 and 8:10 am) can look similar due to the same weather and lighting conditions.
-                Also, gold standard videos for the quality check can appear again if you label many batches.
+                Video's die dicht bij elkaar gemaakt zijn (8 uur en 8:10) hebben de kans dat de video's hetzelfde uitzien doordat het weer en het licht hetzelfde kunnen zijn.
+                Daarnaast zullen de maatstaf video's vaker terug komen tijdens het labelen van een batch.
+                <!-- Videos that have closer times (e.g., 8 and 8:10 am) can look similar due to the same weather and lighting conditions.
+                Also, gold standard videos for the quality check can appear again if you label many batches. -->
               </li>
             </ul>
             <a class="jump" name="q9"></a>
             <p class="text no-bottom-margin add-top-margin">
               <span>
-                Q9: Can I build a similar system with your code?
+                Q9: Kan ik ongeveer hetzelfde systeem bouwen met jullie code?
+                <!-- Q9: Can I build a similar system with your code? -->
               </span>
             </p>
             <hr>
             <ul>
               <li>
-                This project is <a href="https://github.com/MultiX-Amsterdam/ijmond-camera-monitor" target="_blank">open-sourced on GitHub</a>. Please feel free to reuse the code.
+                Dit project is <a href="https://github.com/MultiX-Amsterdam/ijmond-camera-monitor" target="_blank">open-source en te vinden op GitHub</a>.
+                Voel je vrij om de code opnieuw te gebruiken.
+                <!-- This project is <a href="https://github.com/MultiX-Amsterdam/ijmond-camera-monitor" target="_blank">open-sourced on GitHub</a>.
+                 Please feel free to reuse the code. -->
               </li>
             </ul>
             <a class="jump" name="q10"></a>
             <p class="text no-bottom-margin add-top-margin">
               <span>
-                Q10: Are there other actions that I can take to advocate for better air quality?
+                Q10: Zijn er andere acties die ik kan ondernemen om te pleiten voor betere luchtkwaliteit?
+                <!-- Q10: Are there other actions that I can take to advocate for better air quality? -->
               </span>
             </p>
             <hr>
             <ul>
               <li>
-                We recommend checking <a href="https://www.frissewind.nu/" target="_blank">Frisse Wind's website</a> to understand opportunities for air quality advocacy,
+                Wij raden u aan om op de <a href="https://www.frissewind.nu/" target="_blank">website van Frisse Wind</a> te kijken naar meer mogelijkheden rondom het pleiten voor betere luchtkwaliteit.
+                Om luchtverontreiniging aan te pakken kan er gekeken worden naar de <a href="https://odnzkg.nl/faq-handhaving-tata-steel-kooksgasfabrieken/" target="_blank">acties van de Omgevingsdienst Noordzeekanaalgebied</a>.
+                Voor meer inzicht hoe burgers wetenschappers luchtkwaliteit monitoren is op de pagina van <a href="https://hollandse-luchten.org/" target="_blank">Hollandse Luchten netwerk</a> hier meer informatie over te vinden.
+                Daarnaast publiceert het <a href="https://www.rivm.nl/nieuws/directe-relatie-tussen-uitstoot-tata-steel-en-hinder-en-kans-op-ziekte" target="_blank">RIVM rapporten</a> over hoe de gezondheids invloed van de uitstoot van Tata Steel, hierbij zijn de belanghebbenden van dit rapport te vinden in het <a href="https://www.ad.nl/binnenland/harde-conclusie-onderzoek-tata-inwoners-wijk-aan-zee-leven-korter-door-uitstoot-staalfabriek~a9bbf8f4/">nieuwsartikel</a>.
+                <!-- We recommend checking <a href="https://www.frissewind.nu/" target="_blank">Frisse Wind's website</a> to understand opportunities for air quality advocacy,
                 the <a href="https://odnzkg.nl/faq-handhaving-tata-steel-kooksgasfabrieken/" target="_blank">environmental services's action</a> in addressing the air pollution concerns,
                 the <a href="https://hollandse-luchten.org/" target="_blank">Hollandse Luchten network</a> to understand local citizen science activities in monitoring air quality,
                 the <a href="https://www.rivm.nl/nieuws/directe-relatie-tussen-uitstoot-tata-steel-en-hinder-en-kans-op-ziekte" target="_blank">recent RIVM report</a> about the health impact of Tata Steel emissions,
-                and <a href="https://www.ad.nl/binnenland/harde-conclusie-onderzoek-tata-inwoners-wijk-aan-zee-leven-korter-door-uitstoot-staalfabriek~a9bbf8f4/">this news article</a> about how various stakeholders respond to RIVM's research results.
+                and <a href="https://www.ad.nl/binnenland/harde-conclusie-onderzoek-tata-inwoners-wijk-aan-zee-leven-korter-door-uitstoot-staalfabriek~a9bbf8f4/">this news article</a> about how various stakeholders respond to RIVM's research results. -->
               </li>
             </ul>
             <a class="jump" name="q11"></a>
             <p class="text no-bottom-margin add-top-margin">
               <span>
-                Q11: Why does this tool not support devices older than Android 7 and iOS 11?
+                Q11: Waarom ondersteunt deze tool geen apparaten ouder dan Android 7 en iOS 11?
+                <!-- Q11: Why does this tool not support devices older than Android 7 and iOS 11? -->
               </span>
             </p>
             <hr>
             <ul>
               <li>
-                When labeling smoke, this tool shows 16 videos at the same time.
-                Older devices have difficulties in playing these videos, which results in poor user experiences.
+                Wanneer er gelabeld moet worden of er rook is, worden er 16 of meer video's tegelijkertijd afgespeeld.
+                Oudere apparaten zullen hier meer moeite mee hebben waardoor uw ervaring minder wordt.
+                <!-- When labeling smoke, this tool shows 16 videos at the same time.
+                Older devices have difficulties in playing these videos, which results in poor user experiences. -->
               </li>
             </ul>
             <a class="jump" name="q12"></a>
             <p class="text no-bottom-margin add-top-margin">
               <span>
-                Q12: Why are there no nighttime videos to label?
+                Q12: Waarom zijn er alleen maar opnames gemaakt overdag?
+                <!-- Q12: Why are there no nighttime videos to label? -->
               </span>
             </p>
             <hr>
             <ul>
               <li>
-                Smoke emissions in nighttime videos (captured by commercial digital cameras) are tough for the computer to recognize due to insufficient light.
-                We want to focus on training the computer to recognize daytime smoke emissions first.
+                Doordat er 's nachts minder licht is, is het moeilijker door computers om rook te herkennen.
+                Om deze reden is ervoor gekozen om eerst naar rook overdag te kijken.
+                <!-- Smoke emissions in nighttime videos (captured by commercial digital cameras) are tough for the computer to recognize due to insufficient light.
+                We want to focus on training the computer to recognize daytime smoke emissions first. -->
+              </li>
+            </ul>
+            <a class="jump" name="q13"></a>
+            <p class="text no-bottom-margin add-top-margin">
+              <span>
+                Q13: Hoe vond je de gebeurtenissen?
+                <!-- Q13: How did you find the events? -->
+              </span>
+            </p>
+            <hr>
+            <ul>
+              <li>
+                De gebeurtenissen met rook uitstoot zijn gevonden met behulp van een object detectie model, ontwikkeld tijdens de <a href="https://www.fruitpunch.ai/challenges/ai-against-toxic-clouds" target="_blank">AI against Toxic Clouds challenge</a> door FruitPunch AI, georganiseerd door Jeroen van <a href="https://strangeloop.nl/" target="_blank">strangeloop.nl</a>.
+                Vrijwilligers van Frisse Wind hebben de gebeurtenissen handmatig geverifieerd.
+                <!-- The smoke emission events were found using an object detection model, developed during the <a href="https://www.fruitpunch.ai/challenges/ai-against-toxic-clouds" target="_blank">AI against Toxic Clouds challenge</a> by FruitPunch AI, hosted by Jeroen from <a href="https://strangeloop.nl/" target="_blank">strangeloop.nl</a>.
+                Volunteers from Frisse Wind have manually verified the events. -->
               </li>
             </ul>
           </div>
         </div>
       </div>
     </div>
-  </div>
-  <div id="video-test-dialog" class="custom-dialog-large" title="Autoplay" data-role="none">
-    <p>Video autoplay is disabled. Please enable it.</p>
-    <button id="play-video-button" class="custom-button">Enable video autoplay</button>
   </div>
 </body>
 

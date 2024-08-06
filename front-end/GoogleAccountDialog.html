@@ -1,0 +1,18 @@
+<div id="account-dialog" class="custom-dialog-large" title="Account" data-role="none">
+  <p id="sign-in-text">
+    Log in om uw persoonlijke prestaties bij te houden.
+    <!-- Sign in to track your personal records and contributions. -->
+  </p>
+  <div id="hello-text">
+    <p>
+      Hallo, bedankt voor het inloggen.
+    </p>
+  </div>
+  <p>
+    In ons systeem zullen wij alleen uw anonieme gebruikers ID opslaan (Het veld "sub" van de <a href="https://developers.google.com/identity/gsi/web/reference/js-reference#credential">Google Identity API</a>), deze bevat geen persoonlijke informatie.
+    <!-- We store only the anonymous user ID (the "sub" field from <a href="https://developers.google.com/identity/gsi/web/reference/js-reference#credential">Google Identity API</a>), which has no personal information. -->
+  </p>
+  <div id="google-sign-in-button" class="g-signin2"></div>
+  <button id="google-sign-out-button" class="custom-button">Uitloggen bij Google</button>
+  <button id="guest-button" class="custom-button">Ga verder als gast</button>
+</div>

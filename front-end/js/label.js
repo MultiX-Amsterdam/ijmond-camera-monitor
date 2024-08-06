@@ -13,7 +13,6 @@
   var is_first_time = true;
   var is_video_autoplay_tested = false;
   var ga_tracker;
-  var $sign_in_prompt;
   var $user_score_container;
   var $user_score_text;
   var $user_raw_score_text;
@@ -76,7 +75,6 @@
 
   function onUserIdChangeSuccess(new_user_id) {
     $("#review").prop("href", "gallery.html" + "?user_id=" + new_user_id);
-    google_account_dialog.updateUserId(new_user_id);
     if (is_first_time) {
       is_first_time = false;
       $next = $("#next");
@@ -160,10 +158,6 @@
         video_labeling_tool.updateUserIdByGoogleIdToken(google_id_token, {
           success: function (obj) {
             onUserIdChangeSuccess(obj.userId());
-            $sign_in_prompt.find("span").text("Sign Out");
-            if ($sign_in_prompt.hasClass("pulse-white")) {
-              $sign_in_prompt.removeClass("pulse-white")
-            }
             $user_score_container.show();
           },
           error: function (xhr) {
@@ -173,14 +167,9 @@
         });
       },
       sign_out_success: function () {
-        window.localStorage.removeItem("user_data");
         video_labeling_tool.updateUserIdByClientId(ga_tracker.getClientId(), {
           success: function (obj) {
             onUserIdChangeSuccess(obj.userId());
-            $sign_in_prompt.find("span").text("Sign In");
-            if (!$sign_in_prompt.hasClass("pulse-white")) {
-              $sign_in_prompt.addClass("pulse-white")
-            }
             $user_score_container.hide();
           },
           error: function (xhr) {
@@ -189,10 +178,6 @@
           }
         });
       }
-    });
-    $sign_in_prompt = $("#sign-in-prompt");
-    $sign_in_prompt.on("click", function () {
-      google_account_dialog.getDialog().dialog("open");
     });
     $user_score_container = $("#user-score-container");
     video_test_dialog = new edaplotjs.VideoTestDialog();
