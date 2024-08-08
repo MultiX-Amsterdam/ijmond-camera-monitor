@@ -163,11 +163,12 @@
         function createBBox(bbox) {
             // Starting value of the image is 20px
             const STARTING_VALUE = 20;
-            const $box = $('<div class="bbox"></div>');
 
+            const $box = $(`<div class="bbox"></div>`);
             // Update the bounding box style based on the bbox object
             $box.css({
                 position: "absolute",
+                display: "flex",
                 left: STARTING_VALUE + bbox.left + 'px',
                 top: STARTING_VALUE + bbox.top + 'px',
                 width: bbox.width + 'px',
@@ -175,6 +176,62 @@
                 border: "3px solid red"
             });
 
+            const $leftBox = $('<div class="resizer top-left"></div>')
+            const $rightBox = $(`<div class="resizer bottom-right"></div>`);
+
+            let startWidth, startHeight;
+            let startX, startY;
+            let startTop, startLeft;
+
+            $rightBox[0].addEventListener('mousedown', (e) => {
+                e.preventDefault();
+                startX = e.clientX;
+                startY = e.clientY;
+                startWidth = $box[0].offsetWidth;
+                startHeight = $box[0].offsetHeight;
+
+                document.addEventListener('mousemove', handleMouseMoveRight);
+                document.addEventListener('mouseup', handleMouseUp);
+            });
+
+            function handleMouseMoveRight(e) {
+                $box[0].style.width = (startWidth + e.clientX - startX) + 'px';
+                $box[0].style.height = (startHeight + e.clientY - startY) + 'px';
+            }
+
+            $leftBox[0].addEventListener('mousedown', (e) => {
+                e.preventDefault();
+                startX = e.clientX;
+                startY = e.clientY;
+                startWidth = $box[0].offsetWidth;
+                startHeight = $box[0].offsetHeight;
+                startLeft = $box[0].offsetLeft;g
+                startTop = $box[0].offsetTop;
+    
+                document.addEventListener('mousemove', handleMouseMoveLeft);
+                document.addEventListener('mouseup', handleMouseUp);
+            });
+
+            function handleMouseMoveLeft(e) {
+                const deltaX = e.clientX - startX;
+                const deltaY = e.clientY - startY;
+                $box[0].style.width = (startWidth - deltaX) + 'px';
+                $box[0].style.height = (startHeight - deltaY) + 'px';
+                $box[0].style.left = (startLeft + deltaX) + 'px';
+                $box[0].style.top = (startTop + deltaY) + 'px';
+            }
+
+            function handleMouseUp() {
+                document.removeEventListener('mousemove', handleMouseMoveRight);
+                document.removeEventListener('mousemove', handleMouseMoveLeft);
+                document.removeEventListener('mouseup', handleMouseUp);
+            }
+
+            $box.append($leftBox)
+            $box.append($rightBox)
+
+            
+            
             return $box;
         }
 
@@ -222,7 +279,7 @@
                 }
                 $item.data("id", v["id"]);
                 // Add bounding box
-                var $box = createBBox(v['bbox']);
+                var $box = createBBox(v['bbox']);                
                 $item.append($box);
 
                 var $vid = $item.find("video");
@@ -481,4 +538,11 @@
         window.edaplotjs = {};
         window.edaplotjs.VideoLabelingTool = VideoLabelingTool;
     }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Register to window
+    //
+
+
 })();

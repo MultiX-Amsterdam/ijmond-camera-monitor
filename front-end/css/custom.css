@@ -533,3 +533,23 @@ body,
     max-width: 100% !important;
   }
 }
+
+.resizer {
+  width: 15px;
+  height: 15px;
+  background: green;
+  position: absolute;
+  z-index: 1;
+  border-radius: 50%;
+  cursor: nwse-resize;
+}
+
+.resizer.top-left {
+  top: -5px;
+  left: -5px;  
+}
+
+.resizer.bottom-right {
+  bottom: -5px;
+  right: -5px;
+}
