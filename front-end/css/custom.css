@@ -546,10 +546,27 @@ body,
 
 .resizer.top-left {
   top: -5px;
-  left: -5px;  
+  left: -5px;
 }
 
 .resizer.bottom-right {
   bottom: -5px;
   right: -5px;
+}
+
+@media screen and (max-width: 600px) {
+  .resizer {
+    width: 20px;
+    height: 20px;
+  }
+
+  .resizer.top-left {
+    top: -10px;
+    left: -10px;
+  }
+
+  .resizer.bottom-right {
+    bottom: -10px;
+    right: -10px;
+  }
 }

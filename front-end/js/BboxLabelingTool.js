@@ -346,6 +346,8 @@
             util.resolvePromises(deferreds, {
                 success: function (data) {
                     updateTool($tool_videos);
+
+                    
                     if (typeof callback["success"] === "function") callback["success"](data);
                 },
                 error: function (xhr) {
