@@ -160,6 +160,8 @@
         }
 
         // Create resizers for the boundary box
+        // Touch is used for phone
+        // Mouse is used for desktop
         function createResizer($box) {
             const $leftBox = $('<div class="resizer top-left"></div>');
             const $rightBox = $('<div class="resizer bottom-right"></div>');
@@ -169,42 +171,48 @@
             let startTop, startLeft;
 
             function handlerRightMovement(e) {
+                // Calculates the new width and height of the box based on the movement
                 const clientX = e.clientX || e.touches[0].clientX;
                 const clientY = e.clientY || e.touches[0].clientY;
+                // Determine the new dimensions based on the initial state
                 $box[0].style.width = (startWidth + clientX - startX) + 'px';
                 $box[0].style.height = (startHeight + clientY - startY) + 'px';
             }
             
         
             function handlerLeftMovement(e) {
+                // Calculates the new width and height of the box based on the movement
                 const clientX = e.clientX || e.touches[0].clientX;
                 const clientY = e.clientY || e.touches[0].clientY;
+                // Make it so that the box can be expended to the left
                 const deltaX = clientX - startX;
                 const deltaY = clientY - startY;
+                // Determine the new dimensions based on the initial state
                 $box[0].style.width = (startWidth - deltaX) + 'px';
                 $box[0].style.height = (startHeight - deltaY) + 'px';
                 $box[0].style.left = (startLeft + deltaX) + 'px';
                 $box[0].style.top = (startTop + deltaY) + 'px';
             }
-        
-            function handlerMovement() {
+            
+            function removeListener() {
                 document.removeEventListener('mousemove', handlerRightMovement);
                 document.removeEventListener('touchmove', handlerRightMovement);
 
                 document.removeEventListener('mousemove', handlerLeftMovement);
                 document.removeEventListener('touchmove', handlerLeftMovement);
 
-                document.removeEventListener('mouseup', handlerMovement);
-                document.removeEventListener('touchend', handlerMovement);
+                document.removeEventListener('mouseup', removeListener);
+                document.removeEventListener('touchend', removeListener);
             }
 
             function addListener(handler) {
                 document.addEventListener('mousemove', handler);
                 document.addEventListener('touchmove', handler);
-                document.addEventListener('mouseup', handlerMovement);
-                document.addEventListener('touchend', handlerMovement);
+                document.addEventListener('mouseup', removeListener);
+                document.addEventListener('touchend', removeListener);
             }
-        
+            
+            // Initializes the resizing process
             function startResizingRight(e) {
                 e.preventDefault();
                 startX = e.clientX || e.touches[0].clientX;
@@ -214,7 +222,8 @@
 
                 addListener(handlerRightMovement)
             }
-        
+            
+            // Initializes the resizing process
             function startResizingLeft(e) {
                 e.preventDefault();
                 startX = e.clientX || e.touches[0].clientX;
@@ -239,7 +248,6 @@
 
         // Create a bounding box element
         function createBBox(bbox) {
-            // Starting value of the image is 20px
             const STARTING_VALUE = 20;
 
             const $box = $(`<div class="bbox"></div>`);
@@ -305,7 +313,7 @@
                 }
                 $item.data("id", v["id"]);
                 // Add bounding box
-                var $box = createBBox(v['bbox']);                
+                var $box = createBBox(v['bbox']);
                 $item.append($box);
 
                 var $vid = $item.find("video");
@@ -346,20 +354,6 @@
                     showBadVideoMsg();
                     if (typeof callback["abort"] === "function") callback["abort"](xhr);
                 }
-            });
-
-            // TEMP for testing
-            const box_styles = [
-                { top: '10px', left: '10px', width: '100px', height: '50px' },
-                { top: '500px', left: '50px', width: '150px', height: '75px' },
-                { top: '600px', left: '600px', width: '150px', height: '75px' },
-                { top: '210px', left: '20px', width: '430px', height: '105px' },
-            ];
-
-            const video_containers = document.querySelectorAll('.video-container');
-            video_containers.forEach((container, index) => {
-                const border_box = box_styles[index % box_styles.length]; // Cycle through styles
-                addBoxToVideo(container, border_box);
             });
         }
 
