@@ -159,6 +159,84 @@
             return $item;
         }
 
+        // Create resizers for the boundary box
+        function createResizer($box) {
+            const $leftBox = $('<div class="resizer top-left"></div>');
+            const $rightBox = $('<div class="resizer bottom-right"></div>');
+        
+            let startWidth, startHeight;
+            let startX, startY;
+            let startTop, startLeft;
+
+            function handlerRightMovement(e) {
+                const clientX = e.clientX || e.touches[0].clientX;
+                const clientY = e.clientY || e.touches[0].clientY;
+                $box[0].style.width = (startWidth + clientX - startX) + 'px';
+                $box[0].style.height = (startHeight + clientY - startY) + 'px';
+            }
+            
+        
+            function handlerLeftMovement(e) {
+                const clientX = e.clientX || e.touches[0].clientX;
+                const clientY = e.clientY || e.touches[0].clientY;
+                const deltaX = clientX - startX;
+                const deltaY = clientY - startY;
+                $box[0].style.width = (startWidth - deltaX) + 'px';
+                $box[0].style.height = (startHeight - deltaY) + 'px';
+                $box[0].style.left = (startLeft + deltaX) + 'px';
+                $box[0].style.top = (startTop + deltaY) + 'px';
+            }
+        
+            function handlerMovement() {
+                document.removeEventListener('mousemove', handlerRightMovement);
+                document.removeEventListener('touchmove', handlerRightMovement);
+
+                document.removeEventListener('mousemove', handlerLeftMovement);
+                document.removeEventListener('touchmove', handlerLeftMovement);
+
+                document.removeEventListener('mouseup', handlerMovement);
+                document.removeEventListener('touchend', handlerMovement);
+            }
+
+            function addListener(handler) {
+                document.addEventListener('mousemove', handler);
+                document.addEventListener('touchmove', handler);
+                document.addEventListener('mouseup', handlerMovement);
+                document.addEventListener('touchend', handlerMovement);
+            }
+        
+            function startResizingRight(e) {
+                e.preventDefault();
+                startX = e.clientX || e.touches[0].clientX;
+                startY = e.clientY || e.touches[0].clientY;
+                startWidth = $box[0].offsetWidth;
+                startHeight = $box[0].offsetHeight;
+
+                addListener(handlerRightMovement)
+            }
+        
+            function startResizingLeft(e) {
+                e.preventDefault();
+                startX = e.clientX || e.touches[0].clientX;
+                startY = e.clientY || e.touches[0].clientY;
+                startWidth = $box[0].offsetWidth;
+                startHeight = $box[0].offsetHeight;
+                startLeft = $box[0].offsetLeft;
+                startTop = $box[0].offsetTop;
+        
+                addListener(handlerLeftMovement)
+            }
+        
+            $rightBox[0].addEventListener('mousedown', startResizingRight);
+            $rightBox[0].addEventListener('touchstart', startResizingRight);
+        
+            $leftBox[0].addEventListener('mousedown', startResizingLeft);
+            $leftBox[0].addEventListener('touchstart', startResizingLeft);
+        
+            return [$rightBox, $leftBox];
+        }
+        
+
         // Create a bounding box element
         function createBBox(bbox) {
             // Starting value of the image is 20px
@@ -175,62 +253,10 @@
                 height: bbox.height + 'px',
                 border: "3px solid red"
             });
-
-            const $leftBox = $('<div class="resizer top-left"></div>')
-            const $rightBox = $(`<div class="resizer bottom-right"></div>`);
-
-            let startWidth, startHeight;
-            let startX, startY;
-            let startTop, startLeft;
-
-            $rightBox[0].addEventListener('mousedown', (e) => {
-                e.preventDefault();
-                startX = e.clientX;
-                startY = e.clientY;
-                startWidth = $box[0].offsetWidth;
-                startHeight = $box[0].offsetHeight;
-
-                document.addEventListener('mousemove', handleMouseMoveRight);
-                document.addEventListener('mouseup', handleMouseUp);
-            });
-
-            function handleMouseMoveRight(e) {
-                $box[0].style.width = (startWidth + e.clientX - startX) + 'px';
-                $box[0].style.height = (startHeight + e.clientY - startY) + 'px';
-            }
-
-            $leftBox[0].addEventListener('mousedown', (e) => {
-                e.preventDefault();
-                startX = e.clientX;
-                startY = e.clientY;
-                startWidth = $box[0].offsetWidth;
-                startHeight = $box[0].offsetHeight;
-                startLeft = $box[0].offsetLeft;g
-                startTop = $box[0].offsetTop;
-    
-                document.addEventListener('mousemove', handleMouseMoveLeft);
-                document.addEventListener('mouseup', handleMouseUp);
-            });
-
-            function handleMouseMoveLeft(e) {
-                const deltaX = e.clientX - startX;
-                const deltaY = e.clientY - startY;
-                $box[0].style.width = (startWidth - deltaX) + 'px';
-                $box[0].style.height = (startHeight - deltaY) + 'px';
-                $box[0].style.left = (startLeft + deltaX) + 'px';
-                $box[0].style.top = (startTop + deltaY) + 'px';
-            }
-
-            function handleMouseUp() {
-                document.removeEventListener('mousemove', handleMouseMoveRight);
-                document.removeEventListener('mousemove', handleMouseMoveLeft);
-                document.removeEventListener('mouseup', handleMouseUp);
-            }
-
-            $box.append($leftBox)
-            $box.append($rightBox)
-
             
+            const resizeBoxes = createResizer($box)
+            $box.append(resizeBoxes[0])
+            $box.append(resizeBoxes[1])
             
             return $box;
         }
