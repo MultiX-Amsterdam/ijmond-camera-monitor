@@ -81,7 +81,7 @@
         is_first_time = false;
         $next = $("#next");
         $next.on("click", function () {
-          nextBatch();
+          // nextBatch()
         });
         nextBatch();
         google_account_dialog.isAuthenticatedWithGoogle({

@@ -42,6 +42,25 @@
             showLoadingMsg();
         }
 
+        const JSON_temp = {
+            "boxes": {
+                "x": 366, 
+                "y": 96, 
+                "w": 75, 
+                "h": 123
+            }, 
+            "relative_boxes": {
+                "x": 219,
+                "y": 96,
+                "w": 75, 
+                "h": 123
+            }, 
+            "image_width": 900, 
+            "image_height": 900, 
+            "cropped_width": 512, 
+            "cropped_height": 512
+        }
+
         // Get the user id from the server
         function login(post_json, callback) {
             callback = safeGet(callback, {});
@@ -151,10 +170,8 @@
             // "preload" is ignored by mobile devices
             // "disableRemotePlayback" prevents chrome casting
             // "playsinline" and "playsInline" prevents playing video fullscreen
-            var $vid = $("<video autoplay preload loop muted playsinline playsInline disableRemotePlayback></video>");
-            $item.on("click", function () {
-                toggleSelect($(this));
-            });
+            var $vid = $("<video class='return-size' autoplay preload loop muted playsinline playsInline disableRemotePlayback></video>");
+            var $img = $("<img class='return-size' src='../img/crop.png'>");
             $item.append($vid).append($caption);
             return $item;
         }
@@ -166,17 +183,17 @@
             const $leftBox = $('<div class="resizer top-left"></div>');
             const $rightBox = $('<div class="resizer bottom-right"></div>');
         
-            let startWidth, startHeight;
-            let startX, startY;
-            let startTop, startLeft;
+            let start_width, start_height;
+            let start_x, start_y;
+            let start_top, start_left;
 
             function handlerRightMovement(e) {
                 // Calculates the new width and height of the box based on the movement
-                const clientX = e.clientX || e.touches[0].clientX;
-                const clientY = e.clientY || e.touches[0].clientY;
+                const client_x = e.clientX || e.touches[0].clientX;
+                const client_y = e.clientY || e.touches[0].clientY;
                 // Determine the new dimensions based on the initial state
-                $box[0].style.width = (startWidth + clientX - startX) + 'px';
-                $box[0].style.height = (startHeight + clientY - startY) + 'px';
+                $box[0].style.width = (start_width + client_x - start_x) + 'px';
+                $box[0].style.height = (start_height + client_y - start_y) + 'px';
             }
             
         
@@ -185,13 +202,13 @@
                 const clientX = e.clientX || e.touches[0].clientX;
                 const clientY = e.clientY || e.touches[0].clientY;
                 // Make it so that the box can be expended to the left
-                const deltaX = clientX - startX;
-                const deltaY = clientY - startY;
+                const deltaX = clientX - start_x;
+                const deltaY = clientY - start_y;
                 // Determine the new dimensions based on the initial state
-                $box[0].style.width = (startWidth - deltaX) + 'px';
-                $box[0].style.height = (startHeight - deltaY) + 'px';
-                $box[0].style.left = (startLeft + deltaX) + 'px';
-                $box[0].style.top = (startTop + deltaY) + 'px';
+                $box[0].style.width = (start_width - deltaX) + 'px';
+                $box[0].style.height = (start_height - deltaY) + 'px';
+                $box[0].style.left = (start_left + deltaX) + 'px';
+                $box[0].style.top = (start_top + deltaY) + 'px';
             }
             
             function removeListener() {
@@ -215,10 +232,10 @@
             // Initializes the resizing process
             function startResizingRight(e) {
                 e.preventDefault();
-                startX = e.clientX || e.touches[0].clientX;
-                startY = e.clientY || e.touches[0].clientY;
-                startWidth = $box[0].offsetWidth;
-                startHeight = $box[0].offsetHeight;
+                start_x = e.clientX || e.touches[0].clientX;
+                start_y = e.clientY || e.touches[0].clientY;
+                start_width = $box[0].offsetWidth;
+                start_height = $box[0].offsetHeight;
 
                 addListener(handlerRightMovement)
             }
@@ -226,12 +243,12 @@
             // Initializes the resizing process
             function startResizingLeft(e) {
                 e.preventDefault();
-                startX = e.clientX || e.touches[0].clientX;
-                startY = e.clientY || e.touches[0].clientY;
-                startWidth = $box[0].offsetWidth;
-                startHeight = $box[0].offsetHeight;
-                startLeft = $box[0].offsetLeft;
-                startTop = $box[0].offsetTop;
+                start_x = e.clientX || e.touches[0].clientX;
+                start_y = e.clientY || e.touches[0].clientY;
+                start_width = $box[0].offsetWidth;
+                start_height = $box[0].offsetHeight;
+                start_left = $box[0].offsetLeft;
+                start_top = $box[0].offsetTop;
         
                 addListener(handlerLeftMovement)
             }
@@ -262,9 +279,9 @@
                 border: "3px solid red"
             });
             
-            const resizeBoxes = createResizer($box)
-            $box.append(resizeBoxes[0])
-            $box.append(resizeBoxes[1])
+            const resize_boxes = createResizer($box)
+            $box.append(resize_boxes[0])
+            $box.append(resize_boxes[1])
             
             return $box;
         }
@@ -273,15 +290,15 @@
         // Function will be removed after data is receivable from the server
         function createRandomBBox() {
             // Generate random values for image width and height around 100
-            const imageWidth = 400 + (Math.random() * 200 - 100);
-            const imageHeight = 400 + (Math.random() * 200 - 100);
+            const image_width = 400 + (Math.random() * 200 - 100);
+            const image_height = 400 + (Math.random() * 200 - 100);
 
             // Generate random values for left, top, width, and height within bounds
             const width = 10 + Math.random() * 50;
             const height = 10 + Math.random() * 50;
 
-            const left = Math.max(20, Math.random() * Math.min(imageWidth - 30, 320) - width);
-            const top = Math.max(20, Math.random() * Math.min(imageHeight - 60, 320) - height);
+            const left = Math.max(20, Math.random() * Math.min(image_width - 30, 320) - width);
+            const top = Math.max(20, Math.random() * Math.min(image_height - 60, 320) - height);
 
             // Return the bbox object with random values
             return {
@@ -289,8 +306,33 @@
                 top: Math.round(top),
                 width: Math.round(width),
                 height: Math.round(height),
-                image_width: Math.round(imageWidth),
-                image_height: Math.round(imageHeight)
+                image_width: Math.round(image_width),
+                image_height: Math.round(image_height)
+            };
+        }
+
+        function calculateBBox(meta_data, div_size=420) {
+            const relative_boxes = meta_data["relative_boxes"];
+            const cropped_width = meta_data["cropped_width"];
+            const cropped_height = meta_data["cropped_height"];
+
+            const x = relative_boxes['x']
+            const y = relative_boxes['y']
+            const w = relative_boxes['w']
+            const h = relative_boxes['h']
+
+            const box_x = (x / cropped_width) * div_size
+            const box_y = (y / cropped_height) * div_size
+            const box_w = (w / cropped_width) * div_size
+            const box_h = (h / cropped_height) * div_size
+
+            return {
+                left: Math.round(box_x),
+                top: Math.round(box_y),
+                width: Math.round(box_w),
+                height: Math.round(box_h),
+                image_width: cropped_width,
+                image_height: cropped_height
             };
         }
 
@@ -300,7 +342,7 @@
             // Add videos
             for (var i = 0; i < video_data.length; i++) {
                 var v = video_data[i];
-                v['bbox'] = createRandomBBox();
+                v['bbox'] = calculateBBox(JSON_temp);
 
                 var $item;
                 if (typeof video_items[i] === "undefined") {
@@ -315,7 +357,7 @@
                 // Add bounding box
                 var $box = createBBox(v['bbox']);
                 $item.append($box);
-
+                
                 var $vid = $item.find("video");
                 $vid.one("canplay", function () {
                     // Play the video
@@ -357,22 +399,6 @@
                     if (typeof callback["abort"] === "function") callback["abort"](xhr);
                 }
             });
-        }
-
-        // Toggle the "select" class of a DOM element
-        function toggleSelect($element) {
-            if ($element.hasClass("selected")) {
-                $element.removeClass("selected");
-            } else {
-                $element.addClass("selected");
-            }
-        }
-
-        // Remove the "select" class of a DOM element
-        function removeSelect($element) {
-            if ($element.hasClass("selected")) {
-                $element.removeClass("selected");
-            }
         }
 
         function updateTool($new_content) {
