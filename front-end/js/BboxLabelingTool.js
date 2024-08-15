@@ -44,20 +44,20 @@
 
         const JSON_temp = {
             "boxes": {
-                "x": 366, 
-                "y": 96, 
-                "w": 75, 
+                "x": 366,
+                "y": 96,
+                "w": 75,
                 "h": 123
-            }, 
+            },
             "relative_boxes": {
                 "x": 219,
                 "y": 96,
-                "w": 75, 
+                "w": 75,
                 "h": 123
-            }, 
-            "image_width": 900, 
-            "image_height": 900, 
-            "cropped_width": 512, 
+            },
+            "image_width": 900,
+            "image_height": 900,
+            "cropped_width": 512,
             "cropped_height": 512
         }
 
@@ -182,7 +182,7 @@
         function createResizer($box) {
             const $leftBox = $('<div class="resizer top-left"></div>');
             const $rightBox = $('<div class="resizer bottom-right"></div>');
-        
+
             let start_width, start_height;
             let start_x, start_y;
             let start_top, start_left;
@@ -195,8 +195,8 @@
                 $box[0].style.width = (start_width + client_x - start_x) + 'px';
                 $box[0].style.height = (start_height + client_y - start_y) + 'px';
             }
-            
-        
+
+
             function handlerLeftMovement(e) {
                 // Calculates the new width and height of the box based on the movement
                 const clientX = e.clientX || e.touches[0].clientX;
@@ -210,7 +210,7 @@
                 $box[0].style.left = (start_left + deltaX) + 'px';
                 $box[0].style.top = (start_top + deltaY) + 'px';
             }
-            
+
             function removeListener() {
                 document.removeEventListener('mousemove', handlerRightMovement);
                 document.removeEventListener('touchmove', handlerRightMovement);
@@ -228,7 +228,7 @@
                 document.addEventListener('mouseup', removeListener);
                 document.addEventListener('touchend', removeListener);
             }
-            
+
             // Initializes the resizing process
             function startResizingRight(e) {
                 e.preventDefault();
@@ -239,7 +239,7 @@
 
                 addListener(handlerRightMovement)
             }
-            
+
             // Initializes the resizing process
             function startResizingLeft(e) {
                 e.preventDefault();
@@ -249,19 +249,18 @@
                 start_height = $box[0].offsetHeight;
                 start_left = $box[0].offsetLeft;
                 start_top = $box[0].offsetTop;
-        
+
                 addListener(handlerLeftMovement)
             }
-        
+
             $rightBox[0].addEventListener('mousedown', startResizingRight);
             $rightBox[0].addEventListener('touchstart', startResizingRight);
-        
+
             $leftBox[0].addEventListener('mousedown', startResizingLeft);
             $leftBox[0].addEventListener('touchstart', startResizingLeft);
-        
+
             return [$rightBox, $leftBox];
         }
-        
 
         // Create a bounding box element
         function createBBox(bbox) {
@@ -278,40 +277,14 @@
                 height: bbox.height + 'px',
                 border: "3px solid red"
             });
-            
+
             const resize_boxes = createResizer($box)
             $box.append(resize_boxes[0])
             $box.append(resize_boxes[1])
-            
             return $box;
         }
 
-        // Create random bounding box for testing purposes
-        // Function will be removed after data is receivable from the server
-        function createRandomBBox() {
-            // Generate random values for image width and height around 100
-            const image_width = 400 + (Math.random() * 200 - 100);
-            const image_height = 400 + (Math.random() * 200 - 100);
-
-            // Generate random values for left, top, width, and height within bounds
-            const width = 10 + Math.random() * 50;
-            const height = 10 + Math.random() * 50;
-
-            const left = Math.max(20, Math.random() * Math.min(image_width - 30, 320) - width);
-            const top = Math.max(20, Math.random() * Math.min(image_height - 60, 320) - height);
-
-            // Return the bbox object with random values
-            return {
-                left: Math.round(left),
-                top: Math.round(top),
-                width: Math.round(width),
-                height: Math.round(height),
-                image_width: Math.round(image_width),
-                image_height: Math.round(image_height)
-            };
-        }
-
-        function calculateBBox(meta_data, div_size=420) {
+        function calculateBBox(meta_data, div_size = 420) {
             const relative_boxes = meta_data["relative_boxes"];
             const cropped_width = meta_data["cropped_width"];
             const cropped_height = meta_data["cropped_height"];
@@ -342,9 +315,8 @@
             // Add videos
             for (var i = 0; i < video_data.length; i++) {
                 var v = video_data[i];
-                v['bbox'] = calculateBBox(JSON_temp);
-
                 var $item;
+
                 if (typeof video_items[i] === "undefined") {
                     $item = createVideo(i);
                     video_items.push($item);
@@ -354,10 +326,7 @@
                     removeSelect($item);
                 }
                 $item.data("id", v["id"]);
-                // Add bounding box
-                var $box = createBBox(v['bbox']);
-                $item.append($box);
-                
+
                 var $vid = $item.find("video");
                 $vid.one("canplay", function () {
                     // Play the video
@@ -389,7 +358,7 @@
                 success: function (data) {
                     updateTool($tool_videos);
 
-                    
+
                     if (typeof callback["success"] === "function") callback["success"](data);
                 },
                 error: function (xhr) {
@@ -399,6 +368,28 @@
                     if (typeof callback["abort"] === "function") callback["abort"](xhr);
                 }
             });
+        }
+
+        function updateBbox(video_data, selector) {
+            let intervalID = setInterval(function () {
+                const element = $(selector);
+                if (element.length > 0) {
+                    clearInterval(intervalID);
+                    var border_width = parseInt(element.css('border-top-width'));
+                    var element_width = element.width() + border_width * 2;
+
+                    console.log('Element width: ', element_width);
+                    const parent_element = element.parent();
+
+                    for (var i = 0; i < video_data.length; i++) {
+                        var v = video_data[i];
+                        v['bbox'] = calculateBBox(JSON_temp, element_width);
+                        var $box = createBBox(v['bbox']);
+                        $(parent_element[i]).append($box);
+                    }
+
+                }
+            }, 100);
         }
 
         function updateTool($new_content) {
@@ -462,6 +453,7 @@
                         if (typeof callback["abort"] === "function") callback["abort"](xhr);
                     }
                 });
+                updateBbox(data["data"], ".return-size");
             }
         }
 
