@@ -176,139 +176,6 @@
             return $item;
         }
 
-        // Create resizers for the boundary box
-        // Touch is used for phone
-        // Mouse is used for desktop
-        function createResizer($box) {
-            const $leftBox = $('<div class="resizer top-left"></div>');
-            const $rightBox = $('<div class="resizer bottom-right"></div>');
-
-            let start_width, start_height;
-            let start_x, start_y;
-            let start_top, start_left;
-
-            function handlerRightMovement(e) {
-                // Calculates the new width and height of the box based on the movement
-                const client_x = e.clientX || e.touches[0].clientX;
-                const client_y = e.clientY || e.touches[0].clientY;
-                // Determine the new dimensions based on the initial state
-                $box[0].style.width = (start_width + client_x - start_x) + 'px';
-                $box[0].style.height = (start_height + client_y - start_y) + 'px';
-            }
-
-
-            function handlerLeftMovement(e) {
-                // Calculates the new width and height of the box based on the movement
-                const clientX = e.clientX || e.touches[0].clientX;
-                const clientY = e.clientY || e.touches[0].clientY;
-                // Make it so that the box can be expended to the left
-                const deltaX = clientX - start_x;
-                const deltaY = clientY - start_y;
-                // Determine the new dimensions based on the initial state
-                $box[0].style.width = (start_width - deltaX) + 'px';
-                $box[0].style.height = (start_height - deltaY) + 'px';
-                $box[0].style.left = (start_left + deltaX) + 'px';
-                $box[0].style.top = (start_top + deltaY) + 'px';
-            }
-
-            function removeListener() {
-                document.removeEventListener('mousemove', handlerRightMovement);
-                document.removeEventListener('touchmove', handlerRightMovement);
-
-                document.removeEventListener('mousemove', handlerLeftMovement);
-                document.removeEventListener('touchmove', handlerLeftMovement);
-
-                document.removeEventListener('mouseup', removeListener);
-                document.removeEventListener('touchend', removeListener);
-            }
-
-            function addListener(handler) {
-                document.addEventListener('mousemove', handler);
-                document.addEventListener('touchmove', handler);
-                document.addEventListener('mouseup', removeListener);
-                document.addEventListener('touchend', removeListener);
-            }
-
-            // Initializes the resizing process
-            function startResizingRight(e) {
-                e.preventDefault();
-                start_x = e.clientX || e.touches[0].clientX;
-                start_y = e.clientY || e.touches[0].clientY;
-                start_width = $box[0].offsetWidth;
-                start_height = $box[0].offsetHeight;
-
-                addListener(handlerRightMovement)
-            }
-
-            // Initializes the resizing process
-            function startResizingLeft(e) {
-                e.preventDefault();
-                start_x = e.clientX || e.touches[0].clientX;
-                start_y = e.clientY || e.touches[0].clientY;
-                start_width = $box[0].offsetWidth;
-                start_height = $box[0].offsetHeight;
-                start_left = $box[0].offsetLeft;
-                start_top = $box[0].offsetTop;
-
-                addListener(handlerLeftMovement)
-            }
-
-            $rightBox[0].addEventListener('mousedown', startResizingRight);
-            $rightBox[0].addEventListener('touchstart', startResizingRight);
-
-            $leftBox[0].addEventListener('mousedown', startResizingLeft);
-            $leftBox[0].addEventListener('touchstart', startResizingLeft);
-
-            return [$rightBox, $leftBox];
-        }
-
-        // Create a bounding box element
-        function createBBox(bbox) {
-            const STARTING_VALUE = 20;
-
-            const $box = $(`<div class="bbox"></div>`);
-            // Update the bounding box style based on the bbox object
-            $box.css({
-                position: "absolute",
-                display: "flex",
-                left: STARTING_VALUE + bbox.left + 'px',
-                top: STARTING_VALUE + bbox.top + 'px',
-                width: bbox.width + 'px',
-                height: bbox.height + 'px',
-                border: "3px solid red"
-            });
-
-            const resize_boxes = createResizer($box)
-            $box.append(resize_boxes[0])
-            $box.append(resize_boxes[1])
-            return $box;
-        }
-
-        function calculateBBox(meta_data, div_size = 420) {
-            const relative_boxes = meta_data["relative_boxes"];
-            const cropped_width = meta_data["cropped_width"];
-            const cropped_height = meta_data["cropped_height"];
-
-            const x = relative_boxes['x']
-            const y = relative_boxes['y']
-            const w = relative_boxes['w']
-            const h = relative_boxes['h']
-
-            const box_x = (x / cropped_width) * div_size
-            const box_y = (y / cropped_height) * div_size
-            const box_w = (w / cropped_width) * div_size
-            const box_h = (h / cropped_height) * div_size
-
-            return {
-                left: Math.round(box_x),
-                top: Math.round(box_y),
-                width: Math.round(box_w),
-                height: Math.round(box_h),
-                image_width: cropped_width,
-                image_height: cropped_height
-            };
-        }
-
         // Update the videos with a new batch of urls
         function updateVideos(video_data, callback) {
             var deferreds = [];
@@ -370,6 +237,159 @@
             });
         }
 
+        // Create resizers for the boundary box
+        // Touch is used for phone
+        // Mouse is used for desktop
+        function createResizer($box, div_size) {
+            const $leftBox = $('<div class="resizer top-left"></div>');
+            const $rightBox = $('<div class="resizer bottom-right"></div>');
+
+            const BORDER_SIZE = 20;
+
+            let start_width, start_height;
+            let start_x, start_y;
+            let start_top, start_left;
+
+            function handlerRightMovement(e) {
+                // Calculates the new width and height of the box based on the movement
+                const client_x = e.clientX || e.touches[0].clientX;
+                const client_y = e.clientY || e.touches[0].clientY;
+
+                // Determine the new dimensions based on the initial state'
+                const new_width = start_width + client_x - start_x;
+                const new_height = start_height + client_y - start_y;
+
+                // Update the width and height of the box without exceeding the image size
+                $box[0].style.width =  Math.min(new_width, div_size - start_left) + 'px';
+                $box[0].style.height = Math.min(new_height, div_size - start_top) + 'px';
+            }
+
+            function handlerLeftMovement(e) {
+                // Calculates the new position and size of the box based on the movement
+                const client_x = e.clientX || e.touches[0].clientX;
+                const client_y = e.clientY || e.touches[0].clientY;
+            
+                // Determine the deltas based on the initial state
+                const deltaX = client_x - start_x;
+                const deltaY = client_y - start_y;
+            
+                // New dimensions and positions
+                const new_width = start_width - deltaX;
+                const new_height = start_height - deltaY;
+                const new_left = start_left + deltaX;
+                const new_top = start_top + deltaY;
+            
+                // Ensure new dimensions and positions do not exceed the container's boundaries
+                $box[0].style.width =  Math.min(new_width, div_size - start_left) + 'px';
+                $box[0].style.height = Math.min(new_height, div_size - start_top) + 'px';
+                $box[0].style.left = Math.max(new_left, 0); + 'px';
+                $box[0].style.top = Math.max(new_top, 0); + 'px';
+            }
+
+            // function handlerLeftMovement(e) {
+            //     // Calculates the new width and height of the box based on the movement
+            //     const clientX = e.clientX || e.touches[0].clientX;
+            //     const clientY = e.clientY || e.touches[0].clientY;
+            //     // Make it so that the box can be expended to the left
+            //     const deltaX = clientX - start_x;
+            //     const deltaY = clientY - start_y;
+            //     // Determine the new dimensions based on the initial state
+            //     $box[0].style.width = (start_width - deltaX) + 'px';
+            //     $box[0].style.height = (start_height - deltaY) + 'px';
+            //     $box[0].style.left = (start_left + deltaX) + 'px';
+            //     $box[0].style.top = (start_top + deltaY) + 'px';
+            // }
+
+            function removeListener() {
+                document.removeEventListener('mousemove', handlerRightMovement);
+                document.removeEventListener('touchmove', handlerRightMovement);
+
+                document.removeEventListener('mousemove', handlerLeftMovement);
+                document.removeEventListener('touchmove', handlerLeftMovement);
+
+                document.removeEventListener('mouseup', removeListener);
+                document.removeEventListener('touchend', removeListener);
+            }
+
+            function addListener(handler) {
+                document.addEventListener('mousemove', handler);
+                document.addEventListener('touchmove', handler);
+                document.addEventListener('mouseup', removeListener);
+                document.addEventListener('touchend', removeListener);
+            }
+
+           // Initializes the resizing process
+            function startResizing(e, handler) {
+                e.preventDefault();
+                start_x = e.clientX || e.touches[0].clientX;
+                start_y = e.clientY || e.touches[0].clientY;
+                start_width = $box[0].offsetWidth;
+                start_height = $box[0].offsetHeight;
+                start_left = $box[0].offsetLeft;
+                start_top = $box[0].offsetTop;
+
+                addListener(handler);
+            }
+
+            // Attach the event listeners
+            $rightBox[0].addEventListener('mousedown', (e) => startResizing(e, handlerRightMovement));
+            $rightBox[0].addEventListener('touchstart', (e) => startResizing(e, handlerRightMovement));
+
+            $leftBox[0].addEventListener('mousedown', (e) => startResizing(e, handlerLeftMovement));
+            $leftBox[0].addEventListener('touchstart', (e) => startResizing(e, handlerLeftMovement));
+
+            return [$rightBox, $leftBox];
+        }
+
+        // Create a bounding box element
+        function createBBox(bbox, div_size = 420) {
+            const STARTING_VALUE = 20;
+
+            const $box = $(`<div class="bbox"></div>`);
+            // Update the bounding box style based on the bbox object
+            $box.css({
+                position: "absolute",
+                display: "flex",
+                left: STARTING_VALUE + bbox.left + 'px',
+                top: STARTING_VALUE + bbox.top + 'px',
+                width: bbox.width + 'px',
+                height: bbox.height + 'px',
+                border: "3px solid red"
+            });
+
+            const resize_boxes = createResizer($box, div_size)
+            $box.append(resize_boxes[0])
+            $box.append(resize_boxes[1])
+            return $box;
+        }
+
+        // Calculate the bounding box based on the given meta data
+        function calculateBBox(meta_data, div_size = 420) {
+            const relative_boxes = meta_data["relative_boxes"];
+            const cropped_width = meta_data["cropped_width"];
+            const cropped_height = meta_data["cropped_height"];
+
+            const x = relative_boxes['x']
+            const y = relative_boxes['y']
+            const w = relative_boxes['w']
+            const h = relative_boxes['h']
+
+            const box_x = (x / cropped_width) * div_size
+            const box_y = (y / cropped_height) * div_size
+            const box_w = (w / cropped_width) * div_size
+            const box_h = (h / cropped_height) * div_size
+
+            return {
+                left: Math.round(box_x),
+                top: Math.round(box_y),
+                width: Math.round(box_w),
+                height: Math.round(box_h),
+                image_width: cropped_width,
+                image_height: cropped_height
+            };
+        }
+
+        // Update bounding box in the video
         function updateBbox(video_data, selector) {
             let intervalID = setInterval(function () {
                 const element = $(selector);
