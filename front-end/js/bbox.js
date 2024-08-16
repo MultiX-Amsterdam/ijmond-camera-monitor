@@ -44,6 +44,42 @@
     }, count_down_duration);
   }
 
+  function collectBoxData() {
+    var $boxes = $(".bbox");
+    var css_properties = [];
+    for (let i = 0; i < $boxes.length; i++) {
+      const $box = $boxes[i];
+      const box_style = window.getComputedStyle($box);
+
+      // Retrieve specific CSS properties
+      var width = box_style.getPropertyValue('width');
+      var height = box_style.getPropertyValue('height');
+      var top = box_style.getPropertyValue('top');
+      var left = box_style.getPropertyValue('left');
+
+      // Store the properties in an object
+      css_properties.push({
+        img_id: i,
+        img_frame: 0,
+        cropped_width: 0,
+        cropped_height: 0,
+        relative_boxes: {
+          x: Math.round(top),
+          y: Math.round(left),
+          w: Math.round(width),
+          h: Math.round(height)
+        }
+      });
+    }
+
+    // Export to JSON
+    const json_file = JSON.stringify(css_properties)
+    var fs = require('fs');
+    fs.writeFile("thing.json", dictstring, function (err, result) {
+      if (err) console.log('error', err);
+    });
+  }
+
   function nextBatch(ignore_labels) {
     $next.prop("disabled", true);
     resetCountDown();
@@ -79,6 +115,7 @@
       is_first_time = false;
       $next = $("#next");
       $next.on("click", function () {
+        collectBoxData();
         nextBatch();
       });
       nextBatch();
@@ -95,6 +132,7 @@
       // Otherwise the server will return an invalid signature error
       nextBatch(true);
     }
+    document.getElementById('myButton').addEventListener('click', collectBoxData);
   }
 
   function onUserNotSignedIn(client_id) {

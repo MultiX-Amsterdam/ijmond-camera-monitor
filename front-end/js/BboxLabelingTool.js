@@ -286,20 +286,6 @@
                 $box[0].style.top = Math.max(new_top, 0); + 'px';
             }
 
-            // function handlerLeftMovement(e) {
-            //     // Calculates the new width and height of the box based on the movement
-            //     const clientX = e.clientX || e.touches[0].clientX;
-            //     const clientY = e.clientY || e.touches[0].clientY;
-            //     // Make it so that the box can be expended to the left
-            //     const deltaX = clientX - start_x;
-            //     const deltaY = clientY - start_y;
-            //     // Determine the new dimensions based on the initial state
-            //     $box[0].style.width = (start_width - deltaX) + 'px';
-            //     $box[0].style.height = (start_height - deltaY) + 'px';
-            //     $box[0].style.left = (start_left + deltaX) + 'px';
-            //     $box[0].style.top = (start_top + deltaY) + 'px';
-            // }
-
             function removeListener() {
                 document.removeEventListener('mousemove', handlerRightMovement);
                 document.removeEventListener('touchmove', handlerRightMovement);
@@ -397,8 +383,7 @@
                     clearInterval(intervalID);
                     var border_width = parseInt(element.css('border-top-width'));
                     var element_width = element.width() + border_width * 2;
-
-                    console.log('Element width: ', element_width);
+                    
                     const parent_element = element.parent();
 
                     for (var i = 0; i < video_data.length; i++) {
