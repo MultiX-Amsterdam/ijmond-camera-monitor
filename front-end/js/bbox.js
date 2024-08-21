@@ -57,14 +57,17 @@
       var top = box_style.getPropertyValue('top');
       var left = box_style.getPropertyValue('left');
 
+      console.log("Width: " + width);
+
       // Store the properties in an object
       css_properties.push({
+        div_size: 0, // Size of the img div on the page 
         img_id: i,
         img_frame: 0,
         cropped_width: 0,
         cropped_height: 0,
         relative_boxes: {
-          x: Math.round(top),
+          x: top,
           y: Math.round(left),
           w: Math.round(width),
           h: Math.round(height)
@@ -74,10 +77,7 @@
 
     // Export to JSON
     const json_file = JSON.stringify(css_properties)
-    var fs = require('fs');
-    fs.writeFile("thing.json", dictstring, function (err, result) {
-      if (err) console.log('error', err);
-    });
+    console.log(json_file);
   }
 
   function nextBatch(ignore_labels) {
