@@ -406,7 +406,7 @@ class SegmentationMask(db.Model):
     label_state_admin = db.Column(db.Integer, nullable=False)
     label_update_time = db.Column(db.Integer)
     frame_number = db.Column(db.Integer)
-    video_id = db.Column(db.Integer, nullable=False)
+    video_id = db.Column(db.Integer, db.ForeignKey("video.id"))
 
     def __repr__(self):
         return (
