@@ -315,7 +315,7 @@ class Tutorial(db.Model):
         2 => passed the last batch (16 videos) during the third try with hints.
         3 => passed the last batch during the second try after showing the answers.
         4 => passed the last batch (16 videos) in the tutorial during the first try.
-    query_type : int
+    query_type : int  
         The query type of the tutorial.
         0 => users enter the tutorial page (may come from different sources or button clicks).
         1 => users click the tutorial button on the webpage (not the prompt dialog).
@@ -335,4 +335,209 @@ class Tutorial(db.Model):
             "<Tutorial id=%r connection_id=%r action_type=%r query_type=%r time=%r>"
         ) % (
             self.id, self.connection_id, self.action_type, self.query_type, self.time
+        )
+
+class SegmentationMask(db.Model):
+    """
+    Class representing a segmentation mask.
+
+    Attributes
+    ----------
+    id : int
+        Unique identifier (primary key).
+    mask_file_name : str
+        The grayscale segmentation mask file name that is stored in the computer.
+    image_file_name : str
+        The file name of the image that is stored in the computer.
+    x_bbox : int
+        The x coordinate of the top-left corner of the bounding box, relative to the image.
+    y_bbox : int
+        The y coordinate of the top-left corner of the bounding box, relative to the image.
+    w_bbox : int
+        Width of the bounding box, relative to the image.
+    h_bbox : int
+        Height of the bounding box, relative to the image.
+    w_image : int
+        Width of the image.
+    h_image : int
+        Height of the image.
+    priority : int
+        The priority of the segmentation mask.
+        Higher priority indicates that the mask should get feedback faster.
+    label_state : int
+        The state of the label, contributed by normal users (client type 1).
+        Also enable database indexing on this column for fast lookup.
+        The list of states:
+        State 0 => Gold standard negative (no smoke)
+        State 1 => Gold standard positive (has smoke)
+        State 2 => This mask has smoke emissions, and is checked by 1 person
+        State 3 => This mask has no smoke emissions, and is checked by 1 person
+        State 4 => This mask has no smoke emissions, is check by 2 people, and they agree with each other (terminate state, which means this mask does not require feedback anymore)
+        State 5 => This mask has smoke emissions, is check by 2 people, and they agree with each other (terminate state, which means this mask does not require feedback anymore)
+        State 6 => This mask has no smoke emissions, is check by 2 people, and they disagree with each other
+        State 7 => This mask has smoke emissions, is check by 2 people, and they disagree with each other
+        State 8 => This mask has no smoke emissions, is check by 3 people, and two of them disagree with each other (terminate state, which means this mask does not require feedback anymore)
+        State 9 => This mask has smoke emissions, is check by 3 people, and two of them disagree with each other (terminate state, which means this mask does not require feedback anymore)
+    label_state_admin : int
+        The state of the label, contributed by the admin researcher (client type 0).
+        Using label_state_admin allows the system to compare researcher and citizen labels.
+        The list of states:
+        State 0 => Negative (no smoke)
+        State 1 => Positive (has smoke)
+    label_update_time : int
+        The most recent epochtime (in seconds) that the label state is updated.
+        Notice that this is only for the normal users (label_state, not label_state_admin).
+    frame_number : int
+        The frame number in the video (can be null if no video is linked to this mask)
+    video_id : int
+        The corresponding video ID (can be null if no video is linked to this mask)
+    """
+    id = db.Column(db.Integer, primary_key=True)
+    mask_file_name = db.Column(db.String(255), unique=True, nullable=False)
+    image_file_name = db.Column(db.String(255), unique=True, nullable=False)
+    x_bbox = db.Column(db.Integer, nullable=False)
+    y_bbox = db.Column(db.Integer, nullable=False)
+    w_bbox = db.Column(db.Integer, nullable=False)
+    h_bbox = db.Column(db.Integer, nullable=False)
+    w_image = db.Column(db.Integer, nullable=False)
+    h_image = db.Column(db.Integer, nullable=False)
+    priority = db.Column(db.Integer, nullable=False, default=0)
+    label_state = db.Column(db.Integer, nullable=False)
+    label_state_admin = db.Column(db.Integer, nullable=False)
+    label_update_time = db.Column(db.Integer)
+    frame_number = db.Column(db.Integer)
+    video_id = db.Column(db.Integer, nullable=False)
+
+    def __repr__(self):
+        return (
+            "<SegmentationMask id=%r mask_file_name=%r image_file_name=%r"
+            "x_bbox=%r y_bbox=%r w_bbox=%r h_bbox=%r w_image=%r h_image=%r"
+            "priority=%r label_state=%r label_state_admin=%r label_update_time=%r"
+            "frame_number=%r video_id=%r>"
+        ) % (
+            self.id, self.mask_file_name, self.image_file_name,
+            self.x_bbox, self.y_bbox, self.w_bbox, self.h_bbox, self.w_image, self.h_image,
+            self.priority, self.label_state, self.label_state_admin, self.label_update_time,
+            self.frame_number, self.video_id
+        )
+    
+class SegmentationFeedback(db.Model):
+    """
+    Class representing a segmentation feedback.
+
+    Attributes
+    ----------
+    id : int
+        Unique identifier (primary key).
+    segmentation_id : int
+        The segmentation mask ID in the SegmentationMask table (foreign key).
+    feedback_code : int
+        The feedback code from the user.
+        Code 0 => There is a bounding box, and the box looks good.
+        Code 1 => There is a bounding box, but the user does not agree with the box and provides an adjusted box instead.
+        Code 2 => There is no bounding box, and the user agrees.
+        Code 3 => There is no bounding box, but the user thinks there should be a box and provide a box instead.
+        Code 4 => This is a gold standard.
+    x_bbox : int
+        The x coordinate of the top-left corner of the bounding box, relative to the image.
+        This is the feedback from the user.
+    y_bbox : int
+        The y coordinate of the top-left corner of the bounding box, relative to the image.
+        This is the feedback from the user.
+    w_bbox : int
+        Width of the bounding box, relative to the image.
+        This is the feedback from the user.
+    h_bbox : int
+        Height of the bounding box, relative to the image.
+        This is the feedback from the user.
+    time : int
+        The epochtime (in seconds) when the user created the label record.
+    user_id : int
+        The user ID in the User table (foreign key).
+        This information is duplicated also in the batch->connnection, for fast query.
+    batch_id : int
+        The batch ID in the Batch table (foreign key).
+        A null batch ID means that an admin changed the label and created a record.
+    """
+    id = db.Column(db.Integer, primary_key=True)
+    segmentation_id = db.Column(db.Integer, db.ForeignKey("segmentation_mask.id"), nullable=False)
+    feedback_code = db.Column(db.Integer, nullable=False)
+    x_bbox = db.Column(db.Integer, nullable=False)
+    y_bbox = db.Column(db.Integer, nullable=False)
+    w_bbox = db.Column(db.Integer, nullable=False)
+    h_bbox = db.Column(db.Integer, nullable=False)
+    time = db.Column(db.Integer, nullable=False, default=get_current_time())
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
+    batch_id = db.Column(db.Integer, db.ForeignKey("batch.id"))
+
+    def __repr__(self):
+        return (
+            "<SegmentationFeedback id=%r segmentation_id=%r feedback_code=%r"
+            "x_bbox=%r y_bbox=%r w_bbox=%r h_bbox=%r time=%r user_id=%r batch_id=%r>"
+        ) % (
+            self.id, self.segmentation_id, self.feedback_code,
+            self.x_bbox, self.y_bbox, self.w_bbox, self.h_bbox,
+            self.time, self.user_id, self.batch_id
+        )
+    
+class SegmentationBatch(db.Model):
+    """
+    Class
+
+    Attributes
+    ----------
+
+    id : int
+        Unique identifier (primary key).
+
+    request_time : int
+        The epochtime (in seconds) when the client requested a batch with many videos.
+
+    return_time : int
+        The epochtime (in seconds) when the client returned a video batch with labels.
+
+    connection_id : int
+        The connection ID in the Connection table (foreign key).
+
+    score : int
+        The score that the user obtained in this Batch (number of segmentation masks that the user gives the feedback correctly).
+        A null score means that no data is returned by the user, or the user is a researcher.
+
+    num_need_feedback : int
+        The number of segmentation masks that need user feedback in this batch.
+
+    num_gold_standard : int
+        The number of gold standards (i.e., segmentation masks with known bounding boxes) in this batch.
+
+    user_score : int
+        Current score of the user (User.score).
+        This means how many segmentation masks that the user already provided feedback and passed the data quality check 
+        (which means using the gold standards to check if the user is doing a good job).
+
+    user_raw_score : int
+        Current raw score of the user (User.raw_score).
+        This means how many segmentation masks that the user already provided feedback.
+    """
+
+    id = db.Column(db.Integer, primary_key=True)
+    request_time = db.Column(db.Integer, nullable=False, default=get_current_time())
+    return_time = db.Column(db.Integer)
+    connection_id = db.Column(db.Integer, db.ForeignKey("connection.id"))
+    score = db.Column(db.Integer)
+    num_need_feedback = db.Column(db.Integer, nullable=False, default=0)
+    num_gold_standard = db.Column(db.Integer, nullable=False, default=0)
+    user_score = db.Column(db.Integer)
+    user_raw_score = db.Column(db.Integer)
+    # Relationships
+    # label = db.relationship("Label", backref=db.backref("batch", lazy=True), lazy=True)
+
+    def __repr__(self):
+        return (
+            "<SegmentationBatch id=%r request_time=%r return_time=%r connection_id=%r "
+            "score=%r num_need_feedback=%r num_gold_standard=%r "
+            "user_score=%r user_raw_score=%r>"
+        ) % (
+            self.id, self.request_time, self.return_time, self.connection_id,
+            self.score, self.num_need_feedback, self.num_gold_standard,
+            self.user_score, self.user_raw_score
         )

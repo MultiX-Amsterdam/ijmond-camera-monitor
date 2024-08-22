@@ -106,16 +106,16 @@
       });
       // To comply with GDPR, we need to disable all the consent by default.
       // We will only enable some features when users specifically give consent.
-      gtag("consent", "default", {
-        "ad_storage": "denied",
-        "ad_user_data": "denied",
-        "ad_personalization": "denied",
-        "analytics_storage": "denied",
-        "functionality_storage": "denied",
-        "personalization_storage": "denied",
-        "security_storage": "granted", // necessary cookies for security purposes
-        "wait_for_update": 500
-      });
+      // gtag("consent", "default", {
+      //   "ad_storage": "denied",
+      //   "ad_user_data": "denied",
+      //   "ad_personalization": "denied",
+      //   "analytics_storage": "denied",
+      //   "functionality_storage": "denied",
+      //   "personalization_storage": "denied",
+      //   "security_storage": "granted", // necessary cookies for security purposes
+      //   "wait_for_update": 500
+      // });
       gtag("get", GA_MEASUREMENT_ID, "client_id", function (gaClientId) {
         clientId = "ga." + gaClientId;
         gtag("get", GA_MEASUREMENT_ID, "session_id", function (gaSessionId) {

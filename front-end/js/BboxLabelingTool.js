@@ -282,23 +282,9 @@
                 // Ensure new dimensions and positions do not exceed the container's boundaries
                 $box[0].style.width =  Math.min(new_width, div_size - start_left) + 'px';
                 $box[0].style.height = Math.min(new_height, div_size - start_top) + 'px';
-                $box[0].style.left = Math.max(new_left, 0); + 'px';
-                $box[0].style.top = Math.max(new_top, 0); + 'px';
+                $box[0].style.left = Math.max(new_left, BORDER_SIZE) + 'px';
+                $box[0].style.top = Math.max(new_top, BORDER_SIZE) + 'px';
             }
-
-            // function handlerLeftMovement(e) {
-            //     // Calculates the new width and height of the box based on the movement
-            //     const clientX = e.clientX || e.touches[0].clientX;
-            //     const clientY = e.clientY || e.touches[0].clientY;
-            //     // Make it so that the box can be expended to the left
-            //     const deltaX = clientX - start_x;
-            //     const deltaY = clientY - start_y;
-            //     // Determine the new dimensions based on the initial state
-            //     $box[0].style.width = (start_width - deltaX) + 'px';
-            //     $box[0].style.height = (start_height - deltaY) + 'px';
-            //     $box[0].style.left = (start_left + deltaX) + 'px';
-            //     $box[0].style.top = (start_top + deltaY) + 'px';
-            // }
 
             function removeListener() {
                 document.removeEventListener('mousemove', handlerRightMovement);
@@ -397,14 +383,13 @@
                     clearInterval(intervalID);
                     var border_width = parseInt(element.css('border-top-width'));
                     var element_width = element.width() + border_width * 2;
-
-                    console.log('Element width: ', element_width);
+                    
                     const parent_element = element.parent();
 
                     for (var i = 0; i < video_data.length; i++) {
                         var v = video_data[i];
                         v['bbox'] = calculateBBox(JSON_temp, element_width);
-                        var $box = createBBox(v['bbox']);
+                        var $box = createBBox(v['bbox'], element_width);
                         $(parent_element[i]).append($box);
                     }
 
