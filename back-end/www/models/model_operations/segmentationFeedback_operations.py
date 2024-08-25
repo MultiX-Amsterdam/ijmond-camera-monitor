@@ -1,27 +1,31 @@
 """Functions to operate the label table."""
 
 from models.model import db
-from models.model import Label
-from models.model import Video
+from models.model import SegmentationFeedback
+from models.model import SegmentationMask
 from models.model import User
-from models.model import Batch
+from models.model import SegmentationBatch
 from app.app import app
 from util.util import get_current_time
 from config.config import config
 
 
-def create_label(video_id, y, user_id, batch_id):
-    """Create a label."""
-    label = Label(
-        video_id=video_id,
-        label=y,
-        user_id=user_id,
-        batch_id=batch_id
+def create_feedback(segment_id, y, x_bbox, y_bbox, w_bbox, h_bbox, user_id, batch_id):
+    """Create a segmentation feedback."""
+    feedback = SegmentationFeedback(
+        segmentation_id = segment_id,
+        feedback_code = y,
+        x_bbox = x_bbox,
+        y_bbox = y_bbox,
+        w_bbox = w_bbox,
+        h_bbox = h_bbox,
+        user_id = user_id,
+        batch_id = batch_id,
     )
-    app.logger.info("Create label: %r" % label)
-    db.session.add(label)
+    app.logger.info("Create segmentation feedback: %r" % feedback)
+    db.session.add(feedback)
     db.session.commit()
-    return label
+    return feedback
 
 
 def remove_label(label_id):
@@ -191,9 +195,6 @@ def compare_segmentation_feedback(segmentation_batch_hashed, feedback_sgm, proxi
         else:
             app.logger.warning("Segmentation %r not found within batch" % img_id)
         return False
-
-
-
 
 def compute_video_batch_score(video_batch_hashed, labels):
     """
