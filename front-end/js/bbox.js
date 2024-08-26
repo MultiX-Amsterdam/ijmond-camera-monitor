@@ -68,15 +68,9 @@
         cropped_height: 0,
         relative_boxes: {
           x: top,
-<<<<<<< HEAD
-          y: Math.round(left),
-          w: Math.round(width),
-          h: Math.round(height)
-=======
           y: left,
           w: width,
           h: height
->>>>>>> 5a01563e9a0ad3f23695539143f06af5197155e1
         }
       });
     }

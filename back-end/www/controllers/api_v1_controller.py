@@ -25,10 +25,13 @@ from models.model_operations.video_operations import query_video_batch
 from models.model_operations.video_operations import get_video_query
 from models.model_operations.video_operations import get_all_videos
 from models.model_operations.video_operations import get_pos_video_query_by_user_id
-from models.model_operations.video_operations import get_statistics
+from models.model_operations.video_operations   import get_statistics
 from models.model_operations.label_operations import update_labels
 from models.model_operations.view_operations import create_views_from_video_batch
 from models.model_operations.tutorial_operations import create_tutorial
+
+from models.model_operations.segmentationMask_operations import query_segmentation_batch
+
 from models.schema import videos_schema_is_admin
 from models.schema import videos_schema_with_detail
 from models.schema import videos_schema
@@ -155,11 +158,7 @@ def encode_user_token(**kwargs):
         payload[k] = kwargs[k]
     return encode_jwt(payload, config.JWT_PRIVATE_KEY)
 
-
-@bp.route("/get_batch", methods=["POST"])
-def get_batch():
-    """For the client to get a batch of video clips."""
-    request_json = request.get_json()
+def batch_check_request(request_json):
     if request_json is None:
         raise InvalidUsage("Missing json", status_code=400)
     if "user_token" not in request_json:
@@ -171,6 +170,15 @@ def get_batch():
         raise InvalidUsage(ex.args[0], status_code=401)
     except Exception as ex:
         raise InvalidUsage(ex.args[0], status_code=401)
+    
+    return user_jwt
+
+# TODO, try to merch these two functions in 1
+@bp.route("/get_batch", methods=["POST"])
+def get_batch():
+    """For the client to get a batch of video clips."""
+    request_json = request.get_json()
+    user_jwt = batch_check_request(request_json)
     # Query videos (active learning or random sampling)
     is_admin = True if user_jwt["client_type"] == 0 else False
     video_batch = query_video_batch(user_jwt["user_id"], use_admin_label_state=is_admin)
@@ -191,6 +199,16 @@ def get_batch():
             )
         return jsonify_videos(video_batch, sign=True, batch_id=batch.id, user_id=user_jwt["user_id"])
 
+@bp.route("/get_segment_batch", methods=["POST"])
+def get_segment_batch():
+    "Return a batch of images to the client."
+    request_json = request.get_json()
+    user_jwt = batch_check_request(request_json)
+    is_admin = True if user_jwt["client_type"] == 0 else False
+    segmentation_batch = query_segmentation_batch(user_jwt["client_type"], use_admin_label_state=is_admin)
+    if segmentation_batch is None or len(segmentation_batch) < config.BATCH_SIZE:
+        return make_response("",204)
+    
 
 def jsonify_videos(videos, sign=False, batch_id=None, total=None, is_admin=False, user_id=None, with_detail=False):
     """

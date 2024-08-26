@@ -10,7 +10,7 @@ from util.util import get_current_time
 from config.config import config
 
 
-def create_feedback(segment_id, y, x_bbox, y_bbox, w_bbox, h_bbox, user_id, batch_id):
+def create_feedback_label(segment_id, y, x_bbox, y_bbox, w_bbox, h_bbox, user_id, batch_id):
     """Create a segmentation feedback."""
     feedback = SegmentationFeedback(
         segmentation_id = segment_id,
@@ -28,30 +28,30 @@ def create_feedback(segment_id, y, x_bbox, y_bbox, w_bbox, h_bbox, user_id, batc
     return feedback
 
 
-def remove_label(label_id):
-    """Remove a label."""
-    label = Label.query.filter_by(id=label_id).first()
-    app.logger.info("Remove label: %r" % label)
-    if label is None:
-        raise Exception("No label found in the database to delete.")
-    db.session.delete(label)
+def remove_feedback_label(feedback_id):
+    """Remove a segmentation feedback."""
+    feedback = SegmentationMask.query.filter_by(id=feedback_id).first()
+    app.logger.info("Remove segmentation feedback: %r" % feedback)
+    if feedback is None:
+        raise Exception("No segmentation feedback found in the database to delete.")
+    db.session.delete(feedback)
     db.session.commit()
 
 
 def update_labels(labels, user_id, connection_id, batch_id, client_type):
     """
-    Update the Video table when a new label is added, return the score of the batch.
+    Update the Segmentation table when a new label is added, return the score of the batch.
 
     Parameters
     ----------
     labels : int
-        Video labels that were returned by the front-end (0 or 1).
+        Segmentation labels that were returned by the front-end (0 or 1).
     user_id : int
         The user id (defined in the user table).
     connection_id : int
         The connection id (defined in the connection table).
     batch_id : int
-        The video batch id (defined in the batch table).
+        The segmentation batch id (defined in the batch table).
     client_type : int
         The type of user (defined in the user table).
 
@@ -62,21 +62,22 @@ def update_labels(labels, user_id, connection_id, batch_id, client_type):
         (for the front-end website to show user contributions)
     """
     if len(labels) == 0: return
-    # Search the video batch and hash videos by video_id
-    video_batch = Video.query.filter(Video.id.in_((v["video_id"] for v in labels))).all()
-    video_batch_hashed = {}
-    for video in video_batch:
-        video_batch_hashed[video.id] = video
+    # Search the segmentation batch and hash segmentations by segmentation_id
+    segmentation_batch = SegmentationMask.query.filter(SegmentationMask.id.in_((s["segmentation_id"] for s in labels))).all()
+    segmentation_batch_hashed = {}
+    for segmentation in segmentation_batch:
+        segmentation_batch_hashed[segmentation.id] = segmentation
     # Find the user
     user = User.query.filter(User.id==user_id).first()
     # Update batch data
     batch_score = None
     if batch_id is not None and connection_id is not None:
-        batch = Batch.query.filter(Batch.id==batch_id).first()
+        batch = SegmentationBatch.query.filter(SegmentationBatch.id==batch_id).first()
         batch.return_time = get_current_time()
         batch.connection_id = connection_id
         if client_type != 0: # do not update the score for reseacher
-            batch_score = compute_video_batch_score(video_batch_hashed, labels)
+            # TODO Update the function so it uses compare_segmentation_feedback()  
+            batch_score = compute_video_batch_score(segmentation_batch_hashed, labels) 
             batch.score = batch_score
             batch.user_score = user.score
             batch.user_raw_score = user.raw_score
@@ -95,31 +96,32 @@ def update_labels(labels, user_id, connection_id, batch_id, client_type):
         app.logger.info("Update user: %r" % user)
     if batch_score != 0: # batch_score can be None if from the dashboard when updating labels
         # Update labels
-        for v in labels:
-            label = create_label(v["video_id"], v["label"], user_id, batch_id)
-            video = video_batch_hashed[v["video_id"]]
-            video.label_update_time = label.time
+        for s in labels:
+            label = create_feedback_label(s["segmentation_id"], s["label"], user_id, batch_id)
+            segmentation = segmentation_batch_hashed[s["segmentation_id"]]
+            segmentation.label_update_time = label.time
             if client_type == 0: # admin researcher
-                next_s = label_state_machine(video.label_state_admin, v["label"], client_type)
+                next_s = label_state_machine(segmentation.label_state_admin, s["label"], client_type)
             else: # normal user
-                next_s = label_state_machine(video.label_state, v["label"], client_type)
+                next_s = label_state_machine(segmentation.label_state, s["label"], client_type)
             if next_s is not None:
                 if client_type == 0: # admin researcher
                     # Researchers should not override the labels provided by normal users
                     # Because we need to compare the reliability of the labels provided by normal users
-                    video.label_state_admin = next_s
+                    segmentation.label_state_admin = next_s
                 else: # normal user
-                    video.label_state = next_s
-                app.logger.info("Update video: %r" % video)
+                    segmentation.label_state = next_s
+                app.logger.info("Update segmentation: %r" % segmentation)
             else:
-                app.logger.warning("No next state for video: %r" % video)
+                app.logger.warning("No next state for segmentation: %r" % segmentation)
     # Update database
     db.session.commit()
     return {"batch": batch_score, "user": user_score, "raw": user_raw_score}
 
+
 def true_size(box_coord, cropped_size, div_size):
     """
-    Calculate the true size of the bounding box.
+    Helper function to calculate the true size of the bounding box.
 
     Parameters
     ----------
@@ -151,6 +153,7 @@ def compare_segmentation_feedback(segmentation_batch_hashed, feedback_sgm, proxi
         Feedback segmentations that were returned by the front-end.
     proximity_threshold : int
         The threshold to determine if the feedback is close to the segmentation.
+        Default value = 1
     
     Returns
     -------
@@ -164,7 +167,7 @@ def compare_segmentation_feedback(segmentation_batch_hashed, feedback_sgm, proxi
     for s in feedback_sgm:
         # Find the true bounding box based on the given feedback
         feedback_segmentation = {
-            "img_id": s["img_id"],
+            "segmentation_id": s["segmentation_id"],
             "feedback_boxes": {
                 coord: true_size(
                     s["relative_boxes"][coord],
@@ -176,9 +179,9 @@ def compare_segmentation_feedback(segmentation_batch_hashed, feedback_sgm, proxi
         }
 
         # Collect the segmentation coordinates
-        img_id = s["img_id"]
-        if img_id in segmentation_batch_hashed:
-            segmentation = segmentation_batch_hashed[img_id]
+        segmentation_id = s["segmentation_id"]
+        if segmentation_id in segmentation_batch_hashed:
+            segmentation = segmentation_batch_hashed[segmentation_id]
             segmentation_coords = {
                 "x":segmentation.x_bbox,
                 "y":segmentation.y_bbox,
@@ -193,37 +196,37 @@ def compare_segmentation_feedback(segmentation_batch_hashed, feedback_sgm, proxi
                         app.logger.info("Feedback %r is close to segmentation %r" % (feedback_coord, segmentation_coord))
                         return True
         else:
-            app.logger.warning("Segmentation %r not found within batch" % img_id)
+            app.logger.warning("Segmentation %r not found within batch" % segmentation_id)
         return False
 
-def compute_video_batch_score(video_batch_hashed, labels):
+def compute_segmentation_batch_score(segmentation_batch_hashed, labels):
     """
-    Compute the score of a video batch.
+    Compute the score of a segmenation batch.
 
     Parameters
-    ----------
-    video_batch_hashed : dict
-        Video objects in a dictionary (the keys are the video id).
+    ---------
+    segmentation_batch_hashed : dict
+        Segmentation objects in a dictionary (the keys are the segmentation id).
     labels : list of Label
-        Video label objects that were returned by the front-end.
+        Segmentation label objects that were returned by the front-end.
 
     Returns
     -------
     score : int
         The score of this batch (the higher the better).
-        Score means the number of labeled videos that were accepted by the system.
+        Score means the number of labeled segmentations that were accepted by the system.
     """
     score = 0
     correct_labeled_gold_standards = 0
-    for v in labels:
-        video = video_batch_hashed[v["video_id"]]
-        label_state_admin = video.label_state_admin
-        s = v["label"]
+    for s in labels:
+        segmentation = segmentation_batch_hashed[s["video_id"]]
+        label_state_admin = segmentation.label_state_admin
+        l = s["label"]
         if label_state_admin == 0b101111: # gold positive
-            if s == 1:
+            if l == 1:
                 correct_labeled_gold_standards += 1
         elif label_state_admin == 0b100000: # gold negative
-            if s == 0:
+            if l == 0:
                 correct_labeled_gold_standards += 1
         else:
             score += 1
@@ -233,7 +236,7 @@ def compute_video_batch_score(video_batch_hashed, labels):
         return score
 
 
-
+# TODO update this to the new label calculation
 def label_state_machine(s, label, client_type):
     """
     A finite state machine to infer the new label state based on current label state and some inputs.
