@@ -1,0 +1,112 @@
+[
+    {
+        "masked_file_name": "mask_1jFnujWn50-0-5-0.jpg",
+        "image_file_name": "crop_1jFnujWn50-0-5-0.jpg",
+        "frame_number": 0,
+        "video_id": 1,
+        "boxes": {
+            "x": 409,
+            "y": 532,
+            "w": 85,
+            "h": 144
+        },
+        "relative_boxes": {
+            "x": 214,
+            "y": 184,
+            "w": 85,
+            "h": 144
+        },
+        "image_width": 900,
+        "image_height": 900,
+        "cropped_width": 512,
+        "cropped_height": 512
+    },
+    {
+        "masked_file_name": "mask_1jFnujWn50-0-5-1.jpg",
+        "image_file_name": "crop_1jFnujWn50-0-5-1.jpg",
+        "frame_number": 1,
+        "video_id": 2,
+        "boxes": {
+            "x": 366,
+            "y": 96,
+            "w": 75,
+            "h": 123
+        },
+        "relative_boxes": {
+            "x": 219,
+            "y": 96,
+            "w": 75,
+            "h": 123
+        },
+        "image_width": 900,
+        "image_height": 900,
+        "cropped_width": 512,
+        "cropped_height": 512
+    },
+    {
+        "masked_file_name": "mask_1jFnujWn50-0-18-0.jpg",
+        "image_file_name": "crop_1jFnujWn50-0-18-0.jpg",
+        "frame_number": 0,
+        "video_id": 3,
+        "boxes": {
+            "x": 357,
+            "y": 79,
+            "w": 96,
+            "h": 135
+        },
+        "relative_boxes": {
+            "x": 208,
+            "y": 79,
+            "w": 96,
+            "h": 135
+        },
+        "image_width": 900,
+        "image_height": 900,
+        "cropped_width": 512,
+        "cropped_height": 512
+    },
+    {
+        "masked_file_name": "mask_1jFnujWn50-0-18-1.jpg",
+        "image_file_name": "crop_1jFnujWn50-0-18-1.jpg",
+        "frame_number": 1,
+        "video_id": 4,
+        "boxes": {
+            "x": 319,
+            "y": 30,
+            "w": 32,
+            "h": 32
+        },
+        "relative_boxes": {
+            "x": 240,
+            "y": 30,
+            "w": 32,
+            "h": 32
+        },
+        "image_width": 900,
+        "image_height": 900,
+        "cropped_width": 512,
+        "cropped_height": 512
+    },
+    {
+        "masked_file_name": "mask_1jFnujWn50-0-33-0.jpg",
+        "image_file_name": "crop_1jFnujWn50-0-33-0.jpg",
+        "frame_number": 0,
+        "video_id": 5,
+        "boxes": {
+            "x": 353,
+            "y": 75,
+            "w": 105,
+            "h": 127
+        },
+        "relative_boxes": {
+            "x": 204,
+            "y": 75,
+            "w": 105,
+            "h": 127
+        },
+        "image_width": 900,
+        "image_height": 900,
+        "cropped_width": 512,
+        "cropped_height": 512
+    }
+]
