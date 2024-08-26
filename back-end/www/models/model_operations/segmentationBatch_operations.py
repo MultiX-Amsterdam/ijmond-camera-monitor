@@ -5,7 +5,7 @@ from models.model import SegmentationBatch
 from app.app import app
 
 
-def create_batch(num_gold_standard, num_unlabeled, connection_id):
+def create_segmentation_batch(num_gold_standard, num_unlabeled, connection_id):
     """Create a segmentation batch."""
     batch = SegmentationBatch(
         num_gold_standard=num_gold_standard,

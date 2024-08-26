@@ -15,8 +15,8 @@ from config.config import config
 import models.model as m
 
 
-def create_segmentation(mask_fn, img_fn, x_bbox, y_bbox, w_bbox, h_bbox,
-                 lb_state, lb_state_admin, lb_update_time, f_nbr, v_id):
+def create_segmentation(mask_fn, img_fn, x_bbox, y_bbox, w_bbox, h_bbox, img_w, img_h, f_nbr, v_id):
+                #  lb_state, lb_state_admin, lb_update_time, 
     """Create a segmentation mask."""
     segment = SegmentationMask(
         mask_file_name=mask_fn,
@@ -25,13 +25,16 @@ def create_segmentation(mask_fn, img_fn, x_bbox, y_bbox, w_bbox, h_bbox,
         y_bbox=y_bbox,
         w_bbox=w_bbox,
         h_bbox=h_bbox,
-        label_state = lb_state,
-        label_state_admin = lb_state_admin,
-        label_update_time = lb_update_time,
+        # label_state = lb_state,
+        # label_state_admin = lb_state_admin,
+        # label_update_time = lb_update_time,
+        w_image = img_w,
+        h_image = img_h,
         frame_number = f_nbr,
         video_id = v_id
     )
     app.logger.info("Create segmentation: %r" % segment)
+    print(f"\n{segment}\n")
     db.session.add(segment)
     db.session.commit()
     return segment

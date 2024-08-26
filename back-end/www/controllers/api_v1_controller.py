@@ -6,6 +6,7 @@ from flask import Blueprint
 from flask import request
 from flask import jsonify
 from flask import make_response
+from flask import Response
 from collections import Counter
 from google.oauth2 import id_token
 from google.auth.transport import requests as g_requests
@@ -31,6 +32,7 @@ from models.model_operations.view_operations import create_views_from_video_batc
 from models.model_operations.tutorial_operations import create_tutorial
 
 from models.model_operations.segmentationMask_operations import query_segmentation_batch
+from models.model_operations.segmentationBatch_operations import create_segmentation_batch
 
 from models.schema import videos_schema_is_admin
 from models.schema import videos_schema_with_detail
@@ -206,9 +208,27 @@ def get_segment_batch():
     user_jwt = batch_check_request(request_json)
     is_admin = True if user_jwt["client_type"] == 0 else False
     segmentation_batch = query_segmentation_batch(user_jwt["client_type"], use_admin_label_state=is_admin)
+    print("-----------------")
+    for i in segmentation_batch:
+        print(f"{i}\n")
     if segmentation_batch is None or len(segmentation_batch) < config.BATCH_SIZE:
-        return make_response("",204)
-    
+        return make_response("", 204)
+    else:
+        if is_admin:
+            batch = create_segmentation_batch(
+                num_gold_standard=0,
+                num_unlabeled=config.BATCH_SIZE,
+                connection_id=user_jwt["connection_id"]
+            ) # no gold standard videos for admin
+        else:
+            batch = create_segmentation_batch(
+                num_gold_standard=config.GOLD_STANDARD_IN_BATCH,
+                num_unlabeled=config.BATCH_SIZE-config.GOLD_STANDARD_IN_BATCH,
+                connection_id=user_jwt["connection_id"]
+            )
+    return []
+        # return jsonify_videos(video_batch, sign=True, batch_id=batch.id, user_id=user_jwt["user_id"])
+
 
 def jsonify_videos(videos, sign=False, batch_id=None, total=None, is_admin=False, user_id=None, with_detail=False):
     """

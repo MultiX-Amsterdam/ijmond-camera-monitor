@@ -80,7 +80,7 @@
         // Get the json file that contains image links
         function getVideoBatch(callback) {
             callback = safeGet(callback, {});
-            util.postJSON(api_url_root + "get_batch", {
+            util.postJSON(api_url_root + "get_segment_batch", {
                 user_token: user_token,
             }, {
                 success: function (data) {

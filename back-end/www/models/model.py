@@ -402,22 +402,21 @@ class SegmentationMask(db.Model):
     w_image = db.Column(db.Integer, nullable=False)
     h_image = db.Column(db.Integer, nullable=False)
     priority = db.Column(db.Integer, nullable=False, default=0)
-    label_state = db.Column(db.Integer, nullable=False)
-    label_state_admin = db.Column(db.Integer, nullable=False)
-    label_update_time = db.Column(db.Integer)
+    label_state = db.Column(db.Integer, nullable=False, default=-1)
+    label_state_admin = db.Column(db.Integer, nullable=False, default=-1)
+    label_update_time = db.Column(db.Integer, default=get_current_time())
     frame_number = db.Column(db.Integer)
     video_id = db.Column(db.Integer, db.ForeignKey("video.id"))
 
     def __repr__(self):
         return (
-            "<SegmentationMask id=%r mask_file_name=%r image_file_name=%r"
-            "x_bbox=%r y_bbox=%r w_bbox=%r h_bbox=%r w_image=%r h_image=%r"
-            "priority=%r label_state=%r label_state_admin=%r label_update_time=%r"
-            "frame_number=%r video_id=%r>"
+            "<SegmentationMask id=%r mask_file_name=%r image_file_name=%r x_bbox=%r y_bbox=%r "
+            "w_bbox=%r h_bbox=%r w_image=%r h_image=%r priority=%r label_state=%r "
+            "label_state_admin=%r label_update_time=%r frame_number=%r video_id=%r>"
         ) % (
-            self.id, self.mask_file_name, self.image_file_name,
-            self.x_bbox, self.y_bbox, self.w_bbox, self.h_bbox, self.w_image, self.h_image,
-            self.priority, self.label_state, self.label_state_admin, self.label_update_time,
+            self.id, self.mask_file_name, self.image_file_name, self.x_bbox, self.y_bbox,
+            self.w_bbox, self.h_bbox, self.w_image, self.h_image, self.priority,
+            self.label_state, self.label_state_admin, self.label_update_time,
             self.frame_number, self.video_id
         )
     
@@ -503,7 +502,7 @@ class SegmentationBatch(db.Model):
         The score that the user obtained in this Batch (number of segmentation masks that the user gives the feedback correctly).
         A null score means that no data is returned by the user, or the user is a researcher.
 
-    num_need_feedback : int
+    num_unlabeled : int
         The number of segmentation masks that need user feedback in this batch.
 
     num_gold_standard : int
@@ -524,7 +523,7 @@ class SegmentationBatch(db.Model):
     return_time = db.Column(db.Integer)
     connection_id = db.Column(db.Integer, db.ForeignKey("connection.id"))
     score = db.Column(db.Integer)
-    num_need_feedback = db.Column(db.Integer, nullable=False, default=0)
+    num_unlabeled = db.Column(db.Integer, nullable=False, default=0)
     num_gold_standard = db.Column(db.Integer, nullable=False, default=0)
     user_score = db.Column(db.Integer)
     user_raw_score = db.Column(db.Integer)
@@ -534,10 +533,10 @@ class SegmentationBatch(db.Model):
     def __repr__(self):
         return (
             "<SegmentationBatch id=%r request_time=%r return_time=%r connection_id=%r "
-            "score=%r num_need_feedback=%r num_gold_standard=%r "
+            "score=%r num_unlabeled=%r num_gold_standard=%r "
             "user_score=%r user_raw_score=%r>"
         ) % (
             self.id, self.request_time, self.return_time, self.connection_id,
-            self.score, self.num_need_feedback, self.num_gold_standard,
+            self.score, self.num_unlabeled, self.num_gold_standard,
             self.user_score, self.user_raw_score
         )
