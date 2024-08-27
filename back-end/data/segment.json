@@ -1,8 +1,8 @@
 [
     {
-        "masked_file_name": "mask_1jFnujWn50-0-5-0.jpg",
-        "image_file_name": "crop_1jFnujWn50-0-5-0.jpg",
-        "frame_number": 0,
+        "masked_file_name": "FNKYVizUslc",
+        "image_file_name": "FNKYVizUslc-1",
+        "frame_number": 1,
         "video_id": 1,
         "boxes": {
             "x": 409,
@@ -22,10 +22,10 @@
         "cropped_height": 512
     },
     {
-        "masked_file_name": "mask_1jFnujWn50-0-5-1.jpg",
-        "image_file_name": "crop_1jFnujWn50-0-5-1.jpg",
+        "masked_file_name": "FNKYVizUslc",
+        "image_file_name": "FNKYVizUslc-1",
         "frame_number": 1,
-        "video_id": 2,
+        "video_id": 1,
         "boxes": {
             "x": 366,
             "y": 96,
@@ -44,10 +44,10 @@
         "cropped_height": 512
     },
     {
-        "masked_file_name": "mask_1jFnujWn50-0-18-0.jpg",
-        "image_file_name": "crop_1jFnujWn50-0-18-0.jpg",
-        "frame_number": 0,
-        "video_id": 3,
+        "masked_file_name": "FNKYVizUslc",
+        "image_file_name": "FNKYVizUslc-1",
+        "frame_number": 1,
+        "video_id": 1,
         "boxes": {
             "x": 357,
             "y": 79,
@@ -66,10 +66,10 @@
         "cropped_height": 512
     },
     {
-        "masked_file_name": "mask_1jFnujWn50-0-18-1.jpg",
-        "image_file_name": "crop_1jFnujWn50-0-18-1.jpg",
+        "masked_file_name": "FNKYVizUslc",
+        "image_file_name": "FNKYVizUslc-1",
         "frame_number": 1,
-        "video_id": 4,
+        "video_id": 1,
         "boxes": {
             "x": 319,
             "y": 30,
@@ -88,10 +88,10 @@
         "cropped_height": 512
     },
     {
-        "masked_file_name": "mask_1jFnujWn50-0-33-0.jpg",
-        "image_file_name": "crop_1jFnujWn50-0-33-0.jpg",
-        "frame_number": 0,
-        "video_id": 5,
+        "masked_file_name": "FNKYVizUslc",
+        "image_file_name": "FNKYVizUslc-1",
+        "frame_number": 1,
+        "video_id": 1,
         "boxes": {
             "x": 353,
             "y": 75,

@@ -205,7 +205,7 @@
                     $vid.one("error", deferred.reject);
                     deferreds.push(deferred);
                 }
-                var src_url = util.buildVideoURL(v);
+                var src_url = util.buildSegmentationURL(v);
                 $vid.prop("src", src_url);
                 util.handleVideoPromise($vid.get(0), "load"); // load to reset video promise
                 if ($item.hasClass("force-hidden")) {
@@ -328,18 +328,19 @@
         }
 
         // Create a bounding box element
-        function createBBox(bbox, div_size = 420) {
+        function createBBox(meta_data, div_size = 420) {
             const STARTING_VALUE = 20;
 
             const $box = $(`<div class="bbox"></div>`);
+            const adjusted_data = calculateBBox(meta_data, div_size);
             // Update the bounding box style based on the bbox object
             $box.css({
                 position: "absolute",
                 display: "flex",
-                left: STARTING_VALUE + bbox.left + 'px',
-                top: STARTING_VALUE + bbox.top + 'px',
-                width: bbox.width + 'px',
-                height: bbox.height + 'px',
+                left: STARTING_VALUE + adjusted_data.left + 'px',
+                top: STARTING_VALUE + adjusted_data.top + 'px',
+                width: adjusted_data.width + 'px',
+                height: adjusted_data.height + 'px',
                 border: "3px solid red"
             });
 
@@ -350,33 +351,33 @@
         }
 
         // Calculate the bounding box based on the given meta data
-        function calculateBBox(meta_data, div_size = 420) {
-            const relative_boxes = meta_data["relative_boxes"];
-            const cropped_width = meta_data["cropped_width"];
-            const cropped_height = meta_data["cropped_height"];
+        function calculateBBox(meta_data, div_size) {
+            const img_width = meta_data["w_image"];
+            const img_height = meta_data["h_image"];
 
-            const x = relative_boxes['x']
-            const y = relative_boxes['y']
-            const w = relative_boxes['w']
-            const h = relative_boxes['h']
+            const x = meta_data["x_bbox"]
+            const y = meta_data['y_bbox']
+            const w = meta_data['w_bbox']
+            const h = meta_data['h_bbox']
 
-            const box_x = (x / cropped_width) * div_size
-            const box_y = (y / cropped_height) * div_size
-            const box_w = (w / cropped_width) * div_size
-            const box_h = (h / cropped_height) * div_size
+            const box_x = (x / img_width) * div_size
+            const box_y = (y / img_height) * div_size
+            const box_w = (w / img_width) * div_size
+            const box_h = (h / img_height) * div_size
 
             return {
-                left: Math.round(box_x),
-                top: Math.round(box_y),
-                width: Math.round(box_w),
-                height: Math.round(box_h),
-                image_width: cropped_width,
-                image_height: cropped_height
+                left: box_x,
+                top: box_y,
+                width: box_w,
+                height: box_h,
+                image_width: img_width,
+                image_height: img_height
             };
         }
 
         // Update bounding box in the video
-        function updateBbox(video_data, selector) {
+        function updateBbox(segment_data, selector) {
+            console.log(segment_data)
             let intervalID = setInterval(function () {
                 const element = $(selector);
                 if (element.length > 0) {
@@ -386,10 +387,9 @@
                     
                     const parent_element = element.parent();
 
-                    for (var i = 0; i < video_data.length; i++) {
-                        var v = video_data[i];
-                        v['bbox'] = calculateBBox(JSON_temp, element_width);
-                        var $box = createBBox(v['bbox'], element_width);
+                    for (var i = 0; i < segment_data.length; i++) {
+                        var v = segment_data[i];
+                        var $box = createBBox(v, element_width);
                         $(parent_element[i]).append($box);
                     }
 

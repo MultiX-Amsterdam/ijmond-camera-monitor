@@ -393,8 +393,10 @@ class SegmentationMask(db.Model):
         The corresponding video ID (can be null if no video is linked to this mask)
     """
     id = db.Column(db.Integer, primary_key=True)
-    mask_file_name = db.Column(db.String(255), unique=True, nullable=False)
-    image_file_name = db.Column(db.String(255), unique=True, nullable=False)
+    # For testing purposes, the file_names don't have to be unique
+    mask_file_name = db.Column(db.String(255), unique=False, nullable=False)
+    image_file_name = db.Column(db.String(255), unique=False, nullable=False)
+
     x_bbox = db.Column(db.Integer, nullable=False)
     y_bbox = db.Column(db.Integer, nullable=False)
     w_bbox = db.Column(db.Integer, nullable=False)

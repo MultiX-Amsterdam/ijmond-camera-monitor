@@ -23,7 +23,7 @@ class Config(object):
     assert VIDEO_URL_ROOT != "", ("need to specify VIDEO_URL_ROOT in config.py")
 
     # Set the number of videos for each batch
-    BATCH_SIZE = 4
+    BATCH_SIZE = 5 #TODO change to original value 16
 
     # Set the number of gold standard videos in the batch for citizens (not admin)
     GOLD_STANDARD_IN_BATCH = 4

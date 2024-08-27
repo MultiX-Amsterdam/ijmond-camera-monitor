@@ -150,6 +150,12 @@
       return src_url;
     };
 
+    this.buildSegmentationURL = function(v) {
+      var camera_names = ["hoogovens", "kooksfabriek_1", "kooksfabriek_2"];
+      var src_url = v["url_root"] + camera_names[v["frame_number"]] + "/" +  v["mask_file_name"] + "/" + v["image_file_name"] + ".mp4";
+      return src_url;
+    }
+
     // Post JSON
     this.postJSON = function (url, data, callback) {
       callback = safeGet(callback, {});

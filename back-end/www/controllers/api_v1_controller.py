@@ -37,6 +37,9 @@ from models.model_operations.segmentationBatch_operations import create_segmenta
 from models.schema import videos_schema_is_admin
 from models.schema import videos_schema_with_detail
 from models.schema import videos_schema
+from models.schema import segmentations_schema_is_admin
+from models.schema import segmentations_schema_with_detail
+from models.schema import segmentations_schema
 import models.model as m
 
 
@@ -199,7 +202,7 @@ def get_batch():
                 num_unlabeled=config.BATCH_SIZE-config.GOLD_STANDARD_IN_BATCH,
                 connection_id=user_jwt["connection_id"]
             )
-        return jsonify_videos(video_batch, sign=True, batch_id=batch.id, user_id=user_jwt["user_id"])
+        return jsonify_data(video_batch, sign=True, batch_id=batch.id, user_id=user_jwt["user_id"])
 
 @bp.route("/get_segment_batch", methods=["POST"])
 def get_segment_batch():
@@ -208,9 +211,6 @@ def get_segment_batch():
     user_jwt = batch_check_request(request_json)
     is_admin = True if user_jwt["client_type"] == 0 else False
     segmentation_batch = query_segmentation_batch(user_jwt["client_type"], use_admin_label_state=is_admin)
-    print("-----------------")
-    for i in segmentation_batch:
-        print(f"{i}\n")
     if segmentation_batch is None or len(segmentation_batch) < config.BATCH_SIZE:
         return make_response("", 204)
     else:
@@ -226,56 +226,58 @@ def get_segment_batch():
                 num_unlabeled=config.BATCH_SIZE-config.GOLD_STANDARD_IN_BATCH,
                 connection_id=user_jwt["connection_id"]
             )
-    return []
-        # return jsonify_videos(video_batch, sign=True, batch_id=batch.id, user_id=user_jwt["user_id"])
+        return jsonify_data(segmentation_batch, sign=True, batch_id=batch.id, user_id=user_jwt["user_id"], is_video=False)
 
 
-def jsonify_videos(videos, sign=False, batch_id=None, total=None, is_admin=False, user_id=None, with_detail=False):
+def jsonify_data(data, sign=False, batch_id=None, total=None, is_admin=False, user_id=None, with_detail=False, is_video=True):
     """
     Convert video objects to json.
 
     Parameters
     ----------
-    videos : list of Video
-        A list of video objects.
+    data : list of data objects (e.g., Video or Segmentation objects)
+        A list of data objects.
     sign : bool
         Require digital signature or not.
     batch_id : int
-        The video batch ID (a part of the digital signature).
+        The batch ID (a part of the digital signature).
     total : int
-        The total number of videos.
+        The total number of datapoints.
     is_admin : bool
         Is the system administrator or not.
-        This affects the level of information to get from the Video table.
-        Check the VideoSchemaIsAdmin class.
+        This affects the level of information to get from the data table.
+        Check the VideoSchemaIsAdmin class for an example.
     user_id : int
         The user ID (a part of the digital signature).
     with_detail : bool
-        For the normal front-end user, display details of the videos or not.
-        Check the VideoSchemaWithDetail class.
+        For the normal front-end user, display details of the data or not.
+        Check the VideoSchemaWithDetail class for an example.
 
     Returns
     -------
     flask.Response (with the application/json mimetype)
-        A list of video objects in JSON.
+        A list of data objects in JSON.
     """
-    if len(videos) == 0: return make_response("", 204)
-    if is_admin:
-        videos_json = videos_schema_is_admin.dump(videos)
-    else:
-        if with_detail:
-            videos_json = videos_schema_with_detail.dump(videos)
+    if len(data) == 0: return make_response("", 204)
+    if is_video:
+        if is_admin:
+            data_json = videos_schema_is_admin.dump(data)
         else:
-            videos_json = videos_schema.dump(videos)
+            data_json = videos_schema_with_detail.dump(data) if with_detail else videos_schema.dump(data)
+    else:
+        if is_admin:
+            data_json = segmentations_schema_is_admin.dump(data)
+        else:
+            data_json = segmentations_schema_with_detail.dump(data) if with_detail else segmentations_schema.dump(data)
     if sign:
-        video_id_list = []
-    for i in range(len(videos_json)):
-        videos_json[i]["url_root"] = config.VIDEO_URL_ROOT
+        data_id_list = []
+    for i in range(len(data_json)):
+        data_json[i]["url_root"] = config.VIDEO_URL_ROOT
         if sign:
-            video_id_list.append(videos_json[i]["id"])
-    return_json = {"data": videos_json}
+            data_id_list.append(data_json[i]["id"])
+    return_json = {"data": data_json}
     if sign:
-        return_json["video_token"] = encode_video_jwt(video_id_list=video_id_list, batch_id=batch_id, user_id=user_id)
+        return_json["video_token"] = encode_video_jwt(video_id_list=data_id_list, batch_id=batch_id, user_id=user_id)
     if total is not None:
         return_json["total"] = total
     return jsonify(return_json)
