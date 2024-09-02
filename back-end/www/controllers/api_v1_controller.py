@@ -33,6 +33,7 @@ from models.model_operations.tutorial_operations import create_tutorial
 
 from models.model_operations.segmentationMask_operations import query_segmentation_batch
 from models.model_operations.segmentationBatch_operations import create_segmentation_batch
+from models.model_operations.segmentationFeedback_operations import update_segmentation_labels
 
 from models.schema import videos_schema_is_admin
 from models.schema import videos_schema_with_detail
@@ -178,7 +179,6 @@ def batch_check_request(request_json):
     
     return user_jwt
 
-# TODO, try to merch these two functions in 1
 @bp.route("/get_batch", methods=["POST"])
 def get_batch():
     """For the client to get a batch of video clips."""
@@ -329,6 +329,40 @@ def send_batch():
     except Exception as ex:
         raise InvalidUsage(ex.args[0], status_code=400)
 
+@bp.route("/send_segmentation_batch", methods=["POST"])
+def send_segmentation_batch():
+    """For the client to send segmentation bbox of a batch back to the server."""
+    request_json = request.get_json()
+    if request_json is None:
+        raise InvalidUsage("Missing json", status_code=400)
+    if "data" not in request_json:
+        raise InvalidUsage("Missing field: data", status_code=400)
+    if "user_token" not in request_json:
+        raise InvalidUsage("Missing field: user_token", status_code=400)
+    if "segmentation_token" not in request_json:
+        raise InvalidUsage("Missing field: segmentation_token", status_code=400)
+    # Decode user and video jwt
+    try:
+        segmentation_jwt = decode_jwt(request_json["segmentation_token"], config.JWT_PRIVATE_KEY)
+        user_jwt = decode_jwt(request_json["user_token"], config.JWT_PRIVATE_KEY)
+    except jwt.InvalidSignatureError as ex:
+        raise InvalidUsage(ex.args[0], status_code=401)
+    except Exception as ex:
+        raise InvalidUsage(ex.args[0], status_code=401)
+    # Verify video id list and user_id
+    labels = request_json["data"]
+    original_v = segmentation_jwt["segmentation_id_list"]
+    returned_v = [v["segmentmentation_id"] for v in labels]
+    if Counter(original_v) != Counter(returned_v) or segmentation_jwt["user_id"] != user_jwt["user_id"]:
+        raise InvalidUsage("Signature of the segmentation batch is not valid", status_code=401)
+    # Update database
+    try:
+        # TODO Update the scores
+        score = update_segmentation_labels(labels, user_jwt["user_id"], user_jwt["connection_id"], segmentation_jwt["batch_id"], user_jwt["client_type"])
+        return_json = {"data": {"score": score}}
+        return jsonify(return_json)
+    except Exception as ex:
+        raise InvalidUsage(ex.args[0], status_code=400)
 
 @bp.route("/set_label_state", methods=["POST"])
 def set_label_state():
