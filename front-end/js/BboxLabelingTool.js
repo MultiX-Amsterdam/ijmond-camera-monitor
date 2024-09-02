@@ -377,7 +377,6 @@
 
         // Update bounding box in the video
         function updateBbox(segment_data, selector) {
-            console.log(segment_data)
             let intervalID = setInterval(function () {
                 const element = $(selector);
                 if (element.length > 0) {

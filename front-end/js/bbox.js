@@ -46,7 +46,7 @@
 
   function collectBoxData() {
     var $boxes = $(".bbox");
-    var css_properties = [];
+    var box_roperties = [];
     for (let i = 0; i < $boxes.length; i++) {
       const $box = $boxes[i];
       const box_style = window.getComputedStyle($box);
@@ -57,11 +57,9 @@
       var top = box_style.getPropertyValue('top');
       var left = box_style.getPropertyValue('left');
 
-      console.log("Width: " + width);
-
       // Store the properties in an object
-      css_properties.push({
-        div_size: 0, // Size of the img div on the page 
+      box_roperties.push({
+        div_size: 0, // Size of the img div on the page
         img_id: i,
         img_frame: 0,
         cropped_width: 0,
@@ -76,8 +74,8 @@
     }
 
     // Export to JSON
-    const json_file = JSON.stringify(css_properties)
-    console.log(json_file);
+    const json_file = JSON.stringify(box_roperties)
+    console.log(box_roperties);
   }
 
   function nextBatch(ignore_labels) {
