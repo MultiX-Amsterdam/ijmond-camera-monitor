@@ -357,7 +357,7 @@ def send_segmentation_batch():
         raise InvalidUsage("Signature of the segmentation batch is not valid", status_code=401)
     # Update database
     try:
-        # TODO Update the scores
+        # TODO Add a way to calculate the scores based on the segmentation feedback
         score = update_segmentation_labels(labels, user_jwt["user_id"], user_jwt["connection_id"], segmentation_jwt["batch_id"], user_jwt["client_type"])
         return_json = {"data": {"score": score}}
         return jsonify(return_json)

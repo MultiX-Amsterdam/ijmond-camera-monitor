@@ -95,6 +95,7 @@
             console.warn("Server respond: " + JSON.stringify(xhr.responseJSON));
         }
 
+        // TODO implement this function
         // Collect the data from the given Bbox
         function collectBoxData() {
             var $boxes = $(".bbox");
@@ -103,7 +104,7 @@
               const $box = $boxes[i];
               const box_style = window.getComputedStyle($box);
         
-              // Retrieve specific CSS properties
+              // Retrieve CSS properties
               var width = box_style.getPropertyValue('width');
               var height = box_style.getPropertyValue('height');
               var top = box_style.getPropertyValue('top');
@@ -118,7 +119,7 @@
                 img_frame: 0,
                 cropped_width: 0,
                 cropped_height: 0,
-                relative_boxes: {
+                relative_boxes: { // True size of bbox will be calculated at the backend (segmentationFeedback_operations.py->true_size())
                   x: top,
                   y: left,
                   w: width,
@@ -128,6 +129,7 @@
             }
         
             // Export to JSON
+            // TODO export the JSON file to the backend
             const json_file = JSON.stringify(css_properties)
             console.log(json_file);
           }
@@ -194,7 +196,7 @@
             // "disableRemotePlayback" prevents chrome casting
             // "playsinline" and "playsInline" prevents playing video fullscreen
             var $vid = $("<video class='return-size' autoplay preload loop muted playsinline playsInline disableRemotePlayback></video>");
-            // TODO Change it to img instead of video
+            // TODO Change it to img tag instead of video tag to propaly display the image
             var $img = $("<img class='return-size' src='../img/crop.png'>");
             $item.append($vid).append($caption);
             return $item;

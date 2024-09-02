@@ -151,7 +151,7 @@
     };
 
     // Buid the segmentation URL from server returned data
-    // TODO make it use images instead of video's
+    // TODO make it use images instead of video's and change the url to the img implementation
     // Video's are currently used because no img implementation 
     this.buildSegmentationURL = function(v) {
       var camera_names = ["hoogovens", "kooksfabriek_1", "kooksfabriek_2"];

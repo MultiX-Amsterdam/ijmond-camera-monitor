@@ -121,6 +121,7 @@ def update_segmentation_labels(labels, user_id, connection_id, batch_id, client_
 def true_size(box_coord, cropped_size, div_size):
     """
     Helper function to calculate the true size of the bounding box.
+    Can also be placed at the front-end if needed.
 
     Parameters
     ----------

@@ -97,7 +97,7 @@ def query_segmentation_batch(user_id, use_admin_label_state=False):
         gold_neg = SegmentationMask.query.filter(SegmentationMask.label_state_admin==0b100000).order_by(func.random()).limit(num_gold_neg).all()
         # Exclude segmentations labeled by the same user, also the gold standards and other terminal states of reseacher labels
         # (We do not want citizens to do the double work to confirm reseacher labeled segmentations)
-        excluded_labels = (0b101111, 0b100000, 0b10111, 0b10000, 0b10011, 0b10100, 0b1111, 0b1100, -2) # TODO check if the labels match
+        excluded_labels = (0b101111, 0b100000, 0b10111, 0b10000, 0b10011, 0b10100, 0b1111, 0b1100, -2) # TODO check if the labels match with the segmentations
         excluded_s_ids = SegmentationMask.query.filter(SegmentationMask.label_state_admin.in_(excluded_labels)).with_entities(SegmentationMask.id).all()
         excluded_s_ids = [s[0] for s in excluded_s_ids]
         q = SegmentationMask.query.filter(SegmentationMask.id.notin_(labeled_segmentation_ids + excluded_s_ids))
