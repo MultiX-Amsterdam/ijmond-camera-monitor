@@ -179,6 +179,7 @@ def batch_check_request(request_json):
     
     return user_jwt
 
+# TODO, try to merch these two functions in 1
 @bp.route("/get_batch", methods=["POST"])
 def get_batch():
     """For the client to get a batch of video clips."""
@@ -328,7 +329,7 @@ def send_batch():
         return jsonify(return_json)
     except Exception as ex:
         raise InvalidUsage(ex.args[0], status_code=400)
-
+    
 @bp.route("/send_segmentation_batch", methods=["POST"])
 def send_segmentation_batch():
     """For the client to send segmentation bbox of a batch back to the server."""
@@ -363,6 +364,7 @@ def send_segmentation_batch():
         return jsonify(return_json)
     except Exception as ex:
         raise InvalidUsage(ex.args[0], status_code=400)
+
 
 @bp.route("/set_label_state", methods=["POST"])
 def set_label_state():
@@ -567,18 +569,18 @@ def get_video_labels(labels, allow_user_id=False, only_admin=False, use_admin_la
     is_researcher = True if user_jwt is not None and user_jwt["client_type"] == 0 else False
     if user_id is None:
         if labels is None and is_admin:
-            return jsonify_videos(get_all_videos(), is_admin=True)
+            return jsonify_data(get_all_videos(), is_admin=True)
         else:
             q = get_video_query(labels, page_number, page_size, use_admin_label_state=use_admin_label_state)
             if not is_researcher: # ignore researcher
                 create_views_from_video_batch(q.items, user_jwt, query_type=0)
-            return jsonify_videos(q.items, total=q.total, is_admin=is_admin, with_detail=True)
+            return jsonify_data(q.items, total=q.total, is_admin=is_admin, with_detail=True)
     else:
         q = get_pos_video_query_by_user_id(user_id, page_number, page_size, is_researcher)
         if not is_researcher: # ignore researcher
             create_views_from_video_batch(q.items, user_jwt, query_type=1)
         # We need to set is_admin to True here because we want to show user agreements in the data
-        return jsonify_videos(q.items, total=q.total, is_admin=True)
+        return jsonify_data(q.items, total=q.total, is_admin=True)
 
 
 @bp.route("/get_label_statistics", methods=["GET"])
