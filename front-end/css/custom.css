@@ -537,7 +537,7 @@ body,
 .resizer {
   width: 15px;
   height: 15px;
-  background: green;
+  background: blue;
   position: absolute;
   z-index: 1;
   border-radius: 50%;
@@ -546,10 +546,27 @@ body,
 
 .resizer.top-left {
   top: -5px;
-  left: -5px;  
+  left: -5px;
 }
 
 .resizer.bottom-right {
   bottom: -5px;
   right: -5px;
+}
+
+@media screen and (max-width: 600px) {
+  .resizer {
+    width: 25px;
+    height: 25px;
+  }
+
+  .resizer.top-left {
+    top: -10px;
+    left: -10px;
+  }
+
+  .resizer.bottom-right {
+    bottom: -10px;
+    right: -10px;
+  }
 }

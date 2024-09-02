@@ -6,6 +6,7 @@ from flask import Blueprint
 from flask import request
 from flask import jsonify
 from flask import make_response
+from flask import Response
 from collections import Counter
 from google.oauth2 import id_token
 from google.auth.transport import requests as g_requests
@@ -25,13 +26,21 @@ from models.model_operations.video_operations import query_video_batch
 from models.model_operations.video_operations import get_video_query
 from models.model_operations.video_operations import get_all_videos
 from models.model_operations.video_operations import get_pos_video_query_by_user_id
-from models.model_operations.video_operations import get_statistics
+from models.model_operations.video_operations   import get_statistics
 from models.model_operations.label_operations import update_labels
 from models.model_operations.view_operations import create_views_from_video_batch
 from models.model_operations.tutorial_operations import create_tutorial
+
+from models.model_operations.segmentationMask_operations import query_segmentation_batch
+from models.model_operations.segmentationBatch_operations import create_segmentation_batch
+from models.model_operations.segmentationFeedback_operations import update_segmentation_labels
+
 from models.schema import videos_schema_is_admin
 from models.schema import videos_schema_with_detail
 from models.schema import videos_schema
+from models.schema import segmentations_schema_is_admin
+from models.schema import segmentations_schema_with_detail
+from models.schema import segmentations_schema
 import models.model as m
 
 
@@ -155,11 +164,7 @@ def encode_user_token(**kwargs):
         payload[k] = kwargs[k]
     return encode_jwt(payload, config.JWT_PRIVATE_KEY)
 
-
-@bp.route("/get_batch", methods=["POST"])
-def get_batch():
-    """For the client to get a batch of video clips."""
-    request_json = request.get_json()
+def batch_check_request(request_json):
     if request_json is None:
         raise InvalidUsage("Missing json", status_code=400)
     if "user_token" not in request_json:
@@ -171,6 +176,14 @@ def get_batch():
         raise InvalidUsage(ex.args[0], status_code=401)
     except Exception as ex:
         raise InvalidUsage(ex.args[0], status_code=401)
+    
+    return user_jwt
+
+@bp.route("/get_batch", methods=["POST"])
+def get_batch():
+    """For the client to get a batch of video clips."""
+    request_json = request.get_json()
+    user_jwt = batch_check_request(request_json)
     # Query videos (active learning or random sampling)
     is_admin = True if user_jwt["client_type"] == 0 else False
     video_batch = query_video_batch(user_jwt["user_id"], use_admin_label_state=is_admin)
@@ -189,55 +202,82 @@ def get_batch():
                 num_unlabeled=config.BATCH_SIZE-config.GOLD_STANDARD_IN_BATCH,
                 connection_id=user_jwt["connection_id"]
             )
-        return jsonify_videos(video_batch, sign=True, batch_id=batch.id, user_id=user_jwt["user_id"])
+        return jsonify_data(video_batch, sign=True, batch_id=batch.id, user_id=user_jwt["user_id"])
+
+@bp.route("/get_segment_batch", methods=["POST"])
+def get_segment_batch():
+    "Return a batch of images to the client."
+    request_json = request.get_json()
+    user_jwt = batch_check_request(request_json)
+    is_admin = True if user_jwt["client_type"] == 0 else False
+    segmentation_batch = query_segmentation_batch(user_jwt["client_type"], use_admin_label_state=is_admin)
+    if segmentation_batch is None or len(segmentation_batch) < config.BATCH_SIZE:
+        return make_response("", 204)
+    else:
+        if is_admin:
+            batch = create_segmentation_batch(
+                num_gold_standard=0,
+                num_unlabeled=config.BATCH_SIZE,
+                connection_id=user_jwt["connection_id"]
+            ) # no gold standard videos for admin
+        else:
+            batch = create_segmentation_batch(
+                num_gold_standard=config.GOLD_STANDARD_IN_BATCH,
+                num_unlabeled=config.BATCH_SIZE-config.GOLD_STANDARD_IN_BATCH,
+                connection_id=user_jwt["connection_id"]
+            )
+        return jsonify_data(segmentation_batch, sign=True, batch_id=batch.id, user_id=user_jwt["user_id"], is_video=False)
 
 
-def jsonify_videos(videos, sign=False, batch_id=None, total=None, is_admin=False, user_id=None, with_detail=False):
+def jsonify_data(data, sign=False, batch_id=None, total=None, is_admin=False, user_id=None, with_detail=False, is_video=True):
     """
     Convert video objects to json.
 
     Parameters
     ----------
-    videos : list of Video
-        A list of video objects.
+    data : list of data objects (e.g., Video or Segmentation objects)
+        A list of data objects.
     sign : bool
         Require digital signature or not.
     batch_id : int
-        The video batch ID (a part of the digital signature).
+        The batch ID (a part of the digital signature).
     total : int
-        The total number of videos.
+        The total number of datapoints.
     is_admin : bool
         Is the system administrator or not.
-        This affects the level of information to get from the Video table.
-        Check the VideoSchemaIsAdmin class.
+        This affects the level of information to get from the data table.
+        Check the VideoSchemaIsAdmin class for an example.
     user_id : int
         The user ID (a part of the digital signature).
     with_detail : bool
-        For the normal front-end user, display details of the videos or not.
-        Check the VideoSchemaWithDetail class.
+        For the normal front-end user, display details of the data or not.
+        Check the VideoSchemaWithDetail class for an example.
 
     Returns
     -------
     flask.Response (with the application/json mimetype)
-        A list of video objects in JSON.
+        A list of data objects in JSON.
     """
-    if len(videos) == 0: return make_response("", 204)
-    if is_admin:
-        videos_json = videos_schema_is_admin.dump(videos)
-    else:
-        if with_detail:
-            videos_json = videos_schema_with_detail.dump(videos)
+    if len(data) == 0: return make_response("", 204)
+    if is_video:
+        if is_admin:
+            data_json = videos_schema_is_admin.dump(data)
         else:
-            videos_json = videos_schema.dump(videos)
+            data_json = videos_schema_with_detail.dump(data) if with_detail else videos_schema.dump(data)
+    else:
+        if is_admin:
+            data_json = segmentations_schema_is_admin.dump(data)
+        else:
+            data_json = segmentations_schema_with_detail.dump(data) if with_detail else segmentations_schema.dump(data)
     if sign:
-        video_id_list = []
-    for i in range(len(videos_json)):
-        videos_json[i]["url_root"] = config.VIDEO_URL_ROOT
+        data_id_list = []
+    for i in range(len(data_json)):
+        data_json[i]["url_root"] = config.VIDEO_URL_ROOT
         if sign:
-            video_id_list.append(videos_json[i]["id"])
-    return_json = {"data": videos_json}
+            data_id_list.append(data_json[i]["id"])
+    return_json = {"data": data_json}
     if sign:
-        return_json["video_token"] = encode_video_jwt(video_id_list=video_id_list, batch_id=batch_id, user_id=user_id)
+        return_json["video_token"] = encode_video_jwt(video_id_list=data_id_list, batch_id=batch_id, user_id=user_id)
     if total is not None:
         return_json["total"] = total
     return jsonify(return_json)
@@ -289,6 +329,40 @@ def send_batch():
     except Exception as ex:
         raise InvalidUsage(ex.args[0], status_code=400)
 
+@bp.route("/send_segmentation_batch", methods=["POST"])
+def send_segmentation_batch():
+    """For the client to send segmentation bbox of a batch back to the server."""
+    request_json = request.get_json()
+    if request_json is None:
+        raise InvalidUsage("Missing json", status_code=400)
+    if "data" not in request_json:
+        raise InvalidUsage("Missing field: data", status_code=400)
+    if "user_token" not in request_json:
+        raise InvalidUsage("Missing field: user_token", status_code=400)
+    if "segmentation_token" not in request_json:
+        raise InvalidUsage("Missing field: segmentation_token", status_code=400)
+    # Decode user and video jwt
+    try:
+        segmentation_jwt = decode_jwt(request_json["segmentation_token"], config.JWT_PRIVATE_KEY)
+        user_jwt = decode_jwt(request_json["user_token"], config.JWT_PRIVATE_KEY)
+    except jwt.InvalidSignatureError as ex:
+        raise InvalidUsage(ex.args[0], status_code=401)
+    except Exception as ex:
+        raise InvalidUsage(ex.args[0], status_code=401)
+    # Verify video id list and user_id
+    labels = request_json["data"]
+    original_v = segmentation_jwt["segmentation_id_list"]
+    returned_v = [v["segmentmentation_id"] for v in labels]
+    if Counter(original_v) != Counter(returned_v) or segmentation_jwt["user_id"] != user_jwt["user_id"]:
+        raise InvalidUsage("Signature of the segmentation batch is not valid", status_code=401)
+    # Update database
+    try:
+        # TODO Add a way to calculate the scores based on the segmentation feedback
+        score = update_segmentation_labels(labels, user_jwt["user_id"], user_jwt["connection_id"], segmentation_jwt["batch_id"], user_jwt["client_type"])
+        return_json = {"data": {"score": score}}
+        return jsonify(return_json)
+    except Exception as ex:
+        raise InvalidUsage(ex.args[0], status_code=400)
 
 @bp.route("/set_label_state", methods=["POST"])
 def set_label_state():

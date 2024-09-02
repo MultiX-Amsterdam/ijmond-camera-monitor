@@ -5,7 +5,7 @@
     //
     // Create the class
     //
-    var VideoLabelingTool = function (container_selector, settings) {
+    var BboxLabelingTool = function (container_selector, settings) {
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////
         //
         // Variables
@@ -16,11 +16,15 @@
         var $tool;
         var $tool_videos;
         var video_items = [];
-        var $bad_video_text = $('<span class="bad-video-text">Oops!<br>Some video links are broken.<br>Please refresh this page.</span>');
-        var $error_text = $('<span class="error-text">Oops!<br>Server may be down or busy.<br>Please come back later.</span>');
-        var $no_data_text = $('<span class="no-data-text">Thank you!<br>Videos are all labeled.<br>Please come back later.</span>');
+        //var $bad_video_text = $('<span class="bad-video-text">Oops!<br>Some video links are broken.<br>Please refresh this page.</span>');
+        var $bad_video_text = $('<span class="bad-video-text">Error!<br>Het ziet ernaar uit dat sommige video\'s niet werken.<br>Laat deze pagina opnieuw in alstublieft.</span>');
+        //var $error_text = $('<span class="error-text">Oops!<br>Server may be down or busy.<br>Please come back later.</span>');
+        var $error_text = $('<span class="error-text">Error!<br>Het ziet ernaar uit dat de server druk is.<br>Komt alstublieft later terug.</span>');
+        //var $no_data_text = $('<span class="no-data-text">Thank you!<br>Videos are all labeled.<br>Please come back later.</span>');
+        var $no_data_text = $('<span class="no-data-text">Dankjewel!<br>Op dit moment zijn alle video\'s gelabeld.<br>Kom alstublieft later nog terug.</span>');
         var $loading_text = $('<span class="loading-text"></span>');
-        var $not_supported_text = $('<span class="not-supported-text">We are sorry!<br>Your browser is not supported.</span>');
+        //var $not_supported_text = $('<span class="not-supported-text">We are sorry!<br>Your browser is not supported.</span>');
+        var $not_supported_text = $('<span class="not-supported-text">Onze excuses!<br>De browser ondersteunt deze website helaas niet.</span>');
         var api_url_root = util.getRootApiUrl();
         var user_id;
         var video_token;
@@ -59,9 +63,9 @@
         }
 
         // Get the json file that contains image links
-        function getVideoBatch(callback) {
+        function getSegmentationBatch(callback) {
             callback = safeGet(callback, {});
-            util.postJSON(api_url_root + "get_batch", {
+            util.postJSON(api_url_root + "get_segment_batch", {
                 user_token: user_token,
             }, {
                 success: function (data) {
@@ -91,17 +95,57 @@
             console.warn("Server respond: " + JSON.stringify(xhr.responseJSON));
         }
 
-        // Set a batch of labeled video clips back to the server
-        function sendVideoBatch(callback, options) {
+        // TODO implement this function
+        // Collect the data from the given Bbox
+        function collectBoxData() {
+            var $boxes = $(".bbox");
+            var css_properties = [];
+            for (let i = 0; i < $boxes.length; i++) {
+              const $box = $boxes[i];
+              const box_style = window.getComputedStyle($box);
+        
+              // Retrieve CSS properties
+              var width = box_style.getPropertyValue('width');
+              var height = box_style.getPropertyValue('height');
+              var top = box_style.getPropertyValue('top');
+              var left = box_style.getPropertyValue('left');
+        
+              console.log("Width: " + width);
+        
+              // Store the properties in an object
+              css_properties.push({
+                div_size: 0, // Size of the img div on the page 
+                img_id: i,
+                img_frame: 0,
+                cropped_width: 0,
+                cropped_height: 0,
+                relative_boxes: { // True size of bbox will be calculated at the backend (segmentationFeedback_operations.py->true_size())
+                  x: top,
+                  y: left,
+                  w: width,
+                  h: height
+                }
+              });
+            }
+        
+            // Export to JSON
+            // TODO export the JSON file to the backend
+            const json_file = JSON.stringify(css_properties)
+            console.log(json_file);
+          }
+
+        // Set a batch of labeled segmentations back to the server
+        function sendSegmentationBatch(callback, options) {
             callback = safeGet(callback, {});
             options = safeGet(options, {});
             var ignore_labels = safeGet(options["ignore_labels"], false);
             var labels = collectAndRemoveLabels();
             showLoadingMsg();
+            // TODO collect the bounding box data using collectBoxData()
             if (labels.length == 0 || ignore_labels) {
                 if (typeof callback["success"] === "function") callback["success"]();
             } else {
-                util.postJSON(api_url_root + "send_batch", {
+                util.postJSON(api_url_root + "send_segmentation_batch", {
                     video_token: video_token,
                     user_token: user_token,
                     data: labels
@@ -141,134 +185,33 @@
             return labels;
         }
 
-        // Create a video label element
+        // Create a segmentation label element
         // IMPORTANT: Safari on iPhone only allows displaying maximum 16 videos at once
         // UPDATE: starting from Safari 12, more videos are allowed
-        function createVideo(i) {
+        function createSegmentation(i) {
             var $item = $("<a href='javascript:void(0)' class='flex-column video-container'></a>");
             var $caption = $("<div>" + (i + 1) + "</div>");
             // "autoplay" is needed for iPhone Safari to work
             // "preload" is ignored by mobile devices
             // "disableRemotePlayback" prevents chrome casting
             // "playsinline" and "playsInline" prevents playing video fullscreen
-            var $vid = $("<video autoplay preload loop muted playsinline playsInline disableRemotePlayback></video>");
-            $item.on("click", function () {
-                toggleSelect($(this));
-            });
+            var $vid = $("<video class='return-size' autoplay preload loop muted playsinline playsInline disableRemotePlayback></video>");
+            // TODO Change it to img tag instead of video tag to propaly display the image
+            var $img = $("<img class='return-size' src='../img/crop.png'>");
             $item.append($vid).append($caption);
             return $item;
         }
 
-        // Create resizer element
-        function createResizer(positionClass) {
-            return $(`<div class="resizer ${positionClass}"></div>`);
-        }
-
-        function attachResizerHandlers($resizer, $box, mouseMoveHandler) {
-            let startX, startY, startWidth, startHeight, startTop, startLeft;
-        
-            $resizer[0].addEventListener('mousedown', (e) => {
-                e.preventDefault();
-                startX = e.clientX;
-                startY = e.clientY;
-                startWidth = $box[0].offsetWidth;
-                startHeight = $box[0].offsetHeight;
-                startLeft = $box[0].offsetLeft;
-                startTop = $box[0].offsetTop;
-        
-                function moveHandler(e) {
-                    mouseMoveHandler(e, $box, startX, startY, startWidth, startHeight, startTop, startLeft);
-                }
-        
-                function upHandler() {
-                    document.removeEventListener('mousemove', moveHandler);
-                    document.removeEventListener('mouseup', upHandler);
-                }
-        
-                document.addEventListener('mousemove', moveHandler);
-                document.addEventListener('mouseup', upHandler);
-            });
-        }
-
-        // Handle mouse movement for resizing from the bottom-right
-        function handleMouseMoveRight(e, $box, startX, startY, startWidth, startHeight) {
-            $box[0].style.width = (startWidth + e.clientX - startX) + 'px';
-            $box[0].style.height = (startHeight + e.clientY - startY) + 'px';
-        }
-        
-        // Handle mouse movement for resizing from the top-left
-        function handleMouseMoveLeft(e, $box, startX, startY, startWidth, startHeight, startTop, startLeft) {
-            const deltaX = e.clientX - startX;
-            const deltaY = e.clientY - startY;
-            $box[0].style.width = (startWidth - deltaX) + 'px';
-            $box[0].style.height = (startHeight - deltaY) + 'px';
-            $box[0].style.left = (startLeft + deltaX) + 'px';
-            $box[0].style.top = (startTop + deltaY) + 'px';
-        }
-
-        // Create a bounding box element
-        function createBBox(bbox) {
-            const STARTING_VALUE = 20;
-
-            const $box = $('<div class="bbox"></div>');
-            $box.css({
-                position: "absolute",
-                display: "flex",
-                left: STARTING_VALUE + bbox.left + 'px',
-                top: STARTING_VALUE + bbox.top + 'px',
-                width: bbox.width + 'px',
-                height: bbox.height + 'px',
-                border: "3px solid red"
-            });
-
-            const $leftBox = createResizer('top-left');
-            const $rightBox = createResizer('bottom-right');
-        
-            attachResizerHandlers($leftBox, $box, handleMouseMoveLeft);
-            attachResizerHandlers($rightBox, $box, handleMouseMoveRight);
-        
-            $box.append($leftBox);
-            $box.append($rightBox);
-        
-            return $box;
-        }
-
-        // Create random bounding box for testing purposes
-        // Function will be removed after data is receivable from the server
-        function createRandomBBox() {
-            // Generate random values for image width and height around 100
-            const imageWidth = 400 + (Math.random() * 200 - 100);
-            const imageHeight = 400 + (Math.random() * 200 - 100);
-
-            // Generate random values for left, top, width, and height within bounds
-            const width = 10 + Math.random() * 50;
-            const height = 10 + Math.random() * 50;
-
-            const left = Math.max(20, Math.random() * Math.min(imageWidth - 30, 320) - width);
-            const top = Math.max(20, Math.random() * Math.min(imageHeight - 60, 320) - height);
-
-            // Return the bbox object with random values
-            return {
-                left: Math.round(left),
-                top: Math.round(top),
-                width: Math.round(width),
-                height: Math.round(height),
-                image_width: Math.round(imageWidth),
-                image_height: Math.round(imageHeight)
-            };
-        }
-
         // Update the videos with a new batch of urls
-        function updateVideos(video_data, callback) {
+        function updateSegmentations(video_data, callback) {
             var deferreds = [];
             // Add videos
             for (var i = 0; i < video_data.length; i++) {
                 var v = video_data[i];
-                v['bbox'] = createRandomBBox();
-
                 var $item;
+
                 if (typeof video_items[i] === "undefined") {
-                    $item = createVideo(i);
+                    $item = createSegmentation(i);
                     video_items.push($item);
                     $tool_videos.append($item);
                 } else {
@@ -291,7 +234,7 @@
                     $vid.one("error", deferred.reject);
                     deferreds.push(deferred);
                 }
-                var src_url = util.buildVideoURL(v);
+                var src_url = util.buildSegmentationURL(v);
                 $vid.prop("src", src_url);
                 util.handleVideoPromise($vid.get(0), "load"); // load to reset video promise
                 if ($item.hasClass("force-hidden")) {
@@ -310,45 +253,175 @@
             util.resolvePromises(deferreds, {
                 success: function (data) {
                     updateTool($tool_videos);
+
+
                     if (typeof callback["success"] === "function") callback["success"](data);
                 },
                 error: function (xhr) {
-                    console.warn("Some video urls are broken.");
+                    console.warn("Some img urls are broken.");
                     printServerWarnMsg(xhr);
-                    showBadVideoMsg();
+                    showBadSegmentMsg();
                     if (typeof callback["abort"] === "function") callback["abort"](xhr);
                 }
             });
+        }
 
-            // TEMP for testing
-            const box_styles = [
-                { top: '10px', left: '10px', width: '100px', height: '50px' },
-                { top: '500px', left: '50px', width: '150px', height: '75px' },
-                { top: '600px', left: '600px', width: '150px', height: '75px' },
-                { top: '210px', left: '20px', width: '430px', height: '105px' },
-            ];
+        // Create resizers for the boundary box
+        // Touch is used for phone
+        // Mouse is used for desktop
+        function createResizer($box, div_size) {
+            const $leftBox = $('<div class="resizer top-left"></div>');
+            const $rightBox = $('<div class="resizer bottom-right"></div>');
 
-            const video_containers = document.querySelectorAll('.video-container');
-            video_containers.forEach((container, index) => {
-                const border_box = box_styles[index % box_styles.length]; // Cycle through styles
-                addBoxToVideo(container, border_box);
+            const BORDER_SIZE = 20;
+
+            let start_width, start_height;
+            let start_x, start_y;
+            let start_top, start_left;
+
+            function handlerRightMovement(e) {
+                // Calculates the new width and height of the box based on the movement
+                const client_x = e.clientX || e.touches[0].clientX;
+                const client_y = e.clientY || e.touches[0].clientY;
+
+                // Determine the new dimensions based on the initial state
+                const new_width = start_width + (client_x - start_x);
+                const new_height = start_height + (client_y - start_y);
+
+                // Update the width and height of the box without exceeding the image size
+                $box[0].style.width =  Math.min(new_width, div_size - start_left) + 'px';
+                $box[0].style.height = Math.min(new_height, div_size - start_top) + 'px';
+            }
+
+            function handlerLeftMovement(e) {
+                // Calculates the new width and height of the box based on the movement
+                const client_x = e.clientX || e.touches[0].clientX;
+                const client_y = e.clientY || e.touches[0].clientY;
+            
+                // Determine the new dimensions based on the initial state
+                const new_width = start_width - (client_x - start_x);
+                const new_height = start_height - (client_y - start_y);
+                const new_left = start_left + (client_x - start_x);
+                const new_top = start_top + (client_y - start_y);
+            
+                // Update the width and height of the box without exceeding the image size
+                $box[0].style.width =  Math.min(new_width, div_size - start_left) + 'px';
+                $box[0].style.height = Math.min(new_height, div_size - start_top) + 'px';
+                $box[0].style.left = Math.max(new_left, BORDER_SIZE) + 'px';
+                $box[0].style.top = Math.max(new_top, BORDER_SIZE) + 'px';
+            }
+            // Listeners are added when the user interacts with the bbox
+            function addListener(handler) {
+                document.addEventListener('mousemove', handler);
+                document.addEventListener('mouseup', removeListener);
+
+                document.addEventListener('touchmove', handler);
+                document.addEventListener('touchend', removeListener);
+            }
+
+            function removeListener() {
+                document.removeEventListener('mousemove', handlerRightMovement);
+                document.removeEventListener('touchmove', handlerRightMovement);
+
+                document.removeEventListener('mousemove', handlerLeftMovement);
+                document.removeEventListener('touchmove', handlerLeftMovement);
+
+                document.removeEventListener('mouseup', removeListener);
+                document.removeEventListener('touchend', removeListener);
+            }            
+
+           // Initializes the resizing process
+            function startResizing(e, handler) {
+                e.preventDefault();
+                start_x = e.clientX || e.touches[0].clientX;
+                start_y = e.clientY || e.touches[0].clientY;
+                start_width = $box[0].offsetWidth;
+                start_height = $box[0].offsetHeight;
+                start_left = $box[0].offsetLeft;
+                start_top = $box[0].offsetTop;
+
+                addListener(handler);
+            }
+
+            // Attach the event listeners
+            $rightBox[0].addEventListener('mousedown', (e) => startResizing(e, handlerRightMovement));
+            $rightBox[0].addEventListener('touchstart', (e) => startResizing(e, handlerRightMovement));
+
+            $leftBox[0].addEventListener('mousedown', (e) => startResizing(e, handlerLeftMovement));
+            $leftBox[0].addEventListener('touchstart', (e) => startResizing(e, handlerLeftMovement));
+
+            return [$rightBox, $leftBox];
+        }
+
+        // Calculate the bounding box based on the given meta data
+        function calculateBBox(meta_data, div_size) {
+            const img_width = meta_data["w_image"];
+            const img_height = meta_data["h_image"];
+
+            const x = meta_data["x_bbox"]
+            const y = meta_data['y_bbox']
+            const w = meta_data['w_bbox']
+            const h = meta_data['h_bbox']
+
+            const box_x = (x / img_width) * div_size
+            const box_y = (y / img_height) * div_size
+            const box_w = (w / img_width) * div_size
+            const box_h = (h / img_height) * div_size
+
+            return {
+                left: box_x,
+                top: box_y,
+                width: box_w,
+                height: box_h,
+                image_width: img_width,
+                image_height: img_height
+            };
+        }
+
+        // Create a bounding box element
+        function createBBox(meta_data, div_size = 420) {
+            // The html page creates a padding of 10px on both sides
+            // The coordinates will be adjusted based on the padding
+            const DIV_SIZE_STARTING_VALUE = 20;
+
+            const $box = $(`<div class="bbox"></div>`);
+            const adjusted_data = calculateBBox(meta_data, div_size);
+            // Update the bounding box style based on the bbox object
+            $box.css({
+                position: "absolute",
+                display: "flex",
+                left: DIV_SIZE_STARTING_VALUE + adjusted_data.left + 'px',
+                top: DIV_SIZE_STARTING_VALUE + adjusted_data.top + 'px',
+                width: adjusted_data.width + 'px',
+                height: adjusted_data.height + 'px',
+                border: "3px solid red"
             });
+
+            const resize_boxes = createResizer($box, div_size)
+            $box.append(resize_boxes[0])
+            $box.append(resize_boxes[1])
+            return $box;
         }
 
-        // Toggle the "select" class of a DOM element
-        function toggleSelect($element) {
-            if ($element.hasClass("selected")) {
-                $element.removeClass("selected");
-            } else {
-                $element.addClass("selected");
-            }
-        }
+        // Update bounding box in the video
+        function updateBbox(segment_data, selector) {
+            let intervalID = setInterval(function () {
+                const element = $(selector);
+                if (element.length > 0) {
+                    clearInterval(intervalID);
+                    var border_width = parseInt(element.css('border-top-width'));
+                    var element_width = element.width() + border_width * 2;
+                    
+                    const parent_element = element.parent();
 
-        // Remove the "select" class of a DOM element
-        function removeSelect($element) {
-            if ($element.hasClass("selected")) {
-                $element.removeClass("selected");
-            }
+                    for (var i = 0; i < segment_data.length; i++) {
+                        var v = segment_data[i];
+                        var $box = createBBox(v, element_width);
+                        $(parent_element[i]).append($box);
+                    }
+
+                }
+            }, 100);
         }
 
         function updateTool($new_content) {
@@ -372,7 +445,7 @@
         }
 
         // Show bad video requests message
-        function showBadVideoMsg() {
+        function showBadSegmentMsg() {
             updateTool($bad_video_text);
         }
 
@@ -390,14 +463,14 @@
             return JSON.parse(window.atob(jwt.split('.')[1]));
         }
 
-        // When getting a batch of videos successfully, update videos
-        function onGetVideoBatchSuccess(data, callback) {
+        // When getting a batch of segmentations successfully, update segmentations
+        function onGetSegmentatioBatchSuccess(data, callback) {
             if (typeof data === "undefined") {
                 console.error("The server does not return any data.");
                 showNoDataMsg();
                 if (typeof callback["error"] === "function") callback["error"]();
             } else {
-                updateVideos(data["data"], {
+                updateSegmentations(data["data"], {
                     success: function () {
                         // Need to store the token and return it back to the server when finished
                         video_token = data["video_token"];
@@ -412,11 +485,12 @@
                         if (typeof callback["abort"] === "function") callback["abort"](xhr);
                     }
                 });
+                updateBbox(data["data"], ".return-size");
             }
         }
 
-        // When sending the current batch of video labels successfully, get a new batch of videos
-        function onSendVideoBatchSuccess(data, callback) {
+        // When sending the current batch of segmentation labels successfully, get a new batch of segmentations
+        function onSendSegmentationBatchSuccess(data, callback) {
             // Update the user score
             if (typeof data !== "undefined") {
                 user_score = data["data"]["score"]["user"];
@@ -424,9 +498,9 @@
                 if (typeof on_user_score_update === "function") on_user_score_update(user_score, user_raw_score, data["data"]["score"]["batch"]);
             }
             // Get a new batch
-            getVideoBatch({
+            getSegmentationBatch({
                 success: function (data) {
-                    onGetVideoBatchSuccess(data, callback);
+                    onGetSegmentatioBatchSuccess(data, callback);
                 },
                 error: function (xhr) {
                     if (typeof callback["error"] === "function") callback["error"](xhr);
@@ -455,15 +529,15 @@
         this.next = function (callback, options) {
             callback = safeGet(callback, {});
             if (util.browserSupported()) {
-                sendVideoBatch({
+                sendSegmentationBatch({
                     success: function (data) {
-                        onSendVideoBatchSuccess(data, callback);
+                        onSendSegmentationBatchSuccess(data, callback);
                     },
                     error: function (xhr) {
                         if (typeof callback["error"] === "function") callback["error"](xhr);
                     },
                     abort: function (xhr) {
-                        onSendVideoBatchSuccess(xhr.responseJSON, callback);
+                        onSendSegmentationBatchSuccess(xhr.responseJSON, callback);
                     }
                 }, options);
             } else {
@@ -531,10 +605,10 @@
     // Register to window
     //
     if (window.edaplotjs) {
-        window.edaplotjs.VideoLabelingTool = VideoLabelingTool;
+        window.edaplotjs.BboxLabelingTool = BboxLabelingTool;
     } else {
         window.edaplotjs = {};
-        window.edaplotjs.VideoLabelingTool = VideoLabelingTool;
+        window.edaplotjs.BboxLabelingTool = BboxLabelingTool;
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////

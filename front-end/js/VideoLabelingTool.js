@@ -70,6 +70,7 @@
       }, {
         success: function (data) {
           if (typeof callback["success"] === "function") callback["success"](data);
+          console.log(data);
         },
         error: function (xhr) {
           console.error("Error when getting video urls!");
