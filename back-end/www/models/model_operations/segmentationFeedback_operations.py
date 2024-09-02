@@ -38,7 +38,7 @@ def remove_feedback_label(feedback_id):
     db.session.commit()
 
 
-def update_labels(labels, user_id, connection_id, batch_id, client_type):
+def update_segmentation_labels(labels, user_id, connection_id, batch_id, client_type):
     """
     Update the Segmentation table when a new label is added, return the score of the batch.
 
@@ -76,8 +76,7 @@ def update_labels(labels, user_id, connection_id, batch_id, client_type):
         batch.return_time = get_current_time()
         batch.connection_id = connection_id
         if client_type != 0: # do not update the score for reseacher
-            # TODO Update the function so it uses compare_segmentation_feedback()  
-            batch_score = compute_video_batch_score(segmentation_batch_hashed, labels) 
+            batch_score = compare_segmentation_feedback(segmentation_batch_hashed, labels) 
             batch.score = batch_score
             batch.user_score = user.score
             batch.user_raw_score = user.raw_score
@@ -140,7 +139,7 @@ def true_size(box_coord, cropped_size, div_size):
     true_coord = (box_coord * cropped_size) / div_size
     return int(true_coord)
 
-
+# TODO Update the function so it returns a score 
 def compare_segmentation_feedback(segmentation_batch_hashed, feedback_sgm, proximity_threshold=1):
     """
     Compare the segmentation with the given user feedback.
@@ -236,7 +235,7 @@ def compute_segmentation_batch_score(segmentation_batch_hashed, labels):
         return score
 
 
-# TODO update this to the new label calculation
+# TODO Update this to the new label calculation
 def label_state_machine(s, label, client_type):
     """
     A finite state machine to infer the new label state based on current label state and some inputs.

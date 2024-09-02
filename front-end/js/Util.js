@@ -150,6 +150,9 @@
       return src_url;
     };
 
+    // Buid the segmentation URL from server returned data
+    // TODO make it use images instead of video's
+    // Video's are currently used because no img implementation 
     this.buildSegmentationURL = function(v) {
       var camera_names = ["hoogovens", "kooksfabriek_1", "kooksfabriek_2"];
       var src_url = v["url_root"] + camera_names[v["frame_number"]] + "/" +  v["mask_file_name"] + "/" + v["image_file_name"] + ".mp4";
