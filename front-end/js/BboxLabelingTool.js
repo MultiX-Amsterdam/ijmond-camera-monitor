@@ -219,6 +219,9 @@
                     removeSelect($item);
                 }
                 $item.data("id", v["id"]);
+                // Add bounding box
+                var $box = createBBox(v['bbox']);
+                $item.append($box);
 
                 var $vid = $item.find("video");
                 $vid.one("canplay", function () {
