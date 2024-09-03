@@ -6,6 +6,7 @@ from sqlalchemy import and_
 from sqlalchemy import or_
 from sqlalchemy import desc
 from sqlalchemy.orm import load_only
+from sqlalchemy.exc import IntegrityError
 from random import shuffle
 from models.model import db
 from models.model import Video
@@ -17,18 +18,23 @@ import models.model as m
 
 def create_video(fn, st, et, up, vid, cid):
     """Create a video."""
-    video = Video(
-        file_name=fn,
-        start_time=st,
-        end_time=et,
-        url_part=up,
-        view_id=vid,
-        camera_id=cid
-    )
-    app.logger.info("Create video: %r" % video)
-    db.session.add(video)
-    db.session.commit()
-    return video
+    try:
+        video = Video(
+            file_name=fn,
+            start_time=st,
+            end_time=et,
+            url_part=up,
+            view_id=vid,
+            camera_id=cid
+        )
+        app.logger.info("Create video: %r" % video)
+        db.session.add(video)
+        db.session.commit()
+        return video
+    except IntegrityError as e:
+        app.logger.warning("Error message\n %s" % e)
+        db.session.rollback()
+        return None
 
 
 def remove_video(video_id):
