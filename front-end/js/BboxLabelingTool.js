@@ -15,7 +15,7 @@
         var $container = $(container_selector);
         var $tool;
         var $tool_videos;
-        var video_items = [];
+        var img_items = [];
         //var $bad_video_text = $('<span class="bad-video-text">Oops!<br>Some video links are broken.<br>Please refresh this page.</span>');
         var $bad_video_text = $('<span class="bad-video-text">Error!<br>Het ziet ernaar uit dat sommige video\'s niet werken.<br>Laat deze pagina opnieuw in alstublieft.</span>');
         //var $error_text = $('<span class="error-text">Oops!<br>Server may be down or busy.<br>Please come back later.</span>');
@@ -103,18 +103,18 @@
             for (let i = 0; i < $boxes.length; i++) {
               const $box = $boxes[i];
               const box_style = window.getComputedStyle($box);
-        
+
               // Retrieve CSS properties
               var width = box_style.getPropertyValue('width');
               var height = box_style.getPropertyValue('height');
               var top = box_style.getPropertyValue('top');
               var left = box_style.getPropertyValue('left');
-        
+
               console.log("Width: " + width);
-        
+
               // Store the properties in an object
               css_properties.push({
-                div_size: 0, // Size of the img div on the page 
+                div_size: 0, // Size of the img div on the page
                 img_id: i,
                 img_frame: 0,
                 cropped_width: 0,
@@ -127,7 +127,7 @@
                 }
               });
             }
-        
+
             // Export to JSON
             // TODO export the JSON file to the backend
             const json_file = JSON.stringify(css_properties)
@@ -186,76 +186,55 @@
         }
 
         // Create a segmentation label element
-        // IMPORTANT: Safari on iPhone only allows displaying maximum 16 videos at once
-        // UPDATE: starting from Safari 12, more videos are allowed
         function createSegmentation(i) {
             var $item = $("<a href='javascript:void(0)' class='flex-column video-container'></a>");
             var $caption = $("<div>" + (i + 1) + "</div>");
-            // "autoplay" is needed for iPhone Safari to work
-            // "preload" is ignored by mobile devices
-            // "disableRemotePlayback" prevents chrome casting
-            // "playsinline" and "playsInline" prevents playing video fullscreen
-            var $vid = $("<video class='return-size' autoplay preload loop muted playsinline playsInline disableRemotePlayback></video>");
-            // TODO Change it to img tag instead of video tag to propaly display the image
-            var $img = $("<img class='return-size' src='../img/crop.png'>");
-            $item.append($vid).append($caption);
+            var $img = $("<img class='return-size' src=''>");
+            $item.append($img).append($caption);
             return $item;
         }
 
-        // Update the videos with a new batch of urls
-        function updateSegmentations(video_data, callback) {
+        // Update the images with a new batch of urls
+        function updateSegmentations(img_data, callback) {
             var deferreds = [];
-            // Add videos
-            for (var i = 0; i < video_data.length; i++) {
-                var v = video_data[i];
+            // Add images
+            for (var i = 0; i < img_data.length; i++) {
+                var v = img_data[i];
                 var $item;
-
-                if (typeof video_items[i] === "undefined") {
+                if (typeof img_items[i] === "undefined") {
                     $item = createSegmentation(i);
-                    video_items.push($item);
+                    img_items.push($item);
                     $tool_videos.append($item);
                 } else {
-                    $item = video_items[i];
+                    $item = img_items[i];
                     removeSelect($item);
                 }
                 $item.data("id", v["id"]);
 
-                var $vid = $item.find("video");
-                $vid.one("canplay", function () {
-                    // Play the video
-                    util.handleVideoPromise(this, "play");
-                });
-                if (!$vid.complete) {
-                    var deferred = $.Deferred();
-                    $vid.one("canplay", deferred.resolve);
-                    $vid.one("error", deferred.reject);
-                    deferreds.push(deferred);
-                }
+                var $img = $item.find("img");
                 var src_url = util.buildSegmentationURL(v);
-                $vid.prop("src", src_url);
-                util.handleVideoPromise($vid.get(0), "load"); // load to reset video promise
+                console.log(src_url)
+                $img.prop("src", src_url);
                 if ($item.hasClass("force-hidden")) {
                     $item.removeClass("force-hidden");
                 }
             }
-            // Hide exceeding videos
-            for (var i = video_data.length; i < video_items.length; i++) {
-                var $item = video_items[i];
+            // Hide exceeding images
+            for (var i = img_data.length; i < img_items.length; i++) {
+                var $item = img_items[i];
                 if (!$item.hasClass("force-hidden")) {
                     $item.addClass("force-hidden");
                 }
             }
-            // Load and show videos
+            // Load and show images
             callback = safeGet(callback, {});
             util.resolvePromises(deferreds, {
                 success: function (data) {
                     updateTool($tool_videos);
-
-
                     if (typeof callback["success"] === "function") callback["success"](data);
                 },
                 error: function (xhr) {
-                    console.warn("Some img urls are broken.");
+                    console.warn("Some image urls are broken.");
                     printServerWarnMsg(xhr);
                     showBadSegmentMsg();
                     if (typeof callback["abort"] === "function") callback["abort"](xhr);
@@ -294,13 +273,13 @@
                 // Calculates the new width and height of the box based on the movement
                 const client_x = e.clientX || e.touches[0].clientX;
                 const client_y = e.clientY || e.touches[0].clientY;
-            
+
                 // Determine the new dimensions based on the initial state
                 const new_width = start_width - (client_x - start_x);
                 const new_height = start_height - (client_y - start_y);
                 const new_left = start_left + (client_x - start_x);
                 const new_top = start_top + (client_y - start_y);
-            
+
                 // Update the width and height of the box without exceeding the image size
                 $box[0].style.width =  Math.min(new_width, div_size - start_left) + 'px';
                 $box[0].style.height = Math.min(new_height, div_size - start_top) + 'px';
@@ -325,7 +304,7 @@
 
                 document.removeEventListener('mouseup', removeListener);
                 document.removeEventListener('touchend', removeListener);
-            }            
+            }
 
            // Initializes the resizing process
             function startResizing(e, handler) {
@@ -408,7 +387,7 @@
                     clearInterval(intervalID);
                     var border_width = parseInt(element.css('border-top-width'));
                     var element_width = element.width() + border_width * 2;
-                    
+
                     const parent_element = element.parent();
 
                     for (var i = 0; i < segment_data.length; i++) {

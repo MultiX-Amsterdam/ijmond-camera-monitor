@@ -80,7 +80,8 @@
     user-select: none;
 }
 
-.video-labeling-tool a video {
+.video-labeling-tool a video,
+.video-labeling-tool a img {
     border-radius: 2px;
     width: 100%;
     box-sizing: border-box;
@@ -92,7 +93,8 @@
     min-height: 100px;
 }
 
-.video-labeling-tool a.selected video {
+.video-labeling-tool a.selected video,
+.video-labeling-tool a.selected img {
     border: 10px solid #ff5e5e;
 }
 

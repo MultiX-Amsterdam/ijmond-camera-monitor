@@ -48,7 +48,7 @@ class SegmentationSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = SegmentationMask # the class for the model
         load_instance = True
-        fields = ("id", "mask_file_name", "image_file_name", "frame_number",
+        fields = ("id", "mask_file_name", "image_file_name", "frame_number", "file_path",
                   "x_bbox", "y_bbox", "w_bbox", "h_bbox", "w_image", "h_image", "url_part")
 segmentations_schema = SegmentationSchema(many=True)
 
@@ -60,8 +60,9 @@ class SegmentationSchemaWithDetail(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = SegmentationMask # the class for the model
         load_instance = True
-        fields = ("id", "mask_file_name", "image_file_name", "frame_number", "video_id",
-                  "x_bbox", "y_bbox", "w_bbox", "h_bbox", "w_image", "h_image", "url_part")
+        fields = ("id", "mask_file_name", "image_file_name", "frame_number", "file_path",
+                  "x_bbox", "y_bbox", "w_bbox", "h_bbox", "w_image", "h_image", "url_part",
+                  "video_id", "frame_timestamp")
 segmentations_schema_with_detail = SegmentationSchemaWithDetail(many=True)
 
 
@@ -72,7 +73,8 @@ class SegmentationSchemaIsAdmin(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = SegmentationMask # the class for the model
         load_instance = True
-        fields = ("id", "mask_file_name", "image_file_name", "frame_number", "video_id",
-                  "label_state", "label_state_admin", "label_update_time",
-                  "x_bbox", "y_bbox", "w_bbox", "h_bbox", "w_image", "h_image", "url_part")
+        fields = ("id", "mask_file_name", "image_file_name", "frame_number", "file_path",
+                  "x_bbox", "y_bbox", "w_bbox", "h_bbox", "w_image", "h_image", "url_part",
+                  "video_id", "frame_timestamp",
+                  "label_state", "label_state_admin", "label_update_time")
 segmentations_schema_is_admin = SegmentationSchemaIsAdmin(many=True)

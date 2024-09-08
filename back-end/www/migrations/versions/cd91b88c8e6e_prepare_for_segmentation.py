@@ -1,8 +1,8 @@
-"""update to model
+"""Prepare for segmentation.
 
-Revision ID: bc97902d95f7
+Revision ID: cd91b88c8e6e
 Revises: 1d79d245c372
-Create Date: 2024-08-26 14:41:06.418926
+Create Date: 2024-09-08 13:06:20.594471
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = 'bc97902d95f7'
+revision = 'cd91b88c8e6e'
 down_revision = '1d79d245c372'
 branch_labels = None
 depends_on = None
@@ -22,6 +22,7 @@ def upgrade():
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('mask_file_name', sa.String(length=255), nullable=False),
     sa.Column('image_file_name', sa.String(length=255), nullable=False),
+    sa.Column('file_path', sa.String(length=768), nullable=False),
     sa.Column('x_bbox', sa.Integer(), nullable=False),
     sa.Column('y_bbox', sa.Integer(), nullable=False),
     sa.Column('w_bbox', sa.Integer(), nullable=False),
@@ -33,11 +34,11 @@ def upgrade():
     sa.Column('label_state_admin', sa.Integer(), nullable=False),
     sa.Column('label_update_time', sa.Integer(), nullable=True),
     sa.Column('frame_number', sa.Integer(), nullable=True),
+    sa.Column('frame_timestamp', sa.Integer(), nullable=True),
     sa.Column('video_id', sa.Integer(), nullable=True),
     sa.ForeignKeyConstraint(['video_id'], ['video.id'], name=op.f('fk_segmentation_mask_video_id_video')),
     sa.PrimaryKeyConstraint('id', name=op.f('pk_segmentation_mask')),
-    sa.UniqueConstraint('image_file_name', name=op.f('uq_segmentation_mask_image_file_name')),
-    sa.UniqueConstraint('mask_file_name', name=op.f('uq_segmentation_mask_mask_file_name'))
+    sa.UniqueConstraint('file_path', name=op.f('uq_segmentation_mask_file_path'))
     )
     op.create_table('segmentation_batch',
     sa.Column('id', sa.Integer(), nullable=False),
@@ -45,7 +46,7 @@ def upgrade():
     sa.Column('return_time', sa.Integer(), nullable=True),
     sa.Column('connection_id', sa.Integer(), nullable=True),
     sa.Column('score', sa.Integer(), nullable=True),
-    sa.Column('num_need_feedback', sa.Integer(), nullable=False),
+    sa.Column('num_unlabeled', sa.Integer(), nullable=False),
     sa.Column('num_gold_standard', sa.Integer(), nullable=False),
     sa.Column('user_score', sa.Integer(), nullable=True),
     sa.Column('user_raw_score', sa.Integer(), nullable=True),

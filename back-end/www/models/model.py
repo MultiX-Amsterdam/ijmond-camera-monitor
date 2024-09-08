@@ -315,7 +315,7 @@ class Tutorial(db.Model):
         2 => passed the last batch (16 videos) during the third try with hints.
         3 => passed the last batch during the second try after showing the answers.
         4 => passed the last batch (16 videos) in the tutorial during the first try.
-    query_type : int  
+    query_type : int
         The query type of the tutorial.
         0 => users enter the tutorial page (may come from different sources or button clicks).
         1 => users click the tutorial button on the webpage (not the prompt dialog).
@@ -349,6 +349,8 @@ class SegmentationMask(db.Model):
         The grayscale segmentation mask file name that is stored in the computer.
     image_file_name : str
         The file name of the image that is stored in the computer.
+    file_path : str
+        The path to the file (should be unique).
     x_bbox : int
         The x coordinate of the top-left corner of the bounding box, relative to the image.
     y_bbox : int
@@ -364,6 +366,7 @@ class SegmentationMask(db.Model):
     priority : int
         The priority of the segmentation mask.
         Higher priority indicates that the mask should get feedback faster.
+        Larger number means higher priority (e.g., 5 has higher priority than 4)
     label_state : int
         The state of the label, contributed by normal users (client type 1).
         Also enable database indexing on this column for fast lookup.
@@ -372,12 +375,22 @@ class SegmentationMask(db.Model):
         State 1 => Gold standard positive (has smoke)
         State 2 => This mask has smoke emissions, and is checked by 1 person
         State 3 => This mask has no smoke emissions, and is checked by 1 person
-        State 4 => This mask has no smoke emissions, is check by 2 people, and they agree with each other (terminate state, which means this mask does not require feedback anymore)
-        State 5 => This mask has smoke emissions, is check by 2 people, and they agree with each other (terminate state, which means this mask does not require feedback anymore)
-        State 6 => This mask has no smoke emissions, is check by 2 people, and they disagree with each other
-        State 7 => This mask has smoke emissions, is check by 2 people, and they disagree with each other
-        State 8 => This mask has no smoke emissions, is check by 3 people, and two of them disagree with each other (terminate state, which means this mask does not require feedback anymore)
-        State 9 => This mask has smoke emissions, is check by 3 people, and two of them disagree with each other (terminate state, which means this mask does not require feedback anymore)
+        State 4 => This mask has no smoke emissions, is check by 2 people,
+            and they agree with each other
+            (terminate state, which means this mask does not require feedback anymore)
+        State 5 => This mask has smoke emissions, is check by 2 people,
+            and they agree with each other
+            (terminate state, which means this mask does not require feedback anymore)
+        State 6 => This mask has no smoke emissions,
+            is check by 2 people, and they disagree with each other
+        State 7 => This mask has smoke emissions,
+            is check by 2 people, and they disagree with each other
+        State 8 => This mask has no smoke emissions, is check by 3 people,
+            and two of them disagree with each other
+            (terminate state, which means this mask does not require feedback anymore)
+        State 9 => This mask has smoke emissions, is check by 3 people,
+            and two of them disagree with each other
+            (terminate state, which means this mask does not require feedback anymore)
     label_state_admin : int
         The state of the label, contributed by the admin researcher (client type 0).
         Using label_state_admin allows the system to compare researcher and citizen labels.
@@ -389,25 +402,29 @@ class SegmentationMask(db.Model):
         Notice that this is only for the normal users (label_state, not label_state_admin).
     frame_number : int
         The frame number in the video (can be null if no video is linked to this mask)
+    frame_timestamp : int
+        If there is no video ID, this field will have the information of the timestamp.
+        The format should be epoch time in seconds.
+        (can be null if there is already a video that is linked to this mask)
     video_id : int
         The corresponding video ID (can be null if no video is linked to this mask)
     """
     id = db.Column(db.Integer, primary_key=True)
-    # For testing purposes, the file_names don't have to be unique
     mask_file_name = db.Column(db.String(255), unique=False, nullable=False)
     image_file_name = db.Column(db.String(255), unique=False, nullable=False)
-
+    file_path = db.Column(db.String(768), unique=True, nullable=False)
     x_bbox = db.Column(db.Integer, nullable=False)
     y_bbox = db.Column(db.Integer, nullable=False)
     w_bbox = db.Column(db.Integer, nullable=False)
     h_bbox = db.Column(db.Integer, nullable=False)
     w_image = db.Column(db.Integer, nullable=False)
     h_image = db.Column(db.Integer, nullable=False)
-    priority = db.Column(db.Integer, nullable=False, default=0)
+    priority = db.Column(db.Integer, nullable=False, default=1)
     label_state = db.Column(db.Integer, nullable=False, default=-1)
     label_state_admin = db.Column(db.Integer, nullable=False, default=-1)
     label_update_time = db.Column(db.Integer, default=get_current_time())
-    frame_number = db.Column(db.Integer)
+    frame_number = db.Column(db.Integer, nullable=True)
+    frame_timestamp = db.Column(db.Integer, nullable=True)
     video_id = db.Column(db.Integer, db.ForeignKey("video.id"))
 
     def __repr__(self):
@@ -421,7 +438,7 @@ class SegmentationMask(db.Model):
             self.label_state, self.label_state_admin, self.label_update_time,
             self.frame_number, self.video_id
         )
-    
+
 class SegmentationFeedback(db.Model):
     """
     Class representing a segmentation feedback.
@@ -480,41 +497,32 @@ class SegmentationFeedback(db.Model):
             self.x_bbox, self.y_bbox, self.w_bbox, self.h_bbox,
             self.time, self.user_id, self.batch_id
         )
-    
+
 class SegmentationBatch(db.Model):
     """
     Class
 
     Attributes
     ----------
-
     id : int
         Unique identifier (primary key).
-
     request_time : int
         The epochtime (in seconds) when the client requested a batch with many videos.
-
     return_time : int
         The epochtime (in seconds) when the client returned a video batch with labels.
-
     connection_id : int
         The connection ID in the Connection table (foreign key).
-
     score : int
         The score that the user obtained in this Batch (number of segmentation masks that the user gives the feedback correctly).
         A null score means that no data is returned by the user, or the user is a researcher.
-
     num_unlabeled : int
         The number of segmentation masks that need user feedback in this batch.
-
     num_gold_standard : int
         The number of gold standards (i.e., segmentation masks with known bounding boxes) in this batch.
-
     user_score : int
         Current score of the user (User.score).
-        This means how many segmentation masks that the user already provided feedback and passed the data quality check 
+        This means how many segmentation masks that the user already provided feedback and passed the data quality check
         (which means using the gold standards to check if the user is doing a good job).
-
     user_raw_score : int
         Current raw score of the user (User.raw_score).
         This means how many segmentation masks that the user already provided feedback.

@@ -151,11 +151,10 @@
     };
 
     // Buid the segmentation URL from server returned data
-    // TODO make it use images instead of video's and change the url to the img implementation
-    // Video's are currently used because no img implementation 
+    // Example: https://ijmondcam.multix.io/videos/bbox_batch_1/6GEzAlK09pI-1/15/6GEzAlK09pI-1-15-0/crop_with_bbox.png
     this.buildSegmentationURL = function(v) {
-      var camera_names = ["hoogovens", "kooksfabriek_1", "kooksfabriek_2"];
-      var src_url = v["url_root"] + camera_names[v["frame_number"]] + "/" +  v["mask_file_name"] + "/" + v["image_file_name"] + ".mp4";
+      console.log(v)
+      var src_url = v["url_root"] + v["file_path"] + v["image_file_name"];
       return src_url;
     }
 
