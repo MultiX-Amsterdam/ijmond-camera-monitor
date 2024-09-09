@@ -23,6 +23,50 @@
     padding: 0;
 }
 
+.video-labeling-tool .video-labeling-tool-videos .segmentation-container {
+    cursor: default;
+}
+
+.video-labeling-tool .video-labeling-tool-videos .segmentation-container img {
+    pointer-events: none;
+}
+
+.video-labeling-tool .video-labeling-tool-videos .segmentation-container .control-group {
+    justify-content: center;
+}
+
+.video-labeling-tool .video-labeling-tool-videos .segmentation-container .control-group span:first-of-type {
+    margin-right: 15px;
+}
+
+.video-labeling-tool .video-labeling-tool-videos .segmentation-container .bbox {
+    position: absolute;
+    display: flex;
+    border: 0;
+    outline: 3px solid rgba(255, 0, 0, 0.75);
+}
+
+.video-labeling-tool .video-labeling-tool-videos .segmentation-container .resizer {
+    width: 16px;
+    height: 16px;
+    background: blue;
+    position: absolute;
+    z-index: 1;
+    border-radius: 50%;
+    cursor: nwse-resize;
+    border: 0;
+}
+
+.video-labeling-tool .video-labeling-tool-videos .segmentation-container .resizer.top-left {
+    top: -8px;
+    left: -8px;
+}
+
+.video-labeling-tool .video-labeling-tool-videos .segmentation-container .resizer.bottom-right {
+    bottom: -8px;
+    right: -8px;
+}
+
 .video-labeling-tool .error-text,
 .video-labeling-tool .not-supported-text {
     color: #ff5e5e;
@@ -98,7 +142,7 @@
     border: 10px solid #ff5e5e;
 }
 
-.video-labeling-tool a>div {
+.video-labeling-tool a>div:first-of-type {
     width: 100%;
     text-align: center;
     color: white;
@@ -106,10 +150,9 @@
     line-height: 24px;
 }
 
-.video-labeling-tool a.selected>div {
+.video-labeling-tool a.selected>div:first-of-type {
     color: #ff5e5e;
 }
-
 
 @media screen and (min-width: 500px) {
     .video-labeling-tool a {
@@ -122,5 +165,21 @@
     .video-labeling-tool a {
         flex: 1 0 100%;
         max-width: 100%;
+    }
+
+    .video-labeling-tool .video-labeling-tool-videos .segmentation-container .resizer {
+        width: 26px;
+        height: 26px;
+        border: 0;
+    }
+
+    .video-labeling-tool .video-labeling-tool-videos .segmentation-container .resizer.top-left {
+        top: -13px;
+        left: -13px;
+    }
+
+    .video-labeling-tool .video-labeling-tool-videos .segmentation-container .resizer.bottom-right {
+        bottom: -13px;
+        right: -13px;
     }
 }

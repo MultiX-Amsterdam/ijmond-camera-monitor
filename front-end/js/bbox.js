@@ -2,7 +2,7 @@
   "use strict";
 
   var util = new edaplotjs.Util();
-  var video_labeling_tool;
+  var bbox_labeling_tool;
   var google_account_dialog;
   var video_test_dialog;
   //var tutorial_prompt_dialog;
@@ -60,7 +60,7 @@
 
       // Store the properties in an object
       css_properties.push({
-        div_size: 0, // Size of the img div on the page 
+        div_size: 0, // Size of the img div on the page
         img_id: i,
         img_frame: 0,
         cropped_width: 0,
@@ -83,7 +83,7 @@
     $next.prop("disabled", true);
     resetCountDown();
     $(window).scrollTop(0);
-    video_labeling_tool.next({
+    bbox_labeling_tool.next({
       success: function () {
         if (!is_video_autoplay_tested) {
           video_test_dialog.startVideoPlayTest(1000);
@@ -135,7 +135,7 @@
   }
 
   function onUserNotSignedIn(client_id) {
-    video_labeling_tool.updateUserIdByClientId(client_id, {
+    bbox_labeling_tool.updateUserIdByClientId(client_id, {
       success: function (obj) {
         onUserIdChangeSuccess(obj.userId());
       },
@@ -152,7 +152,7 @@
     $quality_check_passed_text = $("#quality-check-passed-text");
     $user_score_text = $(".user-score-text");
     $user_raw_score_text = $(".user-raw-score-text");
-    video_labeling_tool = new edaplotjs.VideoLabelingTool("#labeling-tool-container", {
+    bbox_labeling_tool = new edaplotjs.BboxLabelingTool("#labeling-tool-container", {
       on_user_score_update: function (score, raw_score, batch_score) {
         // Update the number of batches that did not pass the quality check
         // batch_score == null means that the user is a reseacher client
@@ -172,7 +172,7 @@
         }
         // Update user score (number of batches that passed the quality check)
         if (typeof $user_score_text !== "undefined") {
-          if (video_labeling_tool.isAdmin()) {
+          if (bbox_labeling_tool.isAdmin()) {
             $user_score_text.text("(researcher)");
           } else {
             if (typeof score !== "undefined" && score !== null) {
@@ -182,7 +182,7 @@
         }
         // Update user raw score (number of totally reviewed batches)
         if (typeof $user_raw_score_text !== "undefined" && typeof raw_score !== "undefined" && raw_score !== null) {
-          if (video_labeling_tool.isAdmin()) {
+          if (bbox_labeling_tool.isAdmin()) {
             $user_raw_score_text.text(raw_score / 16);
           } else {
             $user_raw_score_text.text(raw_score / 12);
@@ -192,7 +192,7 @@
     });
     google_account_dialog = new edaplotjs.GoogleAccountDialog({
       sign_in_success: function (google_id_token) {
-        video_labeling_tool.updateUserIdByGoogleIdToken(google_id_token, {
+        bbox_labeling_tool.updateUserIdByGoogleIdToken(google_id_token, {
           success: function (obj) {
             onUserIdChangeSuccess(obj.userId());
             $user_score_container.show();
@@ -204,7 +204,7 @@
         });
       },
       sign_out_success: function () {
-        video_labeling_tool.updateUserIdByClientId(ga_tracker.getClientId(), {
+        bbox_labeling_tool.updateUserIdByClientId(ga_tracker.getClientId(), {
           success: function (obj) {
             onUserIdChangeSuccess(obj.userId());
             $user_score_container.hide();
@@ -241,7 +241,7 @@
     $("#tutorial").on("click", function () {
       // Add tutorial record based on action types
       util.postJSON(api_url_root + "add_tutorial_record", {
-        "user_token": video_labeling_tool.userToken(),
+        "user_token": bbox_labeling_tool.userToken(),
         "action_type": 0, // this means that users take the tutorial
         "query_type": 1 // this means that users click the tutorial button on the webpage (not the prompt dialog)
       }, {
