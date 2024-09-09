@@ -108,10 +108,12 @@ class Video(db.Model):
         The URL part of the panorama video that contains the video clip.
     label_state : int
         The state of the label, contributed by normal users (client type 1).
+        Check the label_state_machine function in `label_operations.py` for details.
         Also enable database indexing on this column for fast lookup.
     label_state_admin : int
         The state of the label, contributed by the admin researcher (client type 0).
         Using label_state_admin allows the system to compare researcher and citizen labels.
+        Check the label_state_machine function in `label_operations.py` for details.
     label_update_time : int
         The most recent epochtime (in seconds) that the label state is updated.
         Notice that this is only for the normal users (label_state, not label_state_admin).
@@ -337,6 +339,7 @@ class Tutorial(db.Model):
             self.id, self.connection_id, self.action_type, self.query_type, self.time
         )
 
+
 class SegmentationMask(db.Model):
     """
     Class representing a segmentation mask.
@@ -369,34 +372,12 @@ class SegmentationMask(db.Model):
         Larger number means higher priority (e.g., 5 has higher priority than 4)
     label_state : int
         The state of the label, contributed by normal users (client type 1).
+        Check the label_state_machine function in `segmentationFeedback_operations.py` for details.
         Also enable database indexing on this column for fast lookup.
-        The list of states:
-        State 0 => Gold standard negative (no smoke)
-        State 1 => Gold standard positive (has smoke)
-        State 2 => This mask has smoke emissions, and is checked by 1 person
-        State 3 => This mask has no smoke emissions, and is checked by 1 person
-        State 4 => This mask has no smoke emissions, is check by 2 people,
-            and they agree with each other
-            (terminate state, which means this mask does not require feedback anymore)
-        State 5 => This mask has smoke emissions, is check by 2 people,
-            and they agree with each other
-            (terminate state, which means this mask does not require feedback anymore)
-        State 6 => This mask has no smoke emissions,
-            is check by 2 people, and they disagree with each other
-        State 7 => This mask has smoke emissions,
-            is check by 2 people, and they disagree with each other
-        State 8 => This mask has no smoke emissions, is check by 3 people,
-            and two of them disagree with each other
-            (terminate state, which means this mask does not require feedback anymore)
-        State 9 => This mask has smoke emissions, is check by 3 people,
-            and two of them disagree with each other
-            (terminate state, which means this mask does not require feedback anymore)
     label_state_admin : int
         The state of the label, contributed by the admin researcher (client type 0).
         Using label_state_admin allows the system to compare researcher and citizen labels.
-        The list of states:
-        State 0 => Negative (no smoke)
-        State 1 => Positive (has smoke)
+        Check the label_state_machine function in `segmentationFeedback_operations.py` for details.
     label_update_time : int
         The most recent epochtime (in seconds) that the label state is updated.
         Notice that this is only for the normal users (label_state, not label_state_admin).
@@ -439,6 +420,7 @@ class SegmentationMask(db.Model):
             self.frame_number, self.video_id
         )
 
+
 class SegmentationFeedback(db.Model):
     """
     Class representing a segmentation feedback.
@@ -451,11 +433,7 @@ class SegmentationFeedback(db.Model):
         The segmentation mask ID in the SegmentationMask table (foreign key).
     feedback_code : int
         The feedback code from the user.
-        Code 0 => There is a bounding box, and the box looks good.
-        Code 1 => There is a bounding box, but the user does not agree with the box and provides an adjusted box instead.
-        Code 2 => There is no bounding box, and the user agrees.
-        Code 3 => There is no bounding box, but the user thinks there should be a box and provide a box instead.
-        Code 4 => This is a gold standard.
+        Check the bbox_to_feedback_code function in the `segmentationFeedback_operations.py` file.
     x_bbox : int
         The x coordinate of the top-left corner of the bounding box, relative to the image.
         This is the feedback from the user.
@@ -480,13 +458,13 @@ class SegmentationFeedback(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     segmentation_id = db.Column(db.Integer, db.ForeignKey("segmentation_mask.id"), nullable=False)
     feedback_code = db.Column(db.Integer, nullable=False)
-    x_bbox = db.Column(db.Integer, nullable=False)
-    y_bbox = db.Column(db.Integer, nullable=False)
-    w_bbox = db.Column(db.Integer, nullable=False)
-    h_bbox = db.Column(db.Integer, nullable=False)
+    x_bbox = db.Column(db.Integer, nullable=True)
+    y_bbox = db.Column(db.Integer, nullable=True)
+    w_bbox = db.Column(db.Integer, nullable=True)
+    h_bbox = db.Column(db.Integer, nullable=True)
     time = db.Column(db.Integer, nullable=False, default=get_current_time())
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
-    batch_id = db.Column(db.Integer, db.ForeignKey("batch.id"))
+    batch_id = db.Column(db.Integer, db.ForeignKey("segmentation_batch.id"))
 
     def __repr__(self):
         return (
@@ -497,6 +475,7 @@ class SegmentationFeedback(db.Model):
             self.x_bbox, self.y_bbox, self.w_bbox, self.h_bbox,
             self.time, self.user_id, self.batch_id
         )
+
 
 class SegmentationBatch(db.Model):
     """

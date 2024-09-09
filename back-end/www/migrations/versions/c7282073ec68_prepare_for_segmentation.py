@@ -1,8 +1,8 @@
 """Prepare for segmentation.
 
-Revision ID: cd91b88c8e6e
+Revision ID: c7282073ec68
 Revises: 1d79d245c372
-Create Date: 2024-09-08 13:06:20.594471
+Create Date: 2024-09-09 20:44:18.517290
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = 'cd91b88c8e6e'
+revision = 'c7282073ec68'
 down_revision = '1d79d245c372'
 branch_labels = None
 depends_on = None
@@ -57,14 +57,14 @@ def upgrade():
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('segmentation_id', sa.Integer(), nullable=False),
     sa.Column('feedback_code', sa.Integer(), nullable=False),
-    sa.Column('x_bbox', sa.Integer(), nullable=False),
-    sa.Column('y_bbox', sa.Integer(), nullable=False),
-    sa.Column('w_bbox', sa.Integer(), nullable=False),
-    sa.Column('h_bbox', sa.Integer(), nullable=False),
+    sa.Column('x_bbox', sa.Integer(), nullable=True),
+    sa.Column('y_bbox', sa.Integer(), nullable=True),
+    sa.Column('w_bbox', sa.Integer(), nullable=True),
+    sa.Column('h_bbox', sa.Integer(), nullable=True),
     sa.Column('time', sa.Integer(), nullable=False),
     sa.Column('user_id', sa.Integer(), nullable=False),
     sa.Column('batch_id', sa.Integer(), nullable=True),
-    sa.ForeignKeyConstraint(['batch_id'], ['batch.id'], name=op.f('fk_segmentation_feedback_batch_id_batch')),
+    sa.ForeignKeyConstraint(['batch_id'], ['segmentation_batch.id'], name=op.f('fk_segmentation_feedback_batch_id_segmentation_batch')),
     sa.ForeignKeyConstraint(['segmentation_id'], ['segmentation_mask.id'], name=op.f('fk_segmentation_feedback_segmentation_id_segmentation_mask')),
     sa.ForeignKeyConstraint(['user_id'], ['user.id'], name=op.f('fk_segmentation_feedback_user_id_user')),
     sa.PrimaryKeyConstraint('id', name=op.f('pk_segmentation_feedback'))

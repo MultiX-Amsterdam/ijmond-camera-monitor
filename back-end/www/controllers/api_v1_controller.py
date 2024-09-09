@@ -335,7 +335,6 @@ def send_batch():
 def send_segmentation_batch():
     """For the client to send segmentation bbox of a batch back to the server."""
     request_json = request.get_json()
-    print(request_json)
     if request_json is None:
         raise InvalidUsage("Missing json", status_code=400)
     if "data" not in request_json:
@@ -360,9 +359,7 @@ def send_segmentation_batch():
         raise InvalidUsage("Signature of the segmentation batch is not valid", status_code=401)
     # Update database
     try:
-        # TODO Add a way to calculate the scores based on the segmentation feedback
-        #score = update_segmentation_labels(labels, user_jwt["user_id"], user_jwt["connection_id"], video_jwt["batch_id"], user_jwt["client_type"])
-        score = 999
+        score = update_segmentation_labels(labels, user_jwt["user_id"], user_jwt["connection_id"], video_jwt["batch_id"], user_jwt["client_type"])
         return_json = {"data": {"score": score}}
         return jsonify(return_json)
     except Exception as ex:
