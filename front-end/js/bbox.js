@@ -9,7 +9,7 @@
   var $next;
   var counter = 0;
   var max_counter = 10;
-  var count_down_duration = 1000; // in milliseconds
+  var count_down_duration = 100; // in milliseconds
   var is_first_time = true;
   var is_video_autoplay_tested = false;
   var ga_tracker;
@@ -42,41 +42,6 @@
         countDown();
       }
     }, count_down_duration);
-  }
-
-  // TODO Perhaps move this to BboxLabelingTool.js
-  function collectBoxData() {
-    var $boxes = $(".bbox");
-    var css_properties = [];
-    for (let i = 0; i < $boxes.length; i++) {
-      const $box = $boxes[i];
-      const box_style = window.getComputedStyle($box);
-
-      // Retrieve specific CSS properties
-      var width = box_style.getPropertyValue('width');
-      var height = box_style.getPropertyValue('height');
-      var top = box_style.getPropertyValue('top');
-      var left = box_style.getPropertyValue('left');
-
-      // Store the properties in an object
-      css_properties.push({
-        div_size: 0, // Size of the img div on the page
-        img_id: i,
-        img_frame: 0,
-        cropped_width: 0,
-        cropped_height: 0,
-        relative_boxes: {
-          x: top,
-          y: left,
-          w: width,
-          h: height
-        }
-      });
-    }
-
-    // Export to JSON
-    const json_file = JSON.stringify(css_properties)
-    console.log(json_file);
   }
 
   function nextBatch(ignore_labels) {
@@ -114,7 +79,6 @@
       is_first_time = false;
       $next = $("#next");
       $next.on("click", function () {
-        collectBoxData();
         nextBatch();
       });
       nextBatch();
@@ -131,7 +95,6 @@
       // Otherwise the server will return an invalid signature error
       nextBatch(true);
     }
-    document.getElementById('myButton').addEventListener('click', collectBoxData);
   }
 
   function onUserNotSignedIn(client_id) {

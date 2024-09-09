@@ -35,6 +35,11 @@
         var on_user_score_update = settings["on_user_score_update"];
         var is_admin;
 
+        // The html page creates a padding of 10px on both sides.
+        // The bounding box coordinates will be adjusted based on the padding.
+        // TODO: see if we can dynamically figure out this number
+        const BORDER_SIZE = 20;
+
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////
         //
         // Private methods
@@ -95,45 +100,6 @@
             console.warn("Server respond: " + JSON.stringify(xhr.responseJSON));
         }
 
-        // TODO implement this function
-        // Collect the data from the given Bbox
-        function collectBoxData() {
-            var $boxes = $(".bbox");
-            var css_properties = [];
-            for (let i = 0; i < $boxes.length; i++) {
-                const $box = $boxes[i];
-                const box_style = window.getComputedStyle($box);
-
-                // Retrieve CSS properties
-                var width = box_style.getPropertyValue('width');
-                var height = box_style.getPropertyValue('height');
-                var top = box_style.getPropertyValue('top');
-                var left = box_style.getPropertyValue('left');
-
-                console.log("Width: " + width);
-
-                // Store the properties in an object
-                css_properties.push({
-                    div_size: 0, // Size of the img div on the page
-                    img_id: i,
-                    img_frame: 0,
-                    cropped_width: 0,
-                    cropped_height: 0,
-                    relative_boxes: { // True size of bbox will be calculated at the backend (segmentationFeedback_operations.py->true_size())
-                        x: top,
-                        y: left,
-                        w: width,
-                        h: height
-                    }
-                });
-            }
-
-            // Export to JSON
-            // TODO export the JSON file to the backend
-            const json_file = JSON.stringify(css_properties)
-            console.log(json_file);
-        }
-
         // Set a batch of labeled segmentations back to the server
         function sendSegmentationBatch(callback, options) {
             callback = safeGet(callback, {});
@@ -141,7 +107,6 @@
             var ignore_labels = safeGet(options["ignore_labels"], false);
             var labels = collectAndRemoveLabels();
             showLoadingMsg();
-            // TODO collect the bounding box data using collectBoxData()
             if (labels.length == 0 || ignore_labels) {
                 if (typeof callback["success"] === "function") callback["success"]();
             } else {
@@ -174,17 +139,31 @@
         // Collect labels from the user interface
         function collectAndRemoveLabels() {
             var labels = [];
-            $tool_videos.find("a").each(function () {
-                var $item = $(this);
-                var video_id = $item.data("id");
-                if (typeof video_id === "undefined") return;
-                var is_selected = $item.hasClass("selected") ? 1 : 0;
+            var $bboxes = $(".bbox");
+            for (let i = 0; i < $bboxes.length; i++) {
+                const $bbox = $bboxes.eq(i);
+                const meta_data = $bbox.data("metadata");
+                if (typeof meta_data === "undefined") return;
+                // Null means that the bounding box looks good
+                var bbox_original = null;
+                if ($bbox.css("visibility") == "visible") {
+                    // This means there should be a bounding box
+                    if ($bbox.data("interacted")) {
+                        // This means the user edited the bounding box
+                        bbox_original = reverseBBox($bbox);
+                    }
+                } else {
+                    // This means the user said that there should be no bounding box
+                    bbox_original = false;
+                }
                 labels.push({
-                    video_id: video_id,
-                    label: is_selected
+                    id: meta_data["id"],
+                    relative_boxes: bbox_original
                 });
-                $item.removeData("id")
-            });
+                $bbox.removeData("metadata");
+                $bbox.removeData("interacted");
+                $bbox.remove(); // remove the bounding box
+            }
             return labels;
         }
 
@@ -206,7 +185,7 @@
                     $this.find("button").text("Verwijder kader");
                 }
             });
-            var $img = $("<img class='return-size' src=''>");
+            var $img = $("<img class='seg-img' src=''>");
             $item.append($img).append($caption);
             return $item;
         }
@@ -224,7 +203,6 @@
                     $tool_videos.append($item);
                 } else {
                     $item = img_items[i];
-                    removeSelect($item);
                 }
                 $item.data("id", v["id"]);
                 var $img = $item.find("img").first();
@@ -267,11 +245,10 @@
         // Create resizers for the boundary box
         // Touch is used for phone
         // Mouse is used for desktop
-        function createResizer($box, $container) {
+        function createResizer($bbox, $container) {
             const $leftBox = $('<div class="resizer top-left"></div>');
             const $rightBox = $('<div class="resizer bottom-right"></div>');
 
-            const BORDER_SIZE = 20;
             const MIN_WIDTH = 20;
             const MIN_HEIGHT = 20;
 
@@ -302,13 +279,13 @@
                 const heightScale = (div_size.height - BORDER_SIZE) / (previous_div_size.height - BORDER_SIZE);
 
                 // Recalculate new width, height, top, and left positions for the box
-                current_width = ($box.width() - BORDER_SIZE) * widthScale + BORDER_SIZE;
-                current_height = ($box.height() - BORDER_SIZE) * heightScale + BORDER_SIZE;
-                current_left = ($box.position().left - BORDER_SIZE) * widthScale + BORDER_SIZE;
-                current_top = ($box.position().top - BORDER_SIZE) * heightScale + BORDER_SIZE;
+                current_width = ($bbox.width() - BORDER_SIZE) * widthScale + BORDER_SIZE;
+                current_height = ($bbox.height() - BORDER_SIZE) * heightScale + BORDER_SIZE;
+                current_left = ($bbox.position().left - BORDER_SIZE) * widthScale + BORDER_SIZE;
+                current_top = ($bbox.position().top - BORDER_SIZE) * heightScale + BORDER_SIZE;
 
                 // Apply the new dimensions and positions to the box
-                $box.css({
+                $bbox.css({
                     width: current_width + 'px',
                     height: current_height + 'px',
                     left: current_left + 'px',
@@ -332,8 +309,8 @@
                 current_height = Math.max(Math.min(new_height, magic_max_height), MIN_HEIGHT);
 
                 // Update the width and height of the box without exceeding the image size
-                $box[0].style.width = current_width + 'px';
-                $box[0].style.height = current_height + 'px';
+                $bbox[0].style.width = current_width + 'px';
+                $bbox[0].style.height = current_height + 'px';
             }
 
             function handlerLeftMovement(e) {
@@ -356,10 +333,10 @@
                 current_top = Math.max(Math.min(new_top, magic_max_height), BORDER_SIZE);
 
                 // Update the width and height of the box without exceeding the image size
-                $box[0].style.width = current_width + 'px';
-                $box[0].style.height = current_height + 'px';
-                $box[0].style.left = current_left + 'px';
-                $box[0].style.top = current_top + 'px';
+                $bbox[0].style.width = current_width + 'px';
+                $bbox[0].style.height = current_height + 'px';
+                $bbox[0].style.left = current_left + 'px';
+                $bbox[0].style.top = current_top + 'px';
             }
 
             // Add event listeners when the user interacts with the bbox (resizing starts)
@@ -386,16 +363,19 @@
 
                 start_x = e.clientX || e.touches[0].clientX;
                 start_y = e.clientY || e.touches[0].clientY;
-                start_width = $box[0].offsetWidth;
-                start_height = $box[0].offsetHeight;
-                start_left = $box[0].offsetLeft;
-                start_top = $box[0].offsetTop;
+                start_width = $bbox[0].offsetWidth;
+                start_height = $bbox[0].offsetHeight;
+                start_left = $bbox[0].offsetLeft;
+                start_top = $bbox[0].offsetTop;
 
-                var position = $box.position()
+                var position = $bbox.position();
                 current_left = position.left;
                 current_top = position.top;
 
                 addListener(handler);
+
+                // Indicate that the user has interacted with the bounding box
+                $bbox.data("interacted", true);
             }
 
             // Attach the event listeners
@@ -432,38 +412,69 @@
             const box_h = (h / img_height) * container_h
 
             return {
-                left: box_x,
-                top: box_y,
+                left: BORDER_SIZE + box_x,
+                top: BORDER_SIZE + box_y,
                 width: box_w,
-                height: box_h,
-                image_width: img_width,
-                image_height: img_height
+                height: box_h
+            };
+        }
+
+        // Revert the bounding box calculation
+        function reverseBBox($bbox) {
+            const meta_data = $bbox.data("metadata");
+            const img_width = meta_data["w_image"];
+            const img_height = meta_data["h_image"];
+            const position = $bbox.position();
+
+            const $container = $bbox.siblings(".seg-img").first();
+            const container_w = $container.width();
+            const container_h = $container.height();
+
+            // Reverse calculations to get back the original image's coordinates
+            var x_bbox = Math.round(((position.left - BORDER_SIZE) / container_w) * img_width);
+            var y_bbox = Math.round(((position.top - BORDER_SIZE) / container_h) * img_height);
+            var w_bbox = Math.round(($bbox.width() / container_w) * img_width);
+            var h_bbox = Math.round(($bbox.height() / container_h) * img_height);
+
+            // Sometimes after resizing the browser window, the value can be -0, but we want 0
+            x_bbox = (x_bbox == -0) ? 0 : x_bbox;
+            y_bbox = (y_bbox == -0) ? 0 : y_bbox;
+            w_bbox = (w_bbox == -0) ? 0 : w_bbox;
+            h_bbox = (h_bbox == -0) ? 0 : h_bbox;
+
+            return {
+                x_bbox: x_bbox,
+                y_bbox: y_bbox,
+                w_bbox: w_bbox,
+                h_bbox: h_bbox
             };
         }
 
         // Create a bounding box element
         function createBBox(meta_data, $container) {
-            // The html page creates a padding of 10px on both sides
-            // The coordinates will be adjusted based on the padding
-            const DIV_SIZE_STARTING_VALUE = 20;
-            const $box = $('<div class="bbox"></div>');
+            const $bbox = $('<div class="bbox"></div>');
             const adjusted_data = calculateBBox(meta_data, $container);
 
+            // Save the metadata to the data field
+            $bbox.data("metadata", meta_data);
+
+            // Indicate whether the user interacted with this bounding box or not
+            $bbox.data("interacted", false);
+
             // Update the bounding box style based on the bbox object
-            $box.css({
-                left: DIV_SIZE_STARTING_VALUE + adjusted_data.left + 'px',
-                top: DIV_SIZE_STARTING_VALUE + adjusted_data.top + 'px',
+            $bbox.css({
+                left: adjusted_data.left + 'px',
+                top: adjusted_data.top + 'px',
                 width: adjusted_data.width + 'px',
                 height: adjusted_data.height + 'px'
             });
 
-            const resize_boxes = createResizer($box, $container);
-            $box.append(resize_boxes[0]);
-            $box.append(resize_boxes[1]);
-            return $box;
+            const resize_boxes = createResizer($bbox, $container);
+            $bbox.append(resize_boxes[0]);
+            $bbox.append(resize_boxes[1]);
+            return $bbox;
         }
 
-        // Update bounding box in the image
         function updateBBox(segment_data, selector) {
             let intervalID = setInterval(function () {
                 const $element = $(selector);
@@ -472,8 +483,8 @@
                     const parent_element = $element.parent();
                     for (var i = 0; i < segment_data.length; i++) {
                         var v = segment_data[i];
-                        var $box = createBBox(v, $($element.get(i)));
-                        $(parent_element[i]).append($box);
+                        var $bbox = createBBox(v, $($element.get(i)));
+                        $(parent_element[i]).append($bbox);
                     }
                 }
             }, 100);
@@ -529,7 +540,7 @@
                     success: function () {
                         // Need to store the token and return it back to the server when finished
                         video_token = data["video_token"];
-                        updateBBox(data["data"], ".return-size");
+                        updateBBox(data["data"], ".seg-img");
                         if (typeof callback["success"] === "function") callback["success"]();
                     },
                     error: function (xhr) {
@@ -538,7 +549,7 @@
                     abort: function (xhr) {
                         // Need to store the token and return it back to the server when finished
                         video_token = data["video_token"];
-                        updateBBox(data["data"], ".return-size");
+                        updateBBox(data["data"], ".seg-img");
                         if (typeof callback["abort"] === "function") callback["abort"](xhr);
                     }
                 });
@@ -582,6 +593,34 @@
         //
         // Public methods
         //
+        // TODO implement this function
+        // Collect the data from the given Bbox
+        var collectBoxData = function () {
+            var $bboxes = $(".bbox");
+            var feedback = [];
+            for (let i = 0; i < $bboxes.length; i++) {
+                const $bbox = $bboxes.eq(i);
+                const meta_data = $bbox.data("metadata");
+                var bbox_original = null;
+                // Returning null means that the bounding box looks good
+                if ($bbox.data("interacted")) {
+                    bbox_original = reverseBBox($bbox);
+                }
+
+                // Store the properties in an object
+                feedback.push({
+                    id: meta_data["id"],
+                    relative_boxes: bbox_original
+                });
+            }
+
+            // Export to JSON
+            // TODO export the JSON file to the backend
+            const json_file = JSON.stringify(feedback)
+            console.log(json_file);
+        };
+        this.collectBoxData = collectBoxData;
+
         this.next = function (callback, options) {
             callback = safeGet(callback, {});
             if (util.browserSupported()) {

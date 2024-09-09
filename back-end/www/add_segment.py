@@ -1,3 +1,8 @@
+"""
+Important: before running this script, you must run the following:
+$ python add_videos.py ../data/video_dataset_1.json
+"""
+
 from models.model_operations.segmentationMask_operations import create_segmentation
 import json
 import numpy as np

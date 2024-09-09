@@ -23,7 +23,7 @@ class Config(object):
     assert VIDEO_URL_ROOT != "", ("need to specify VIDEO_URL_ROOT in config.py")
 
     # Set the number of videos for each batch
-    BATCH_SIZE = 4 # TODO change to 16
+    BATCH_SIZE = 16
 
     # Set the number of gold standard videos in the batch for citizens (not admin)
     GOLD_STANDARD_IN_BATCH = 4
@@ -59,6 +59,9 @@ class StagingConfig(Config):
     db_url_path = Path(join(secret_dir, "db_url_staging"))
     assert exists(db_url_path), ("need to have the %s file (check README)") % (db_url_path)
     SQLALCHEMY_DATABASE_URI = db_url_path.read_text().strip()
+
+    BATCH_SIZE = 4
+    VIDEO_JWT_NBF_DURATION = 0
 
 
 class TestingConfig(Config):
