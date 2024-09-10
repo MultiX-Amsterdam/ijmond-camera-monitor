@@ -17,8 +17,8 @@ convention = {
 # Initalize app with database
 db = SQLAlchemy(metadata=MetaData(naming_convention=convention))
 
-# Label set variables
-# Check the label_state_machine function in label_operations.py for details
+# Label states for videos (not for segmentation masks)
+# Check the label_state_machine function in `label_operations.py` for details
 pos_labels = [0b10111, 0b1111, 0b10011]
 neg_labels = [0b10000, 0b1100, 0b10100]
 pos_gold_labels = [0b101111]
@@ -28,6 +28,9 @@ maybe_pos_labels = [0b101]
 maybe_neg_labels = [0b100]
 discorded_labels = [0b11]
 bad_labels = [-2]
+
+# Label states for segmentation masks (not for videos)
+# Check the label_state_machine function in `segmentationFeedback_operations.py` for details
 
 
 class User(db.Model):

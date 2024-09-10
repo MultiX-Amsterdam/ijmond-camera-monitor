@@ -32,7 +32,6 @@ def create_segmentation(mask_fn, img_fn, x_bbox, y_bbox, w_bbox, h_bbox, img_w, 
         file_path=fp
     )
     app.logger.info("Create segmentation: %r" % segment)
-    print(f"\n{segment}\n")
     db.session.add(segment)
     db.session.commit()
     return segment
@@ -228,28 +227,3 @@ def get_pos_segmentation_query_by_user_id(user_id, page_number, page_size, is_re
 def get_all_url_part():
     """Get all the url_part in the segmentation table."""
     return SegmentationMask.query.with_entities(SegmentationMask.url_part).all()
-
-
-def get_statistics():
-    """Get statistics of the segmentation labels."""
-    full = m.pos_labels + m.neg_labels
-    gold = m.pos_gold_labels + m.neg_gold_labels
-    partial = m.maybe_pos_labels + m.maybe_neg_labels + m.discorded_labels
-    q = SegmentationMask.query
-    num_all_segmentations= q.filter(SegmentationMask.label_state_admin.notin_(m.bad_labels + gold)).count()
-    num_fully_labeled = q.filter(
-        and_(
-            SegmentationMask.label_state_admin.notin_(m.bad_labels + gold),
-            or_(
-                SegmentationMask.label_state_admin.in_(full),
-                SegmentationMask.label_state.in_(full)
-            )
-        )
-    ).count()
-    num_partially_labeled = q.filter(SegmentationMask.label_state.in_(partial)).count()
-    return_json = {
-        "num_all_segmentations": num_all_segmentations,
-        "num_fully_labeled": num_fully_labeled,
-        "num_partially_labeled": num_partially_labeled
-    }
-    return return_json

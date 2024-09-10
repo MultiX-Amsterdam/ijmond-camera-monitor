@@ -40,6 +40,7 @@ def main(argv):
     else:
         print("Usage: python add_segment.py [segment_json_path]")
         print("Example: python add_segment.py ../data/segmentation_dataset_testing.json")
+        print("Example: python add_segment.py ../data/segmentation_dataset_1.json")
 
 
 if __name__ == "__main__":

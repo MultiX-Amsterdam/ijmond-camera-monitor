@@ -201,22 +201,6 @@
       }
     });
     util.updateLabelStatistics();
-    $("#tutorial").on("click", function () {
-      // Add tutorial record based on action types
-      util.postJSON(api_url_root + "add_tutorial_record", {
-        "user_token": bbox_labeling_tool.userToken(),
-        "action_type": 0, // this means that users take the tutorial
-        "query_type": 1 // this means that users click the tutorial button on the webpage (not the prompt dialog)
-      }, {
-        success: function () {
-          $("#tutorial").prop("disabled", true);
-          $(location).attr("href", "tutorial.html");
-        },
-        error: function (xhr) {
-          console.error("Error when adding tutorial record!");
-        }
-      });
-    });
   }
 
   $(init);

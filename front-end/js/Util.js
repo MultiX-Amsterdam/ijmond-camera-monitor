@@ -153,7 +153,8 @@
     // Buid the segmentation URL from server returned data
     // Example: https://ijmondcam.multix.io/videos/bbox_batch_1/6GEzAlK09pI-1/15/6GEzAlK09pI-1-15-0/crop_with_bbox.png
     this.buildSegmentationURL = function(v) {
-      var src_url = v["url_root"] + v["file_path"] + v["image_file_name"];
+      var src_url = v["url_root"] + v["file_path"] + v["image_file_name"].replace("crop.png", "crop_with_bbox.png");
+      console.log(src_url);
       return src_url;
     }
 

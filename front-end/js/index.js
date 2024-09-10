@@ -17,7 +17,6 @@
         google_account_dialog.isAuthenticatedWithGoogle();
       }
     });
-    util.updateLabelStatistics();
   }
 
   $(init);
