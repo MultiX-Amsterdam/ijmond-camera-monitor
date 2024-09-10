@@ -82,34 +82,39 @@ def query_segmentation_batch(user_id, use_admin_label_state=False):
     if use_admin_label_state:
         # For admin researcher, do not add gold standards
         # Exclude the segmentations that were labeled by the same user
-        q = SegmentationMask.query.filter(and_(SegmentationMask.label_state_admin.in_((-1, 0b11, 0b100, 0b101)),
-                                               SegmentationMask.id.notin_(labeled_segmentation_ids)))
+        q = SegmentationMask.query.filter(and_(
+            SegmentationMask.label_state_admin==-1),
+            SegmentationMask.id.notin_(labeled_segmentation_ids))
         return q.order_by(func.random()).limit(config.BATCH_SIZE).all()
     else:
-        # Select gold standards (at least one pos and neg to prevent spamming)
-        # Spamming patterns include ignoring or selecting all segmentations
-        num_gold_pos = np.random.choice(range(1, config.GOLD_STANDARD_IN_BATCH))
-        num_gold_neg = config.GOLD_STANDARD_IN_BATCH - num_gold_pos
-        gold_pos = SegmentationMask.query.filter(SegmentationMask.label_state_admin==0b101111).order_by(func.random()).limit(num_gold_pos).all()
-        gold_neg = SegmentationMask.query.filter(SegmentationMask.label_state_admin==0b100000).order_by(func.random()).limit(num_gold_neg).all()
+        if config.GOLD_STANDARD_IN_BATCH > 0:
+            # Select gold standards (at least one bbox that needs editing and anothe one that should be removed to prevent spamming)
+            # Spamming patterns include ignoring or selecting all segmentations
+            num_gold_need_editing = np.random.choice(range(1, config.GOLD_STANDARD_IN_BATCH))
+            num_gold_need_removed = config.GOLD_STANDARD_IN_BATCH - num_gold_need_editing
+            gold_need_editing = SegmentationMask.query.filter(SegmentationMask.label_state_admin==17).order_by(func.random()).limit(num_gold_need_editing).all()
+            gold_need_removed = SegmentationMask.query.filter(SegmentationMask.label_state_admin==18).order_by(func.random()).limit(num_gold_need_removed).all()
+            if (len(gold_need_editing + gold_need_removed) != config.GOLD_STANDARD_IN_BATCH):
+                # This means that there are not enough or no gold standard segmentations
+                return None
+        else:
+            gold_need_editing = []
+            gold_need_removed = []
         # Exclude segmentations labeled by the same user, also the gold standards and other terminal states of reseacher labels
         # (We do not want citizens to do the double work to confirm reseacher labeled segmentations)
-        excluded_labels = (0b101111, 0b100000, 0b10111, 0b10000, 0b10011, 0b10100, 0b1111, 0b1100, -2) # TODO check if the labels match with the segmentations
+        excluded_labels = (16, 17, 18, 3, 4, 5, 9, 10, 11, 12, 13, 14, 15, -2)
         excluded_s_ids = SegmentationMask.query.filter(SegmentationMask.label_state_admin.in_(excluded_labels)).with_entities(SegmentationMask.id).all()
         excluded_s_ids = [s[0] for s in excluded_s_ids]
         q = SegmentationMask.query.filter(SegmentationMask.id.notin_(labeled_segmentation_ids + excluded_s_ids))
         # Try to include some partially labeled segmentations in this batch
         num_unlabeled = config.BATCH_SIZE - config.GOLD_STANDARD_IN_BATCH
         num_partially_labeled = int(num_unlabeled*config.PARTIAL_LABEL_RATIO)
-        partially_labeled = q.filter(SegmentationMask.label_state.in_((0b11, 0b100, 0b101))).order_by(func.random()).limit(num_partially_labeled).all()
+        partially_labeled = q.filter(SegmentationMask.label_state.in_((0, 1, 2, 6, 7, 8))).order_by(func.random()).limit(num_partially_labeled).all()
         not_labeled = q.filter(SegmentationMask.label_state==-1).order_by(func.random()).limit(num_unlabeled - len(partially_labeled)).all()
-        if (len(gold_pos + gold_neg) != config.GOLD_STANDARD_IN_BATCH):
-            # This means that there are not enough or no gold standard segmentations
-            return None
-        else:
-            segmentations = gold_pos + gold_neg + not_labeled + partially_labeled
-            shuffle(segmentations)
-            return segmentations
+        # Assemble the segmentation masks
+        segmentations = gold_need_editing + gold_need_removed + not_labeled + partially_labeled
+        shuffle(segmentations)
+        return segmentations
 
 
 def get_segmentation_query(labels, page_number, page_size, use_admin_label_state=False):

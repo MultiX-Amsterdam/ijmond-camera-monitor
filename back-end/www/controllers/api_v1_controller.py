@@ -30,11 +30,9 @@ from models.model_operations.video_operations   import get_statistics
 from models.model_operations.label_operations import update_labels
 from models.model_operations.view_operations import create_views_from_video_batch
 from models.model_operations.tutorial_operations import create_tutorial
-
 from models.model_operations.segmentationMask_operations import query_segmentation_batch
 from models.model_operations.segmentationBatch_operations import create_segmentation_batch
 from models.model_operations.segmentationFeedback_operations import update_segmentation_labels
-
 from models.schema import videos_schema_is_admin
 from models.schema import videos_schema_with_detail
 from models.schema import videos_schema

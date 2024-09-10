@@ -45,7 +45,7 @@ def update_segmentation_labels(labels, user_id, connection_id, batch_id, client_
     Parameters
     ----------
     labels : int
-        Segmentation labels that were returned by the front-end (0 or 1).
+        Segmentation labels that were returned by the front-end.
     user_id : int
         The user id (defined in the user table).
     connection_id : int
@@ -76,7 +76,7 @@ def update_segmentation_labels(labels, user_id, connection_id, batch_id, client_
         batch.return_time = get_current_time()
         batch.connection_id = connection_id
         if client_type != 0: # do not update the score for reseacher
-            batch_score = compare_segmentation_feedback(segmentation_batch_hashed, labels)
+            batch_score = compute_segmentation_batch_score(segmentation_batch_hashed, labels)
             batch.score = batch_score
             batch.user_score = user.score
             batch.user_raw_score = user.raw_score
@@ -99,7 +99,11 @@ def update_segmentation_labels(labels, user_id, connection_id, batch_id, client_
             bbox = s["relative_boxes"]
             fc = bbox_to_feedback_code(bbox)
             if bbox == None:
+                # This means the box looks good
                 x_bbox, y_bbox, h_bbox, w_bbox = None, None, None, None
+            elif bbox == False:
+                # This means the box should be removed
+                x_bbox, y_bbox, h_bbox, w_bbox = -1, -1, -1, -1
             else:
                 x_bbox, y_bbox, h_bbox, w_bbox = bbox["x_bbox"], bbox["y_bbox"], bbox["h_bbox"], bbox["w_bbox"]
             feedback = create_feedback_label(s["id"], fc, x_bbox, y_bbox, w_bbox, h_bbox, user_id, batch_id)
@@ -124,78 +128,67 @@ def update_segmentation_labels(labels, user_id, connection_id, batch_id, client_
     return {"batch": batch_score, "user": user_score, "raw": user_raw_score}
 
 
-# TODO Update the function so it returns a score
-def compare_segmentation_feedback(segmentation_batch_hashed, feedback_sgm, proximity_threshold=1):
+def compute_iou(bbox1, bbox2):
     """
-    Compare the segmentation with the given user feedback.
+    Compute the Intersection over Union (IoU).
 
     Parameters
     ----------
-    segmentation_batch_hashed : dict
-        Segmentation objects in a dictionary (the keys are the image id).
-    feedback_sgm : list of dict
-        Feedback segmentations that were returned by the front-end.
-    proximity_threshold : int
-        The threshold to determine if the feedback is close to the segmentation.
-        Default value = 1
+    bbox1 : dict
+        The first bounding box.
+        Same data structure as the bbox object in the `bbox_to_feedback_code` function.
+    bbox2 : dict
+        The second bounding box.
+        Same data structure as the bbox object in the `bbox_to_feedback_code` function.
 
     Returns
     -------
-    bool
-        True if the feedback is close to the segmentation, False otherwise.
+    float
+        Intersection over Union (with value range between 0 and 1).
     """
-    if len(feedback_sgm) == 0:
-        app.logger.warning("No feedback segmentations found")
-        return False
+    # Extract the coordinates of the bounding boxes
+    x1_1, y1_1, w1_1, h1_1 = bbox1["x_bbox"], bbox1["y_bbox"], bbox1["w_bbox"], bbox1["h_bbox"]
+    x1_2, y1_2, w1_2, h1_2 = bbox2["x_bbox"], bbox2["y_bbox"], bbox2["w_bbox"], bbox2["h_bbox"]
 
-    for s in feedback_sgm:
-        print("debug")
-        return False
-        # Find the true bounding box based on the given feedback
-        feedback_segmentation = {
-            "segmentation_id": s["id"],
-            "feedback_boxes": {
-                coord: true_size(
-                    s["relative_boxes"][coord],
-                    s["cropped_width"] if coord in ['x', 'w'] else s["cropped_height"],
-                    s["div_size"]
-                )
-                for coord in s["relative_boxes"]
-            },
-        }
+    # Determine the (x, y)-coordinates of the intersection rectangle
+    x_inter_left = max(x1_1, x1_2)
+    y_inter_top = max(y1_1, y1_2)
+    x_inter_right = min(x1_1 + w1_1, x1_2 + w1_2)
+    y_inter_bottom = min(y1_1 + h1_1, y1_2 + h1_2)
 
-        # Collect the segmentation coordinates
-        segmentation_id = s["id"]
-        if segmentation_id in segmentation_batch_hashed:
-            segmentation = segmentation_batch_hashed[segmentation_id]
-            segmentation_coords = {
-                "x":segmentation.x_bbox,
-                "y":segmentation.y_bbox,
-                "w":segmentation.w_bbox,
-                "h":segmentation.h_bbox
-            }
+    # Compute the width and height of the intersection rectangle
+    inter_width = max(0, x_inter_right - x_inter_left)
+    inter_height = max(0, y_inter_bottom - y_inter_top)
 
-            # Compare the feedback with the segmentation
-            for feedback_coord in feedback_segmentation["feedback_boxes"].values():
-                for segmentation_coord in segmentation_coords.values():
-                    if abs(feedback_coord - segmentation_coord) <= proximity_threshold:
-                        app.logger.info("Feedback %r is close to segmentation %r" % (feedback_coord, segmentation_coord))
-                        return True
-        else:
-            app.logger.warning("Segmentation %r not found within batch" % segmentation_id)
-        return False
+    # Compute the area of the intersection rectangle
+    inter_area = inter_width * inter_height
+
+    # Compute the area of both the prediction and ground-truth rectangles
+    bbox1_area = w1_1 * h1_1
+    bbox2_area = w1_2 * h1_2
+
+    # Compute the area of the union
+    union_area = bbox1_area + bbox2_area - inter_area
+
+    # Compute the Intersection over Union (IoU)
+    iou = inter_area / union_area if union_area != 0 else 0
+
+    return iou
 
 
-def compute_segmentation_batch_score(segmentation_batch_hashed, labels):
+def compute_segmentation_batch_score(segmentation_batch_hashed, labels, threshold=0.5):
     """
     Compute the score of a segmenation batch.
 
     Parameters
     ---------
     segmentation_batch_hashed : dict
-        Segmentation objects in a dictionary (the keys are the segmentation id).
-    labels : list of Label
-        Segmentation label objects that were returned by the front-end.
+        SegmentationMask objects in a dictionary (the keys are the segmentation ID).
+    labels : list of dict
+        Labels that were returned by the front-end.
+        Same data structure as the bbox object in the `bbox_to_feedback_code` function.
+    threshold : int
+        The threshold to determine if the feedback is close to the segmentation.
 
     Returns
     -------
@@ -203,24 +196,9 @@ def compute_segmentation_batch_score(segmentation_batch_hashed, labels):
         The score of this batch (the higher the better).
         Score means the number of labeled segmentations that were accepted by the system.
     """
-    score = 0
-    correct_labeled_gold_standards = 0
-    for s in labels:
-        segmentation = segmentation_batch_hashed[s["video_id"]]
-        label_state_admin = segmentation.label_state_admin
-        l = s["label"]
-        if label_state_admin == 0b101111: # gold positive
-            if l == 1:
-                correct_labeled_gold_standards += 1
-        elif label_state_admin == 0b100000: # gold negative
-            if l == 0:
-                correct_labeled_gold_standards += 1
-        else:
-            score += 1
-    if correct_labeled_gold_standards < config.GOLD_STANDARD_IN_BATCH:
-        return 0
-    else:
-        return score
+    # TODO: implement this function
+    # For now we accept all the labels
+    return max(len(labels) - config.GOLD_STANDARD_IN_BATCH, 0)
 
 
 def bbox_to_feedback_code(bbox):
@@ -234,6 +212,8 @@ def bbox_to_feedback_code(bbox):
         The dictionary that is returned from the front-end.
         If the value is None, it means that the box looks good.
         If the value is False, it means that the box should be removed.
+    bbox.id : int
+        The ID of the segmentation mask in the database.
     bbox.relative_boxes.x_bbox : int
         x coordinate of the box in pixels, relative to the image.
     bbox.relative_boxes.y_bbox : int

@@ -61,7 +61,7 @@ class StagingConfig(Config):
     SQLALCHEMY_DATABASE_URI = db_url_path.read_text().strip()
 
     BATCH_SIZE = 4
-    GOLD_STANDARD_IN_BATCH = 2
+    GOLD_STANDARD_IN_BATCH = 0
     VIDEO_JWT_NBF_DURATION = 0
 
 

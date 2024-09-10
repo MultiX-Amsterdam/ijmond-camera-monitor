@@ -13,6 +13,7 @@ class InvalidUsage(Exception):
         if status_code is not None:
             self.status_code = status_code
         self.payload = payload
+        traceback.print_exc()
 
     def to_dict(self):
         rv = dict(self.payload or ())
@@ -113,7 +114,6 @@ def try_wrap_response(func, status_code=400):
         try:
             return func(*args, **kwargs)
         except Exception as ex:
-            traceback.print_exc()
             if len(list(ex.args)) > 1:
                 raise InvalidUsage(ex.args[0], status_code=status_code)
             else:
