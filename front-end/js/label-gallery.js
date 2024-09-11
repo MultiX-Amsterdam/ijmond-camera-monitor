@@ -460,7 +460,8 @@
   function setVideoTypeText(method) {
     var $s = $("#video-type-text");
     if (method == "get_pos_labels") {
-      $s.text("fully labeled videos with smoke");
+      $s.text("alle volledig gelabelde video's met rook");
+      //$s.text("fully labeled videos with smoke");
     } else if (method == "get_neg_labels") {
       $s.text("fully labeled videos with no smoke");
     } else if (method == "get_pos_labels_by_researcher") {
@@ -481,7 +482,7 @@
     } else if (api_url_path_get == "get_bad_labels") {
       $s.text("videos with bad labels");
     } else if (api_url_path_get == "get_maybe_pos_labels") {
-      $s.text("door burgers gelabelde video's die mogelijk rook bevatten");
+      $s.text("gelabelde video's die mogelijk rook bevatten");
       //$s.text("citizen-labeled videos that may have smoke");
     } else if (api_url_path_get == "get_maybe_neg_labels") {
       $s.text("citizen-labeled videos that may not have smoke");

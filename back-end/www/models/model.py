@@ -520,7 +520,7 @@ class SegmentationBatch(db.Model):
     user_score = db.Column(db.Integer)
     user_raw_score = db.Column(db.Integer)
     # Relationships
-    # label = db.relationship("Label", backref=db.backref("batch", lazy=True), lazy=True)
+    # feedback = db.relationship("SegmentationFeedback", backref=db.backref("segmentation_batch", lazy=True), lazy=True)
 
     def __repr__(self):
         return (

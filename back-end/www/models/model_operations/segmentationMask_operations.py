@@ -119,7 +119,7 @@ def query_segmentation_batch(user_id, use_admin_label_state=False):
 
 def get_segmentation_query(labels, page_number, page_size, use_admin_label_state=False):
     """
-    Get segmentation query from the database by the type of labels.
+    Get SegmentationMask query from the database by the type of labels.
 
     Parameters
     ----------
@@ -139,8 +139,9 @@ def get_segmentation_query(labels, page_number, page_size, use_admin_label_state
 
     Returns
     -------
-    The query object of the segmentation table.
+    The query object of the SegmentationMask table.
     """
+    # TODO: fix this function
     page_size = config.MAX_PAGE_SIZE if page_size > config.MAX_PAGE_SIZE else page_size
     q = None
     if type(labels) == list:
@@ -189,7 +190,7 @@ def get_segmentation_query(labels, page_number, page_size, use_admin_label_state
 
 def get_pos_segmentation_query_by_user_id(user_id, page_number, page_size, is_researcher):
     """
-    Get segmentation query (with positive labels) from the database by user id (exclude gold standards).
+    Get SegmentationMask query (with positive labels) from the database by user id (exclude gold standards).
 
     Notice that this function only returns segmentations with positive labels (i.e. segmentations having smoke).
     The returned segmentations are paginated, and the front-end needs to specify page number and size.
@@ -207,21 +208,24 @@ def get_pos_segmentation_query_by_user_id(user_id, page_number, page_size, is_re
 
     Returns
     -------
-    The query object of the segmentation table.
+    The query object of the SegmentationMask table.
     """
     page_size = config.MAX_PAGE_SIZE if page_size > config.MAX_PAGE_SIZE else page_size
     if is_researcher: # researcher
-        q = SegmentationFeedback.query.filter(and_(SegmentationFeedback.user_id==user_id,
-                                                   SegmentationFeedback.label.in_([1, 0b10111, 0b1111, 0b10011]))).subquery()
+        q = SegmentationFeedback.query.filter(and_(
+            SegmentationFeedback.user_id==user_id,
+            SegmentationFeedback.label.in_([0, 1, 3, 4, 6, 9, 10, 11, 13, 15]))).subquery()
     else:
-        q = SegmentationFeedback.query.filter(and_(SegmentationFeedback.user_id==user_id, SegmentationFeedback.label==1)).subquery()
+        q = SegmentationFeedback.query.filter(and_(
+            SegmentationFeedback.user_id==user_id,
+            SegmentationFeedback.label.in_([0, 1, 3, 4, 6, 9, 10, 11, 13, 15]))).subquery()
     # Exclude gold standards
     #q = q.from_self(SegmentationMask).join(SegmentationMask).distinct().filter(SegmentationMask.label_state_admin!=0b101111)
     q = (
         SegmentationMask.query
         .join(q, SegmentationMask.id == q.c.segmentation_id)
         .distinct()
-        .filter(SegmentationMask.label_state_admin != 0b101111)
+        .filter(SegmentationMask.label_state_admin.notin_([16, 17, 18]))
         .order_by(desc(SegmentationMask.label_update_time))
     )
     if page_number is not None and page_size is not None:

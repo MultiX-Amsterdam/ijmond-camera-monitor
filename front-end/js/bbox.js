@@ -16,7 +16,6 @@
   var $user_raw_score_text;
   var count_down_timeout;
   var consecutive_failed_batches = 0;
-  var api_url_root = util.getRootApiUrl();
   var $quality_check_passed_text;
 
   function resetCountDown() {

@@ -16,29 +16,38 @@ from util.util import encode_jwt
 from util.util import decode_jwt
 from util.util import get_current_time
 from config.config import config
+
 from models.model_operations.user_operations import get_user_by_client_id
 from models.model_operations.user_operations import create_user
 from models.model_operations.user_operations import get_user_by_id
 from models.model_operations.user_operations import update_best_tutorial_action_by_user_id
 from models.model_operations.connection_operations import create_connection
 from models.model_operations.batch_operations import create_batch
+
 from models.model_operations.video_operations import query_video_batch
 from models.model_operations.video_operations import get_video_query
 from models.model_operations.video_operations import get_all_videos
 from models.model_operations.video_operations import get_pos_video_query_by_user_id
-from models.model_operations.video_operations   import get_statistics
+from models.model_operations.video_operations import get_statistics
 from models.model_operations.label_operations import update_labels
 from models.model_operations.view_operations import create_views_from_video_batch
 from models.model_operations.tutorial_operations import create_tutorial
-from models.model_operations.segmentationMask_operations import query_segmentation_batch
+
 from models.model_operations.segmentationBatch_operations import create_segmentation_batch
+from models.model_operations.segmentationMask_operations import query_segmentation_batch
+from models.model_operations.segmentationMask_operations import get_segmentation_query
+from models.model_operations.segmentationMask_operations import get_all_segmentations
+from models.model_operations.segmentationMask_operations import get_pos_segmentation_query_by_user_id
 from models.model_operations.segmentationFeedback_operations import update_segmentation_labels
+
 from models.schema import videos_schema_is_admin
 from models.schema import videos_schema_with_detail
 from models.schema import videos_schema
+
 from models.schema import segmentations_schema_is_admin
 from models.schema import segmentations_schema_with_detail
 from models.schema import segmentations_schema
+
 import models.model as m
 
 
@@ -619,3 +628,71 @@ def add_tutorial_record():
         return make_response("", 204)
     except Exception as ex:
         raise InvalidUsage(ex.args[0], status_code=400)
+
+
+def get_segmentation_feedback(labels, allow_user_id=False, only_admin=False, use_admin_label_state=False):
+    """
+    Return a list of segmentation feedback with specific type of labels.
+
+    Parameters
+    ----------
+    labels : list of raw label states, or str
+        Input for the get_segmentation_query function.
+        See the docstring of the get_segmentation_query function.
+    allow_user_id : bool
+        Request videos by user id or not.
+    only_admin : bool
+        Only for admin users or not.
+    use_admin_label_state : bool
+        Input for the get_segmentation_query function.
+        See the docstring of the get_segmentation_query function.
+
+    Returns
+    -------
+    flask.Response (with the application/json mimetype)
+        A list of video objects in JSON.
+    """
+    user_id = request.args.get("user_id") if allow_user_id else None
+    page_number = request.args.get("pageNumber", 1, type=int)
+    page_size = request.args.get("pageSize", 16, type=int)
+    user_jwt = None
+    data = request.get_data()
+    if data is not None:
+        qs = parse_qs(data.decode("utf8"))
+        if "user_token" in qs:
+            # Decode user jwt
+            try:
+                user_jwt = decode_jwt(qs["user_token"][0], config.JWT_PRIVATE_KEY)
+            except jwt.InvalidSignatureError as ex:
+                raise InvalidUsage(ex.args[0], status_code=401)
+            except Exception as ex:
+                raise InvalidUsage(ex.args[0], status_code=401)
+        if "pageNumber" in qs:
+            page_number = int(qs["pageNumber"][0])
+        if "pageSize" in qs:
+            page_size = int(qs["pageSize"][0])
+    if only_admin:
+        # Verify if user_token is returned
+        if user_jwt is None:
+            raise InvalidUsage("Missing fields: user_token", status_code=400)
+        # Verify if the user is researcher or expert (they are considered admins in this case)
+        if user_jwt["client_type"] != 0 and user_jwt["client_type"] != 1:
+            raise InvalidUsage("Permission denied", status_code=403)
+    is_admin = True if user_jwt is not None and (user_jwt["client_type"] == 0 or user_jwt["client_type"] == 1) else False
+    is_researcher = True if user_jwt is not None and user_jwt["client_type"] == 0 else False
+    if user_id is None:
+        if labels is None and is_admin:
+            return jsonify_data(get_all_segmentations(), is_admin=True, is_video=False)
+        else:
+            q = get_segmentation_query(labels, page_number, page_size, use_admin_label_state=use_admin_label_state)
+            # TODO: implement the SegmentationView table and the operations
+            #if not is_researcher: # ignore researcher
+            #    create_views_from_video_batch(q.items, user_jwt, query_type=0)
+            return jsonify_data(q.items, total=q.total, is_admin=is_admin, with_detail=True, is_video=False)
+    else:
+        q = get_pos_segmentation_query_by_user_id(user_id, page_number, page_size, is_researcher)
+        # TODO: implement the SegmentationView table and the operations
+        #if not is_researcher: # ignore researcher
+        #    create_views_from_video_batch(q.items, user_jwt, query_type=1)
+        # We need to set is_admin to True here because we want to show user agreements in the data
+        return jsonify_data(q.items, total=q.total, is_admin=True, is_video=False)
