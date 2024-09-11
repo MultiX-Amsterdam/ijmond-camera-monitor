@@ -6,7 +6,6 @@
   <meta charset="utf-8" name="viewport" content="width=device-width, initial-scale=1">
   <link href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" media="screen" rel="stylesheet" type="text/css" />
   <link href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css" media="screen" rel="stylesheet" type="text/css" />
-  <link href="lib/pagination/pagination.css" media="screen" rel="stylesheet" type="text/css" />
   <link href="css/frame.css" media="screen" rel="stylesheet" type="text/css" />
   <link href="css/controls.css" media="screen" rel="stylesheet" type="text/css" />
   <link href="css/widgets.css" media="screen" rel="stylesheet" type="text/css" />
@@ -20,13 +19,11 @@
   <!-- End for Google Sign-In -->
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
   <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
-  <script src="lib/pagination/pagination.js"></script>
   <script src="js/widgets.js"></script>
   <script src="js/menu.js"></script>
   <script src="js/Util.js"></script>
   <script src="js/GoogleAnalyticsTracker.js"></script>
   <script src="js/GoogleAccountDialog.js"></script>
-  <script src="js/VideoTestDialog.js"></script>
   <script src="js/gallery.js"></script>
   <style>
     .menu-gallery {
@@ -44,85 +41,32 @@
       <div class="content-table flex-column">
         <div class="flex-row">
           <div class="flex-item flex-column">
-            <p class="text admin-text no-bottom-margin">
-              Your log in as a <span class="custom-text-info-dark-theme">researcher or expert</span>.
-              The gallery is displayed in the dashboard mode.
-              <a id="download-user-token">Click to download user token</a>.
-              You can use the token to get the metadata of labeled videos from our API calls.
+            <p class="text">
+              De galerijen hieronder tonen de resultaten van de taken.
             </p>
-            <p class="text intro-text no-bottom-margin">
-              Wij willen u graag bedanken voor uw inzet!
-              Dit zijn <span class="custom-text-info-dark-theme" id="video-type-text">alle gelabelde video's met rook</span> (<a href="faq.html#q6" target="_blank">meer informatie</a>).
-               <!-- We greatly appreciate your effort!
-              These are the <span class="custom-text-info-dark-theme" id="video-type-text">fully labeled videos with smoke</span> (<a href="faq.html#q6" target="_blank">learn more</a>). -->
+            <h2 class="add-top-margin">Rook Labelen Galerij</h2>
+            <hr>
+            <p class="text">
+              In deze galerij kun je de video's bekijken waarvan mensen denken dat ze rookuitstoot hebben.
+              Klik op de knoppen hieronder om naar een galerij te gaan.
             </p>
-            <p class="text user-text no-bottom-margin">
-              Wij willen u graag bedanken voor uw inzet!
-              De volgende gelabelde video's met rook zijn uw persoonlijke bijdragen aan het model.
-              <!-- We greatly appreciate your effort!
-              The following labeled smoke videos are your personal contributions. -->
-            </p>
-            <p class="text user-text no-bottom-margin">
-              Een symbool <span class="custom-text-primary-dark-theme">&#10004;</span> in de linkerbovenhoek van elke video betekent dat anderen het eens waren met uw bevindingen.
-              Video's die niet geverifieerd zijn, zullen geen symbolen tonen.
-              <!-- Symbol <span class="custom-text-primary-dark-theme">&#10004;</span> on the top-left corner of each video means that others <span class="custom-text-primary-dark-theme">agreed</span> with your findings.
-              Videos that are not verified will not show symbols. -->
-            </p>
-            <div class="control-group community-control add-bottom-margin add-top-margin">
-              <a class="custom-button-flat stretch-on-mobile large" href="?method=get_pos_labels">Met Rook</a>
-              <a class="custom-button-flat stretch-on-mobile large" href="?method=get_maybe_pos_labels">Mogelijk met Rook</a>
-              <a id="review-community" class="custom-button-flat stretch-on-mobile large" href="">Mijn Bijdrage</a>
+            <div class="control-group">
+              <a class="custom-button-flat large stretch-on-mobile" href="label-gallery.html"><img src="img/play.png"><span>Rook Labelen Galerij</span></a>
             </div>
-            <div class="control-group admin-control add-bottom-margin add-top-margin">
-              <div class="custom-dropdown stretch-on-mobile large">
-                <a tabindex="0" href="javascript:void(0)"><span>Select Labels by a Filtering Method</span></a>
-                <div>
-                  <a href="?method=get_pos_labels">Positive Labels</a>
-                  <a href="?method=get_neg_labels">Negative Labels</a>
-                  <a href="?method=get_pos_labels_by_citizen">Positive Labels by Citizens</a>
-                  <a href="?method=get_neg_labels_by_citizen">Negative Labels by Citizens</a>
-                  <a href="?method=get_pos_labels_by_researcher">Positive Labels by Researchers</a>
-                  <a href="?method=get_neg_labels_by_researcher">Negative Labels by Researchers</a>
-                  <a href="?method=get_pos_gold_labels">Positive Gold Standards</a>
-                  <a href="?method=get_neg_gold_labels">Negative Gold Standards</a>
-                  <a href="?method=get_maybe_pos_labels">Maybe Positive Labels</a>
-                  <a href="?method=get_maybe_neg_labels">Maybe Negative Labels</a>
-                  <a href="?method=get_discorded_labels">Discorded Labels</a>
-                  <a href="?method=get_bad_labels">Bad Labels</a>
-                  <a id="review-admin" href="">My Contribution</a>
-                </div>
-              </div>
-              <button id="download-data" class="custom-button-flat stretch-on-mobile">Download All Data</button>
-            </div>
-          </div>
-        </div>
-        <div class="gallery">
-          <div class="gallery-videos"></div>
-        </div>
-        <div class="flex-row">
-          <div class="flex-item flex-column full-width">
-            <div id="page-control" class="control-group add-top-margin force-hidden">
-              <button id="page-back" class="custom-button-flat large stretch-on-mobile" disabled><img src="img/back.png"><span>Vorige</span></button>
-              <button id="page-next" class="custom-button-flat large stretch-on-mobile"><img src="img/next.png"><span>Volgende</span></button>
-              <div id="page-navigator" class="stretch-on-mobile"></div>
+            <h2 class="add-top-margin">Rook Controleren Galerij</h2>
+            <hr>
+            <p class="text">
+              In deze galerij kun je de correcties bekijken van de locaties waarvan het AI-model denkt dat ze rookuitstoot hebben.
+              Mensen hebben de correcties aangeleverd.
+              Klik op de knoppen hieronder om naar een galerij te gaan.
+            </p>
+            <div class="control-group">
+              <a class="custom-button-flat large stretch-on-mobile" href="bbox-gallery.html"><img src="img/play.png"><span>Rook Controleren Galerij</span></a>
             </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
-  <div id="video-test-dialog" class="custom-dialog-large" title="Autoplay" data-role="none">
-    <p>
-      Automatisch afspelen van video is uitgeschakeld. Schakel deze in.
-      <!-- Video autoplay is disabled. Please enable it. -->
-    </p>
-    <button id="play-video-button" class="custom-button">
-      Video autoplay inschakelen
-      <!-- Enable video autoplay -->
-    </button>
-  </div>
-  <div id="set-label-confirm-dialog" title="Set Label" data-role="none">
-    <p></p>
   </div>
 </body>
 

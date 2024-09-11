@@ -4,14 +4,12 @@
   var util = new edaplotjs.Util();
   var bbox_labeling_tool;
   var google_account_dialog;
-  var video_test_dialog;
   //var tutorial_prompt_dialog;
   var $next;
   var counter = 0;
   var max_counter = 10;
   var count_down_duration = 100; // in milliseconds
   var is_first_time = true;
-  var is_video_autoplay_tested = false;
   var ga_tracker;
   var $user_score_container;
   var $user_score_text;
@@ -50,10 +48,6 @@
     $(window).scrollTop(0);
     bbox_labeling_tool.next({
       success: function () {
-        if (!is_video_autoplay_tested) {
-          video_test_dialog.startVideoPlayTest(1000);
-          is_video_autoplay_tested = true;
-        }
         countDown();
         util.updateLabelStatistics();
       },
@@ -74,7 +68,7 @@
   }
 
   function onUserIdChangeSuccess(new_user_id) {
-    $("#review").prop("href", "gallery.html" + "?user_id=" + new_user_id);
+    $("#review").prop("href", "label-gallery.html" + "?user_id=" + new_user_id);
     if (is_first_time) {
       is_first_time = false;
       $next = $("#next");
@@ -180,7 +174,6 @@
       }
     });
     $user_score_container = $("#user-score-container");
-    video_test_dialog = new edaplotjs.VideoTestDialog();
     //tutorial_prompt_dialog = new edaplotjs.TutorialPromptDialog({
     //  video_labeling_tool: video_labeling_tool
     //});
