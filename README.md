@@ -12,6 +12,7 @@ A lot of the code and documentation is borrowed from the [`video-labeling-tool`]
 - [Manipulate database](#manipulate-database)
 - [Test cases](#test-cases)
 - [Setup Google Identity API (administrator only)](#setup-google-identity)
+- [Dump, import, and backup database](#dump-and-import-database)
 - [Deploy back-end using uwsgi (administrator only)](#deploy-back-end-using-uwsgi)
 - [Setup the apache server with https (administrator only)](#setup-apache)
 - [Setup Google Analytics (administrator only)](#setup-google-analytics)
@@ -381,6 +382,62 @@ This makes it possible for the front-end to call the Google Identity API to get 
 Also, we use a different domain name "http://api.ijmondcam.multix.io" for the back-end
 So we will need to go to the Credentials page and add the domain name to the "Authorised redirect URIs" in the OAuth client.
 This makes it possible for the back-end to call the Google Identity API to validate the Google user tokens.
+
+# <a name="dump-and-import-database"></a>Dump, import, and backup database
+This section assumes that you want to dump the production database to a file and import it to the staging database. First, SSH to the production server and dump the database to the /tmp/ directory.
+```sh
+ssh [USER_NAME_PRODUCTION]@[SERVER_ADDRESS_PRODUCTION]
+
+# For Ubuntu
+sudo -u postgres pg_dump -d ijmond_camera_monitor_production >/tmp/ijmond_camera_monitor_production.out
+# For Mac OS
+pg_dump -d ijmond_camera_monitor_production >/tmp/ijmond_camera_monitor_production.out
+
+exit
+```
+SSH to the development server and get the dumped database file from the production server.
+```sh
+ssh [USER_NAME_DEVELOPMENT]@[SERVER_ADDRESS_DEVELOPMENT]
+
+rsync -av [USER_NAME_PRODUCTION]@[SERVER_ADDRESS_PRODUCTION]:/tmp/ijmond_camera_monitor_production.out /tmp/
+
+# For specifying a port number
+rsync -av -e "ssh -p [PORT_NUMBER]" [USER_NAME_PRODUCTION]@[SERVER_ADDRESS_PRODUCTION]:/tmp/ijmond_camera_monitor_production.out /tmp/
+```
+Import the dumped production database file to the staging database.
+```sh
+# For Ubuntu
+sudo -u postgres psql postgres
+# For Mac OS
+psql postgres
+
+DROP DATABASE ijmond_camera_monitor_staging;
+CREATE DATABASE ijmond_camera_monitor_staging OWNER ijmond_camera_monitor;
+\q
+
+# For Ubuntu
+sudo -u postgres pg_dump -d ijmond_camera_monitor_staging </tmp/ijmond_camera_monitor_production.out
+# For Mac OS
+pg_dump -d ijmond_camera_monitor_staging </tmp/ijmond_camera_monitor_production.out
+```
+We provide a script to backup the database:
+```sh
+# For the production database
+sh ijmond-camera-monitor/back-end/www/backup_db.sh production
+
+# For the development database
+sh ijmond-camera-monitor/back-end/www/backup_db.sh staging
+```
+You can also use crontab to backup the database automatically:
+```sh
+sudo crontab -e
+
+# Add the following line for the production database
+0 0 * * * cd /var/www/ijmond-camera-monitor/back-end/data/db_backup; sh ../../www/backup_db.sh production
+
+# Add the following line for the staging database
+0 0 * * * cd /var/www/ijmond-camera-monitor/back-end/data/db_backup; sh ../../www/backup_db.sh staging
+```
 
 # <a name="deploy-back-end-using-uwsgi"></a>Deploy back-end using uwsgi (administrator only)
 > WARNING: this section is only for system administrators, not developers.
