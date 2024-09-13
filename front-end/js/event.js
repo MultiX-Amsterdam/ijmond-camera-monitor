@@ -330,7 +330,7 @@
     $page_back = $("#page-back");
     $page_next = $("#page-next");
     $gallery = $(".gallery");
-    $gallery_events = $(".gallery-images");
+    $gallery_events = $(".gallery-events");
 
     // Check browser support
     if (util.browserSupported()) {
@@ -359,7 +359,7 @@
             const moment_obj = moment.utc(time_str, "YYYY-MM-DD HH:mm:ss.SSSSSS");
             moment_obj.subtract(40, "seconds"); // substract some time to go back a little bit
             const share_date_str = moment_obj.format("YYYYMMDDHHmmss");
-            const epochTime = (new Date(time_str + "Z")).getTime();
+            const epochTime = moment_obj.valueOf();
             const corrected_epochtime = correctTimestamp(epochTime);
             const date_obj = new Date(corrected_epochtime);
             const date_str = date_obj.toISOString().split("T")[0];

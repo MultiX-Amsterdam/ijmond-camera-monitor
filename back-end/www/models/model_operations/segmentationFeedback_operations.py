@@ -10,10 +10,10 @@ from util.util import get_current_time
 from config.config import config
 
 
-def create_feedback_label(segment_id, fc, x_bbox, y_bbox, w_bbox, h_bbox, user_id, batch_id):
+def create_feedback_label(sid, fc, x_bbox, y_bbox, w_bbox, h_bbox, user_id, batch_id):
     """Create a segmentation feedback."""
     feedback = SegmentationFeedback(
-        segmentation_id = segment_id,
+        segmentation_id = sid,
         feedback_code = fc,
         x_bbox = x_bbox,
         y_bbox = y_bbox,
@@ -198,7 +198,7 @@ def compute_segmentation_batch_score(segmentation_batch_hashed, labels, threshol
     """
     # TODO: implement this function
     # For now we accept all the labels
-    return max(len(labels) - config.GOLD_STANDARD_IN_BATCH, 0)
+    return max(len(labels) - config.GOLD_STANDARD_IN_BATCH_SEG, 0)
 
 
 def bbox_to_feedback_code(bbox):

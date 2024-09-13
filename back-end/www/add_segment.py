@@ -32,11 +32,12 @@ def main(argv):
                 img_h = data[i]["cropped_height"]
                 pr = PRIORITY
                 fp = data[i]["file_path"]
+                ft = data[i]["frame_timestamp"]
 
                 with app.app_context():
-                    video = create_segmentation(mask_fn, img_fn, x_bbox, y_bbox, w_bbox, h_bbox,
-                                                img_w, img_h, f_nbr, v_id, pr, fp)
-                    print(video)
+                    seg = create_segmentation(mask_fn, img_fn, x_bbox, y_bbox, w_bbox, h_bbox,
+                                                img_w, img_h, f_nbr, v_id, pr, fp, ft)
+                    print(seg)
     else:
         print("Usage: python add_segment.py [segment_json_path]")
         print("Example: python add_segment.py ../data/segmentation_dataset_testing.json")

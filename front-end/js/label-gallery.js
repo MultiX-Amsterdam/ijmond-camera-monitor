@@ -469,22 +469,21 @@
     } else if (method == "get_neg_labels_by_researcher") {
       $s.text("researcher-labeled videos with no smoke");
     } else if (method == "get_pos_labels_by_citizen") {
-      $s.text("door burgers gelabelde video's met rook");
-      //$s.text("citizen-labeled videos with smoke");
+      $s.text("citizen-labeled videos with smoke");
     } else if (method == "get_neg_labels_by_citizen") {
       $s.text("citizen-labeled videos with no smoke");
-    } else if (api_url_path_get == "get_pos_gold_labels") {
+    } else if (method == "get_pos_gold_labels") {
       $s.text("researcher-labeled gold standards with smoke");
-    } else if (api_url_path_get == "get_neg_gold_labels") {
+    } else if (method == "get_neg_gold_labels") {
       $s.text("researcher-labeled gold standards with no smoke");
-    } else if (api_url_path_get == "get_discorded_labels") {
+    } else if (method == "get_discorded_labels") {
       $s.text("citizen-labeled videos with discord");
-    } else if (api_url_path_get == "get_bad_labels") {
+    } else if (method == "get_bad_labels") {
       $s.text("videos with bad labels");
-    } else if (api_url_path_get == "get_maybe_pos_labels") {
+    } else if (method == "get_maybe_pos_labels") {
       $s.text("gelabelde video's die mogelijk rook bevatten");
       //$s.text("citizen-labeled videos that may have smoke");
-    } else if (api_url_path_get == "get_maybe_neg_labels") {
+    } else if (method == "get_maybe_neg_labels") {
       $s.text("citizen-labeled videos that may not have smoke");
     }
   }

@@ -136,25 +136,31 @@
     // Public methods
     //
 
+    // Build the original video panarama URL from the segmentation feedback data
+    this.segmentationFeedbackToVideoPanoramaURL = function (v) {
+      const url_part = v["file_path"].split("/")[1].split("-")[0];
+      var src_url = "https://www.youtube.com/watch?v=" + url_part;
+      return src_url;
+    };
+
     // Build the original video panarama URL
-    this.buildVideoPanoramaURL = function(v) {
+    this.buildVideoPanoramaURL = function (v) {
       var src_url = "https://www.youtube.com/watch?v=" + v["url_part"];
       return src_url;
     };
 
     // Build the video URL from server returned data
     // Example: https://ijmondcam.multix.io/videos/hoogovens/bu7USw70eXs/bu7USw70eXs-0.mp4
-    this.buildVideoURL = function(v) {
+    this.buildVideoURL = function (v) {
       var camera_names = ["hoogovens", "kooksfabriek_1", "kooksfabriek_2"];
-      var src_url = v["url_root"] + camera_names[v["camera_id"]] + "/" +  v["url_part"] + "/" + v["file_name"] + ".mp4";
+      var src_url = v["url_root"] + camera_names[v["camera_id"]] + "/" + v["url_part"] + "/" + v["file_name"] + ".mp4";
       return src_url;
     };
 
     // Buid the segmentation URL from server returned data
     // Example: https://ijmondcam.multix.io/videos/bbox_batch_1/6GEzAlK09pI-1/15/6GEzAlK09pI-1-15-0/crop_with_bbox.png
-    this.buildSegmentationURL = function(v) {
+    this.buildSegmentationURL = function (v) {
       var src_url = v["url_root"] + v["file_path"] + v["image_file_name"].replace("crop.png", "crop_with_bbox.png");
-      console.log(src_url);
       return src_url;
     }
 

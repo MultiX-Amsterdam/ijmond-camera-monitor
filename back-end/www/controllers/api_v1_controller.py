@@ -186,7 +186,7 @@ def batch_check_request(request_json):
 
     return user_jwt
 
-# TODO, try to merch these two functions in 1
+
 @bp.route("/get_batch", methods=["POST"])
 def get_batch():
     """For the client to get a batch of video clips."""
@@ -212,26 +212,27 @@ def get_batch():
             )
         return jsonify_data(video_batch, sign=True, batch_id=batch.id, user_id=user_jwt["user_id"])
 
+
 @bp.route("/get_segment_batch", methods=["POST"])
 def get_segment_batch():
-    "Return a batch of images to the client."
+    """For the client to get a batch of segmentation masks."""
     request_json = request.get_json()
     user_jwt = batch_check_request(request_json)
     is_admin = True if user_jwt["client_type"] == 0 else False
-    segmentation_batch = query_segmentation_batch(user_jwt["client_type"], use_admin_label_state=is_admin)
-    if segmentation_batch is None or len(segmentation_batch) < config.BATCH_SIZE:
+    segmentation_batch = query_segmentation_batch(user_jwt["user_id"], use_admin_label_state=is_admin)
+    if segmentation_batch is None or len(segmentation_batch) < config.BATCH_SIZE_SEG:
         return make_response("", 204)
     else:
         if is_admin:
             batch = create_segmentation_batch(
                 num_gold_standard=0,
-                num_unlabeled=config.BATCH_SIZE,
+                num_unlabeled=config.BATCH_SIZE_SEG,
                 connection_id=user_jwt["connection_id"]
             ) # no gold standard videos for admin
         else:
             batch = create_segmentation_batch(
-                num_gold_standard=config.GOLD_STANDARD_IN_BATCH,
-                num_unlabeled=config.BATCH_SIZE-config.GOLD_STANDARD_IN_BATCH,
+                num_gold_standard=config.GOLD_STANDARD_IN_BATCH_SEG,
+                num_unlabeled=config.BATCH_SIZE_SEG-config.GOLD_STANDARD_IN_BATCH_SEG,
                 connection_id=user_jwt["connection_id"]
             )
         return jsonify_data(segmentation_batch, sign=True, batch_id=batch.id, user_id=user_jwt["user_id"], is_video=False)
@@ -630,9 +631,27 @@ def add_tutorial_record():
         raise InvalidUsage(ex.args[0], status_code=400)
 
 
-def get_segmentation_feedback(labels, allow_user_id=False, only_admin=False, use_admin_label_state=False):
+@bp.route("/get_pos_labels_seg", methods=["GET", "POST"])
+def get_pos_labels_seg():
     """
-    Return a list of segmentation feedback with specific type of labels.
+    Get segmentation masks with positive labels.
+    The label state is aggregated from both researcher and citizens.
+    """
+    return get_segmentation_masks("pos", allow_user_id=True)
+
+
+@bp.route("/get_maybe_pos_labels_seg", methods=["GET", "POST"])
+def get_maybe_pos_labels_seg():
+    """
+    Get segmentation masks with insufficient citizen-provided positive labels.
+    This type of label will only be set by citizens.
+    """
+    return get_segmentation_masks(m.maybe_pos_labels_seg)
+
+
+def get_segmentation_masks(labels, allow_user_id=False, only_admin=False, use_admin_label_state=False):
+    """
+    Return a list of segmentation masks with specific type of labels.
 
     Parameters
     ----------
@@ -640,7 +659,7 @@ def get_segmentation_feedback(labels, allow_user_id=False, only_admin=False, use
         Input for the get_segmentation_query function.
         See the docstring of the get_segmentation_query function.
     allow_user_id : bool
-        Request videos by user id or not.
+        Request segmentation masks by user id or not.
     only_admin : bool
         Only for admin users or not.
     use_admin_label_state : bool
@@ -650,7 +669,7 @@ def get_segmentation_feedback(labels, allow_user_id=False, only_admin=False, use
     Returns
     -------
     flask.Response (with the application/json mimetype)
-        A list of video objects in JSON.
+        A list of SegmentationMask objects in JSON.
     """
     user_id = request.args.get("user_id") if allow_user_id else None
     page_number = request.args.get("pageNumber", 1, type=int)
@@ -688,6 +707,7 @@ def get_segmentation_feedback(labels, allow_user_id=False, only_admin=False, use
             # TODO: implement the SegmentationView table and the operations
             #if not is_researcher: # ignore researcher
             #    create_views_from_video_batch(q.items, user_jwt, query_type=0)
+            print(q.items)
             return jsonify_data(q.items, total=q.total, is_admin=is_admin, with_detail=True, is_video=False)
     else:
         q = get_pos_segmentation_query_by_user_id(user_id, page_number, page_size, is_researcher)

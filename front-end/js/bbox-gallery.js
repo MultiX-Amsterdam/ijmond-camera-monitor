@@ -4,7 +4,7 @@
   var util = new edaplotjs.Util();
   var google_account_dialog;
   var api_url_root = util.getRootApiUrl();
-  var api_url_path_get = "get_pos_labels";
+  var api_url_path_get = "get_pos_labels_seg";
   var $gallery_no_data_text = $('<span class="gallery-no-data-text">No images are found.</span>');
   var $gallery_error_text = $('<span class="gallery-error-text">Oops!<br>Server may be down or busy.<br>Please come back later.</span>');
   var $gallery_loading_text = $('<span class="gallery-loading-text"></span>');
@@ -81,7 +81,7 @@
     // Update date and time information
     var src_url = util.buildSegmentationURL(v);
     var $i = $item.children(".label-control").find("i").removeClass();
-    var date_str = (new Date(parseInt(v["start_time"]) * 1000)).toLocaleString("en-GB", {
+    var date_str = (new Date(parseInt(v["frame_timestamp"]) * 1000)).toLocaleString("en-GB", {
       timeZone: "Europe/Amsterdam",
       hour: "2-digit",
       minute: "2-digit",
@@ -90,7 +90,8 @@
       day: "2-digit",
       hour12: false
     });
-    $($i.get(0)).html("<a target='_blank' href='javascript:void(0)'>" + date_str + "</a>");
+    console.log(v)
+    $($i.get(0)).html("<a target='_blank' href='" + util.segmentationFeedbackToVideoPanoramaURL(v) + "'>" + date_str + "</a>");
     var $img = $item.find("img");
     $img.prop("src", src_url);
     return $item;
@@ -205,7 +206,7 @@
   function onLoginSuccess(data) {
     user_token = data["user_token"];
     var payload = getJwtPayload(user_token);
-    var desired_href_review = "label-gallery.html" + "?user_id=" + payload["user_id"];
+    var desired_href_review = "bbox-gallery.html" + "?user_id=" + payload["user_id"];
     $("#review-community").prop("href", desired_href_review);
     $(".community-control").css("display", "flex");
   }
@@ -216,12 +217,10 @@
 
   function setImageTypeText(method) {
     var $s = $("#image-type-text");
-    if (method == "get_bbox_one_person") {
-      $s.text("kaders met rook, gecontroleerd door één persoon");
-    } else if (method == "get_bbox_two_people") {
-      $s.text("kaders met rook, gecontroleerd door twee mensen");
-    } else if (method == "get_bbox_three_people") {
-      $s.text("kaders met rook, gecontroleerd door drie mensen");
+    if (method == "get_pos_labels_seg") {
+      $s.text("alle volledig gecontroleerd kaders met rook");
+    } else if (method == "get_maybe_pos_labels_seg") {
+      $s.text("gecontroleerd kaders die mogelijk rook bevatten");
     }
   }
 

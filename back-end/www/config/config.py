@@ -25,9 +25,16 @@ class Config(object):
     # Set the number of videos for each batch
     BATCH_SIZE = 16
 
+    # Set the number of segmentation masks for each batch
+    BATCH_SIZE_SEG = 8
+
     # Set the number of gold standard videos in the batch for citizens (not admin)
+    # This variable is used for the videos
     GOLD_STANDARD_IN_BATCH = 4
-    if GOLD_STANDARD_IN_BATCH < 2: GOLD_STANDARD_IN_BATCH = 2 # must be larger than 2
+
+    # Set the number of gold standard videos in the batch for citizens (not admin)
+    # This variable is used for the segmentation masks
+    GOLD_STANDARD_IN_BATCH_SEG = 2
 
     # Set the ratio of partially labeled videos in a batch labeling request
     # 0.8 means that we want 80% of the videos in the batch to be partially labeled
@@ -60,8 +67,8 @@ class StagingConfig(Config):
     assert exists(db_url_path), ("need to have the %s file (check README)") % (db_url_path)
     SQLALCHEMY_DATABASE_URI = db_url_path.read_text().strip()
 
-    BATCH_SIZE = 4
     GOLD_STANDARD_IN_BATCH = 0
+    GOLD_STANDARD_IN_BATCH_SEG = 0
     VIDEO_JWT_NBF_DURATION = 0
 
 

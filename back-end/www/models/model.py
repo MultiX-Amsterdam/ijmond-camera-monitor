@@ -31,6 +31,16 @@ bad_labels = [-2]
 
 # Label states for segmentation masks (not for videos)
 # Check the label_state_machine function in `segmentationFeedback_operations.py` for details
+pos_labels_seg = [3, 4, 9, 10, 11, 13, 15]
+neg_labels_seg = [5, 12, 14]
+pos_gold_labels_seg = [16, 17]
+neg_gold_labels_seg = [18]
+gold_labels_seg = pos_gold_labels_seg + neg_gold_labels_seg
+maybe_pos_labels_seg = [0, 1, 6]
+maybe_neg_labels_seg = [2]
+discorded_labels_seg = [7, 8]
+bad_labels_seg = [-2]
+partial_labels_seg = maybe_pos_labels_seg + maybe_neg_labels_seg + discorded_labels_seg
 
 
 class User(db.Model):
@@ -117,13 +127,19 @@ class Video(db.Model):
         The state of the label, contributed by the admin researcher (client type 0).
         Using label_state_admin allows the system to compare researcher and citizen labels.
         Check the label_state_machine function in `label_operations.py` for details.
+        Also enable database indexing on this column for fast lookup.
     label_update_time : int
         The most recent epochtime (in seconds) that the label state is updated.
         Notice that this is only for the normal users (label_state, not label_state_admin).
     view_id : int
         ID of the view within the same camera.
+        Note that this is not the key for the View table.
     camera_id : int
         ID of the camera.
+    priority : int
+        The priority of the video.
+        Higher priority indicates that the mask should get feedback faster.
+        Larger number means higher priority (e.g., 5 has higher priority than 4)
     """
     id = db.Column(db.Integer, primary_key=True)
     file_name = db.Column(db.String(255), unique=True, nullable=False)
@@ -135,6 +151,7 @@ class Video(db.Model):
     label_update_time = db.Column(db.Integer)
     view_id = db.Column(db.Integer, nullable=False, default=-1)
     camera_id = db.Column(db.Integer, nullable=False, default=-1)
+    priority = db.Column(db.Integer, nullable=False, default=1)
     # Relationships
     label = db.relationship("Label", backref=db.backref("video", lazy=True), lazy=True)
     view = db.relationship("View", backref=db.backref("video", lazy=True), lazy=True)
@@ -143,11 +160,11 @@ class Video(db.Model):
         return (
             "<Video id=%r file_name=%r start_time=%r end_time=%r url_part=%r "
             "label_state=%r, label_state_admin=%r, label_update_time=%r view_id=%r "
-            "camera_id=%r>"
+            "camera_id=%r, priority=%r>"
         ) % (
             self.id, self.file_name, self.start_time, self.end_time, self.url_part,
             self.label_state, self.label_state_admin, self.label_update_time, self.view_id,
-            self.camera_id
+            self.camera_id, self.priority
         )
 
 
@@ -168,6 +185,7 @@ class Label(db.Model):
     user_id : int
         The user ID in the User table (foreign key).
         This information is duplicated also in the batch->connnection, for fast query.
+        Also enable database indexing on this column for fast lookup.
     batch_id : int
         The batch ID in the Batch table (foreign key).
         A null batch ID means that an admin changed the label and created a record.
@@ -381,6 +399,7 @@ class SegmentationMask(db.Model):
         The state of the label, contributed by the admin researcher (client type 0).
         Using label_state_admin allows the system to compare researcher and citizen labels.
         Check the label_state_machine function in `segmentationFeedback_operations.py` for details.
+        Also enable database indexing on this column for fast lookup.
     label_update_time : int
         The most recent epochtime (in seconds) that the label state is updated.
         Notice that this is only for the normal users (label_state, not label_state_admin).
@@ -389,7 +408,6 @@ class SegmentationMask(db.Model):
     frame_timestamp : int
         If there is no video ID, this field will have the information of the timestamp.
         The format should be epoch time in seconds.
-        (can be null if there is already a video that is linked to this mask)
     video_id : int
         The corresponding video ID (can be null if no video is linked to this mask)
     """
@@ -404,23 +422,25 @@ class SegmentationMask(db.Model):
     w_image = db.Column(db.Integer, nullable=False)
     h_image = db.Column(db.Integer, nullable=False)
     priority = db.Column(db.Integer, nullable=False, default=1)
-    label_state = db.Column(db.Integer, nullable=False, default=-1)
-    label_state_admin = db.Column(db.Integer, nullable=False, default=-1)
+    label_state = db.Column(db.Integer, nullable=False, default=-1, index=True)
+    label_state_admin = db.Column(db.Integer, nullable=False, default=-1, index=True)
     label_update_time = db.Column(db.Integer, default=get_current_time())
     frame_number = db.Column(db.Integer, nullable=True)
     frame_timestamp = db.Column(db.Integer, nullable=True)
     video_id = db.Column(db.Integer, db.ForeignKey("video.id"))
+    # Relationships
+    feedback = db.relationship("SegmentationFeedback", backref=db.backref("segmentation_mask", lazy=True), lazy=True)
 
     def __repr__(self):
         return (
             "<SegmentationMask id=%r mask_file_name=%r image_file_name=%r x_bbox=%r y_bbox=%r "
             "w_bbox=%r h_bbox=%r w_image=%r h_image=%r priority=%r label_state=%r "
-            "label_state_admin=%r label_update_time=%r frame_number=%r video_id=%r>"
+            "label_state_admin=%r label_update_time=%r frame_number=%r frame_timestamp=%r video_id=%r>"
         ) % (
             self.id, self.mask_file_name, self.image_file_name, self.x_bbox, self.y_bbox,
             self.w_bbox, self.h_bbox, self.w_image, self.h_image, self.priority,
             self.label_state, self.label_state_admin, self.label_update_time,
-            self.frame_number, self.video_id
+            self.frame_number, self.frame_timestamp, self.video_id
         )
 
 
@@ -520,7 +540,7 @@ class SegmentationBatch(db.Model):
     user_score = db.Column(db.Integer)
     user_raw_score = db.Column(db.Integer)
     # Relationships
-    # feedback = db.relationship("SegmentationFeedback", backref=db.backref("segmentation_batch", lazy=True), lazy=True)
+    feedback = db.relationship("SegmentationFeedback", backref=db.backref("segmentation_batch", lazy=True), lazy=True)
 
     def __repr__(self):
         return (

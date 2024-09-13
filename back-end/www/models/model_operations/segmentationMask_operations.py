@@ -15,7 +15,7 @@ from config.config import config
 import models.model as m
 
 
-def create_segmentation(mask_fn, img_fn, x_bbox, y_bbox, w_bbox, h_bbox, img_w, img_h, f_nbr, v_id, pr, fp):
+def create_segmentation(mask_fn, img_fn, x_bbox, y_bbox, w_bbox, h_bbox, img_w, img_h, f_nbr, v_id, pr, fp, ft):
     """Create a segmentation mask."""
     segment = SegmentationMask(
         mask_file_name=mask_fn,
@@ -29,7 +29,8 @@ def create_segmentation(mask_fn, img_fn, x_bbox, y_bbox, w_bbox, h_bbox, img_w, 
         frame_number=f_nbr,
         video_id=v_id,
         priority=pr,
-        file_path=fp
+        file_path=fp,
+        frame_timestamp=ft
     )
     app.logger.info("Create segmentation: %r" % segment)
     db.session.add(segment)
@@ -37,9 +38,9 @@ def create_segmentation(mask_fn, img_fn, x_bbox, y_bbox, w_bbox, h_bbox, img_w, 
     return segment
 
 
-def remove_segmentation(segment_id):
+def remove_segmentation(segmentation_id):
     """Remove a segmentation."""
-    segment = SegmentationMask.query.filter_by(id=segment_id).first()
+    segment = SegmentationMask.query.filter_by(id=segmentation_id).first()
     app.logger.info("Remove segmentation: %r" % segment)
     if segment is None:
         raise Exception("No segmentation mask found in the database to delete.")
@@ -57,7 +58,7 @@ def get_segmentation_ids_labeled_by_user(user_id):
     labels = SegmentationFeedback.query.filter(SegmentationFeedback.user_id==user_id).all()
     s_ids = set()
     for label in labels:
-        s_ids.add(label.segment_id)
+        s_ids.add(label.segmentation_id)
     return list(s_ids)
 
 
@@ -85,16 +86,16 @@ def query_segmentation_batch(user_id, use_admin_label_state=False):
         q = SegmentationMask.query.filter(and_(
             SegmentationMask.label_state_admin==-1),
             SegmentationMask.id.notin_(labeled_segmentation_ids))
-        return q.order_by(func.random()).limit(config.BATCH_SIZE).all()
+        return q.order_by(func.random()).limit(config.BATCH_SIZE_SEG).all()
     else:
-        if config.GOLD_STANDARD_IN_BATCH > 0:
+        if config.GOLD_STANDARD_IN_BATCH_SEG > 0:
             # Select gold standards (at least one bbox that needs editing and anothe one that should be removed to prevent spamming)
             # Spamming patterns include ignoring or selecting all segmentations
-            num_gold_need_editing = np.random.choice(range(1, config.GOLD_STANDARD_IN_BATCH))
-            num_gold_need_removed = config.GOLD_STANDARD_IN_BATCH - num_gold_need_editing
+            num_gold_need_editing = np.random.choice(range(1, config.GOLD_STANDARD_IN_BATCH_SEG))
+            num_gold_need_removed = config.GOLD_STANDARD_IN_BATCH_SEG - num_gold_need_editing
             gold_need_editing = SegmentationMask.query.filter(SegmentationMask.label_state_admin==17).order_by(func.random()).limit(num_gold_need_editing).all()
             gold_need_removed = SegmentationMask.query.filter(SegmentationMask.label_state_admin==18).order_by(func.random()).limit(num_gold_need_removed).all()
-            if (len(gold_need_editing + gold_need_removed) != config.GOLD_STANDARD_IN_BATCH):
+            if (len(gold_need_editing + gold_need_removed) != config.GOLD_STANDARD_IN_BATCH_SEG):
                 # This means that there are not enough or no gold standard segmentations
                 return None
         else:
@@ -102,14 +103,14 @@ def query_segmentation_batch(user_id, use_admin_label_state=False):
             gold_need_removed = []
         # Exclude segmentations labeled by the same user, also the gold standards and other terminal states of reseacher labels
         # (We do not want citizens to do the double work to confirm reseacher labeled segmentations)
-        excluded_labels = (16, 17, 18, 3, 4, 5, 9, 10, 11, 12, 13, 14, 15, -2)
+        excluded_labels = m.gold_labels_seg + m.pos_labels_seg + m.neg_labels_seg + m.bad_labels_seg
         excluded_s_ids = SegmentationMask.query.filter(SegmentationMask.label_state_admin.in_(excluded_labels)).with_entities(SegmentationMask.id).all()
         excluded_s_ids = [s[0] for s in excluded_s_ids]
         q = SegmentationMask.query.filter(SegmentationMask.id.notin_(labeled_segmentation_ids + excluded_s_ids))
         # Try to include some partially labeled segmentations in this batch
-        num_unlabeled = config.BATCH_SIZE - config.GOLD_STANDARD_IN_BATCH
+        num_unlabeled = config.BATCH_SIZE_SEG - config.GOLD_STANDARD_IN_BATCH_SEG
         num_partially_labeled = int(num_unlabeled*config.PARTIAL_LABEL_RATIO)
-        partially_labeled = q.filter(SegmentationMask.label_state.in_((0, 1, 2, 6, 7, 8))).order_by(func.random()).limit(num_partially_labeled).all()
+        partially_labeled = q.filter(SegmentationMask.label_state.in_(m.partial_labels_seg)).order_by(func.random()).limit(num_partially_labeled).all()
         not_labeled = q.filter(SegmentationMask.label_state==-1).order_by(func.random()).limit(num_unlabeled - len(partially_labeled)).all()
         # Assemble the segmentation masks
         segmentations = gold_need_editing + gold_need_removed + not_labeled + partially_labeled
@@ -141,7 +142,6 @@ def get_segmentation_query(labels, page_number, page_size, use_admin_label_state
     -------
     The query object of the SegmentationMask table.
     """
-    # TODO: fix this function
     page_size = config.MAX_PAGE_SIZE if page_size > config.MAX_PAGE_SIZE else page_size
     q = None
     if type(labels) == list:
@@ -152,7 +152,7 @@ def get_segmentation_query(labels, page_number, page_size, use_admin_label_state
                 # Exclude gold standards and bad labels for normal request
                 q = SegmentationMask.query.filter(and_(
                     SegmentationMask.label_state.in_(labels),
-                    SegmentationMask.label_state_admin.notin_(m.gold_labels + m.bad_labels)))
+                    SegmentationMask.label_state_admin.notin_(m.bad_labels_seg + m.gold_labels_seg)))
         elif len(labels) == 1:
             if use_admin_label_state:
                 q = SegmentationMask.query.filter(SegmentationMask.label_state_admin==labels[0])
@@ -160,28 +160,28 @@ def get_segmentation_query(labels, page_number, page_size, use_admin_label_state
                 # Exclude gold standards and bad labels for normal request
                 q = SegmentationMask.query.filter(and_(
                     SegmentationMask.label_state==labels[0],
-                    SegmentationMask.label_state_admin.notin_(m.gold_labels + m.bad_labels)))
+                    SegmentationMask.label_state_admin.notin_(m.bad_labels_seg + m.gold_labels_seg)))
     elif type(labels) == str:
         # Aggregate citizen and researcher labels
         # Researcher labels override citizen labels
         if labels == "pos":
             # Exclude gold standards and bad labels for normal request
             q = SegmentationMask.query.filter(and_(
-                SegmentationMask.label_state_admin.notin_(m.gold_labels + m.bad_labels),
+                SegmentationMask.label_state_admin.notin_(m.bad_labels_seg + m.gold_labels_seg),
                 or_(
-                    SegmentationMask.label_state_admin.in_(m.pos_labels),
+                    SegmentationMask.label_state_admin.in_(m.pos_labels_seg),
                     and_(
-                        SegmentationMask.label_state_admin.notin_(m.pos_labels + m.neg_labels),
-                        SegmentationMask.label_state.in_(m.pos_labels)))))
+                        SegmentationMask.label_state_admin.notin_(m.pos_labels_seg + m.neg_labels_seg),
+                        SegmentationMask.label_state.in_(m.pos_labels_seg)))))
         elif labels == "neg":
             # Exclude gold standards and bad labels for normal request
             q = SegmentationMask.query.filter(and_(
-                SegmentationMask.label_state_admin.notin_(m.gold_labels + m.bad_labels),
+                SegmentationMask.label_state_admin.notin_(m.bad_labels_seg + m.gold_labels_seg),
                 or_(
-                    SegmentationMask.label_state_admin.in_(m.neg_labels),
+                    SegmentationMask.label_state_admin.in_(m.neg_labels_seg),
                     and_(
-                        SegmentationMask.label_state_admin.notin_(m.pos_labels + m.neg_labels),
-                        SegmentationMask.label_state.in_(m.neg_labels)))))
+                        SegmentationMask.label_state_admin.notin_(m.pos_labels_seg + m.neg_labels_seg),
+                        SegmentationMask.label_state.in_(m.neg_labels_seg)))))
     q = q.order_by(desc(SegmentationMask.label_update_time))
     if page_number is not None and page_size is not None:
         q = q.paginate(page=page_number, per_page=page_size, max_per_page=100)
@@ -214,18 +214,18 @@ def get_pos_segmentation_query_by_user_id(user_id, page_number, page_size, is_re
     if is_researcher: # researcher
         q = SegmentationFeedback.query.filter(and_(
             SegmentationFeedback.user_id==user_id,
-            SegmentationFeedback.label.in_([0, 1, 3, 4, 6, 9, 10, 11, 13, 15]))).subquery()
+            SegmentationFeedback.feedback_code.in_([0, 1]))).subquery()
     else:
         q = SegmentationFeedback.query.filter(and_(
             SegmentationFeedback.user_id==user_id,
-            SegmentationFeedback.label.in_([0, 1, 3, 4, 6, 9, 10, 11, 13, 15]))).subquery()
+            SegmentationFeedback.feedback_code.in_([0, 1]))).subquery()
     # Exclude gold standards
     #q = q.from_self(SegmentationMask).join(SegmentationMask).distinct().filter(SegmentationMask.label_state_admin!=0b101111)
     q = (
         SegmentationMask.query
         .join(q, SegmentationMask.id == q.c.segmentation_id)
         .distinct()
-        .filter(SegmentationMask.label_state_admin.notin_([16, 17, 18]))
+        .filter(SegmentationMask.label_state_admin.notin_(m.gold_labels_seg))
         .order_by(desc(SegmentationMask.label_update_time))
     )
     if page_number is not None and page_size is not None:

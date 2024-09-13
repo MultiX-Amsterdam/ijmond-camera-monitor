@@ -4,6 +4,7 @@
         "image_file_name": "crop.png",
         "file_path": "bbox_batch_1/FNKYVizUslc-1/10/FNKYVizUslc-1-10-0/",
         "frame_number": 10,
+        "frame_timestamp": 1684579238,
         "video_id": 1,
         "relative_boxes": {
             "x": 0,
@@ -19,6 +20,7 @@
         "image_file_name": "crop.png",
         "file_path": "bbox_batch_1/FNKYVizUslc-1/22/FNKYVizUslc-1-22-0/",
         "frame_number": 22,
+        "frame_timestamp": 1684579238,
         "video_id": 1,
         "relative_boxes": {
             "x": 0,
@@ -34,6 +36,7 @@
         "image_file_name": "crop.png",
         "file_path": "bbox_batch_1/S1Juid0Wi8M-3/29/S1Juid0Wi8M-3-29-0/",
         "frame_number": 29,
+        "frame_timestamp": 1687199436,
         "video_id": 78,
         "relative_boxes": {
             "x": 470,
@@ -49,6 +52,7 @@
         "image_file_name": "crop.png",
         "file_path": "bbox_batch_1/S1Juid0Wi8M-3/6/S1Juid0Wi8M-3-6-0/",
         "frame_number": 6,
+        "frame_timestamp": 1687199436,
         "video_id": 78,
         "relative_boxes": {
             "x": 248,
@@ -64,6 +68,7 @@
         "image_file_name": "crop.png",
         "file_path": "bbox_batch_1/S1Juid0Wi8M-3/6/S1Juid0Wi8M-3-6-1/",
         "frame_number": 6,
+        "frame_timestamp": 1687199436,
         "video_id": 78,
         "relative_boxes": {
             "x": 258,
@@ -79,6 +84,7 @@
         "image_file_name": "crop.png",
         "file_path": "bbox_batch_1/S1Juid0Wi8M-3/14/S1Juid0Wi8M-3-14-0/",
         "frame_number": 14,
+        "frame_timestamp": 1687199436,
         "video_id": 78,
         "relative_boxes": {
             "x": 272,
@@ -94,6 +100,7 @@
         "image_file_name": "crop.png",
         "file_path": "bbox_batch_1/_XCMSfdJdj4-1/19/_XCMSfdJdj4-1-19-0/",
         "frame_number": 19,
+        "frame_timestamp": 1686149451,
         "video_id": 671,
         "relative_boxes": {
             "x": 199,
@@ -109,6 +116,7 @@
         "image_file_name": "crop.png",
         "file_path": "bbox_batch_1/_XCMSfdJdj4-1/5/_XCMSfdJdj4-1-5-0/",
         "frame_number": 5,
+        "frame_timestamp": 1686149451,
         "video_id": 671,
         "relative_boxes": {
             "x": 113,
@@ -124,6 +132,7 @@
         "image_file_name": "crop.png",
         "file_path": "bbox_batch_1/_XCMSfdJdj4-1/14/_XCMSfdJdj4-1-14-0/",
         "frame_number": 14,
+        "frame_timestamp": 1686149451,
         "video_id": 671,
         "relative_boxes": {
             "x": 45,
