@@ -479,7 +479,7 @@
                 if ($element.length > 0) {
                     clearInterval(intervalID);
                     const parent_element = $element.parent();
-		    // Remove existing bounding box
+                    // Remove existing bounding box
                     parent_element.find(".bbox").remove();
                     for (var i = 0; i < segment_data.length; i++) {
                         var v = segment_data[i];
