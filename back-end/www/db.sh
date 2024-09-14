@@ -13,6 +13,9 @@ then
 elif [ "$1" = "downgrade" ]
 then
   flask db downgrade
+elif [ "$1" = "current" ]
+then
+  flask db current
 elif [ "$1" = "history" ]
 then
   flask db history

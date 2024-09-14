@@ -74,7 +74,8 @@ def upgrade():
     sa.PrimaryKeyConstraint('id', name=op.f('pk_segmentation_feedback'))
     )
     with op.batch_alter_table('video', schema=None) as batch_op:
-        batch_op.add_column(sa.Column('priority', sa.Integer(), nullable=False))
+        batch_op.add_column(sa.Column('priority', sa.Integer(), nullable=False, server_default= "1"))
+        batch_op.alter_column('priority', server_default=None)
 
     # ### end Alembic commands ###
 

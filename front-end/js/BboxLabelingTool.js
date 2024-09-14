@@ -170,7 +170,7 @@
         // Create a segmentation label element
         function createSegmentation(i) {
             var $item = $("<a href='javascript:void(0)' class='flex-column segmentation-container'></a>");
-            var $caption = $("<div class='control-group'><span>Beeld " + (i + 1) + "</span><button class='custom-button-flat'>Verwijder kader</button></div>");
+            var $caption = $("<div class='control-group'><span>Beeld " + (i + 1) + "</span><button class='box-toggle custom-button-flat'>Verwijder kader</button></div>");
             // Add the event for users to remove and add the bounding box.
             // Users can indicate if the image has or does not have smoke.
             // Notice that we cannot use the "hide" or "show" function because it will break when users resize the browser window.
@@ -203,6 +203,7 @@
                     $tool_videos.append($item);
                 } else {
                     $item = img_items[i];
+                    $item.find(".box-toggle").text("Verwijder kader");
                 }
                 $item.data("id", v["id"]);
                 var $img = $item.find("img").first();

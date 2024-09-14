@@ -8,7 +8,7 @@
   var $next;
   var counter = 0;
   var max_counter = 10;
-  var count_down_duration = 100; // in milliseconds
+  var count_down_duration = 1000; // in milliseconds
   var is_first_time = true;
   var ga_tracker;
   var $user_score_container;

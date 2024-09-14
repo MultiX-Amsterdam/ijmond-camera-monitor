@@ -389,9 +389,9 @@ This section assumes that you want to dump the production database to a file and
 ssh USER_NAME_PRODUCTION@SERVER_ADDRESS_PRODUCTION
 
 # For Ubuntu
-sudo -u postgres pg_dump -d ijmond_camera_monitor_production >/tmp/ijmond_camera_monitor_production.out
+sudo -u postgres pg_dump -d ijmond_camera_monitor_production > /tmp/ijmond_camera_monitor_production.out
 # For Mac OS
-pg_dump -d ijmond_camera_monitor_production >/tmp/ijmond_camera_monitor_production.out
+pg_dump -d ijmond_camera_monitor_production > /tmp/ijmond_camera_monitor_production.out
 
 exit
 ```
@@ -414,9 +414,11 @@ CREATE DATABASE ijmond_camera_monitor_staging OWNER ijmond_camera_monitor;
 \q
 
 # For Ubuntu
-sudo -u postgres pg_dump -d ijmond_camera_monitor_staging </tmp/ijmond_camera_monitor_production.out
+sudo -u postgres pg_dump -d ijmond_camera_monitor_staging < /tmp/ijmond_camera_monitor_production.out
 # For Mac OS
-pg_dump -d ijmond_camera_monitor_staging </tmp/ijmond_camera_monitor_production.out
+psql -d ijmond_camera_monitor_staging < /tmp/ijmond_camera_monitor_production.out
+
+sh db.sh upgrade
 ```
 We provide a script to backup the database:
 ```sh
