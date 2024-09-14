@@ -105,7 +105,7 @@
             callback = safeGet(callback, {});
             options = safeGet(options, {});
             var ignore_labels = safeGet(options["ignore_labels"], false);
-            var labels = collectAndRemoveLabels();
+            var labels = collectLabels();
             showLoadingMsg();
             if (labels.length == 0 || ignore_labels) {
                 if (typeof callback["success"] === "function") callback["success"]();
@@ -137,7 +137,7 @@
         }
 
         // Collect labels from the user interface
-        function collectAndRemoveLabels() {
+        function collectLabels() {
             var labels = [];
             var $bboxes = $(".bbox");
             for (let i = 0; i < $bboxes.length; i++) {
@@ -160,9 +160,6 @@
                     id: meta_data["id"],
                     relative_boxes: bbox_original
                 });
-                $bbox.removeData("metadata");
-                $bbox.removeData("interacted");
-                $bbox.remove(); // remove the bounding box
             }
             return labels;
         }
@@ -482,6 +479,8 @@
                 if ($element.length > 0) {
                     clearInterval(intervalID);
                     const parent_element = $element.parent();
+		    // Remove existing bounding box
+                    parent_element.find(".bbox").remove();
                     for (var i = 0; i < segment_data.length; i++) {
                         var v = segment_data[i];
                         var $bbox = createBBox(v, $($element.get(i)));
@@ -594,34 +593,6 @@
         //
         // Public methods
         //
-        // TODO implement this function
-        // Collect the data from the given Bbox
-        var collectBoxData = function () {
-            var $bboxes = $(".bbox");
-            var feedback = [];
-            for (let i = 0; i < $bboxes.length; i++) {
-                const $bbox = $bboxes.eq(i);
-                const meta_data = $bbox.data("metadata");
-                var bbox_original = null;
-                // Returning null means that the bounding box looks good
-                if ($bbox.data("interacted")) {
-                    bbox_original = reverseBBox($bbox);
-                }
-
-                // Store the properties in an object
-                feedback.push({
-                    id: meta_data["id"],
-                    relative_boxes: bbox_original
-                });
-            }
-
-            // Export to JSON
-            // TODO export the JSON file to the backend
-            const json_file = JSON.stringify(feedback)
-            console.log(json_file);
-        };
-        this.collectBoxData = collectBoxData;
-
         this.next = function (callback, options) {
             callback = safeGet(callback, {});
             if (util.browserSupported()) {
@@ -700,7 +671,6 @@
     //
     // Register to window
     //
-    // TODO Rename VideoLabelingTool to BboxLabelingTool based on Constructor
     if (window.edaplotjs) {
         window.edaplotjs.BboxLabelingTool = BboxLabelingTool;
     } else {

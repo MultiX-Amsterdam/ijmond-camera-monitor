@@ -24,7 +24,7 @@
     var no_ui = safeGet(settings["no_ui"], false);
 
     // Client ID and API key from the Developer Console
-    var CLIENT_ID = "628042723276-du06aqfk00h9qgbpn4ghfhfkchgk2ikj.apps.googleusercontent.com";
+    var CLIENT_ID = "524109318088-1gqhh8qeg09mss91qvbhfuuv6jc7s0tn.apps.googleusercontent.com";
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //
@@ -67,6 +67,7 @@
         callback: handleCredentialResponse
       });
       renderGoogleSignInButton();
+      isAuthenticatedWithGoogle();
     }
 
     function handleCredentialResponse(googleUser) {
