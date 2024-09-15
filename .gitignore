@@ -12,5 +12,6 @@ front-end/videos/
 front-end/event/
 back-end/www/reload
 **/secret/
+**/cache/
 *.sql
 dataset/**/videos/

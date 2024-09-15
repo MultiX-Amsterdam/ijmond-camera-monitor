@@ -2,6 +2,9 @@
 
 import uuid
 import jwt
+import requests
+import json
+import os
 from flask import Blueprint
 from flask import request
 from flask import jsonify
@@ -716,3 +719,41 @@ def get_segmentation_masks(labels, allow_user_id=False, only_admin=False, use_ad
         #    create_views_from_video_batch(q.items, user_jwt, query_type=1)
         # We need to set is_admin to True here because we want to show user agreements in the data
         return jsonify_data(q.items, total=q.total, is_admin=True, is_video=False)
+
+
+def load_cache():
+    """Loads cached data from file if available."""
+    if os.path.exists(config.CACHE_FILE):
+        with open(config.CACHE_FILE, "r") as file:
+            cached_data = json.load(file)
+            return cached_data
+    return None
+
+
+def save_to_cache(data):
+    """Saves the response data to cache file."""
+    with open(config.CACHE_FILE, "w") as file:
+        json.dump(data, file)
+
+
+@bp.route("/cached_smoke", methods=["GET"])
+def proxy():
+    # URL of the external API
+    api_url = "https://spotdegifwolk.nl/api/clouds"
+
+    # Try fetching data from the external API
+    try:
+        response = requests.get(api_url)
+        response.raise_for_status()  # Raise an exception for HTTP errors
+        data = response.json()
+        # Save the response data to cache file
+        save_to_cache(data)
+    except requests.RequestException as e:
+        # If there is an error, load from cache
+        data = load_cache()
+        if not data:
+            # If no cached data is available, return an error response
+            return jsonify({"error": "External API is down and no cache available"}), 503
+        return jsonify(data), 200
+
+    return jsonify(data), 200

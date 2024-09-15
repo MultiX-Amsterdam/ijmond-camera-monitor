@@ -349,7 +349,7 @@
     // Set a callback to run when the Google Visualization API is loaded.
     google.charts.setOnLoadCallback(function () {
       // Load event data
-      $.getJSON("https://gpfw.strange-loop.nl/verified", function (data) {
+      $.getJSON(util.getRootApiUrl() + "cached_smoke", function (data) {
         base_url = data["base_url"] + "/";
         var events = data["gifwolken"];
         for (let i = 0; i < events.length; i++) {

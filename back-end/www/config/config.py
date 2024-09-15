@@ -60,6 +60,9 @@ class Config(object):
     assert exists(gid_path), ("need to have the %s file (check README)") % (gid_path)
     GOOGLE_SIGNIN_CLIENT_ID = gid_path.read_text().strip()
 
+    # Set the file path to store the cached smoke events
+    CACHE_FILE = "../cache/cached_smoke.json"
+
 
 class StagingConfig(Config):
     # Set the database URL
