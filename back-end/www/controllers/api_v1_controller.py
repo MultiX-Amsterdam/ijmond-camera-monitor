@@ -5,6 +5,7 @@ import jwt
 import requests
 import json
 import os
+import time
 from flask import Blueprint
 from flask import request
 from flask import jsonify
@@ -721,39 +722,73 @@ def get_segmentation_masks(labels, allow_user_id=False, only_admin=False, use_ad
         return jsonify_data(q.items, total=q.total, is_admin=True, is_video=False)
 
 
-def load_cache():
+def ensure_cache_directory(file_path):
+    """Ensure that the directory for the cache file exists."""
+    os.makedirs(os.path.dirname(file_path), exist_ok=True)
+
+
+def load_cache(file_path):
     """Loads cached data from file if available."""
-    if os.path.exists(config.CACHE_FILE):
-        with open(config.CACHE_FILE, "r") as file:
+    ensure_cache_directory(file_path)
+    if os.path.exists(file_path):
+        with open(file_path, "r") as file:
             cached_data = json.load(file)
             return cached_data
     return None
 
 
-def save_to_cache(data):
+def save_to_cache(data, file_path):
     """Saves the response data to cache file."""
-    with open(config.CACHE_FILE, "w") as file:
+    ensure_cache_directory(file_path)
+    with open(file_path, "w") as file:
         json.dump(data, file)
+
+
+def get_last_update_time(file_path):
+    """Reads the last update time from the file."""
+    if os.path.exists(file_path):
+        with open(file_path, "r") as file:
+            return float(file.read().strip())
+    return 0
+
+
+def update_last_update_time(file_path):
+    """Writes the current time to the last update file."""
+    with open(file_path, "w") as file:
+        file.write(str(time.time()))
 
 
 @bp.route("/cached_smoke", methods=["GET"])
 def cached_smoke():
-    # URL of the external API
-    api_url = "https://spotdegifwolk.nl/api/clouds"
+    current_time = time.time()
+    last_update_time = get_last_update_time(config.CACHE_SMOKE_LAST_UPDATE_FILE)
 
-    # Try fetching data from the external API
-    try:
-        response = requests.get(api_url)
-        response.raise_for_status()  # Raise an exception for HTTP errors
-        data = response.json()
-        # Save the response data to cache file
-        save_to_cache(data)
-    except requests.RequestException as e:
-        # If there is an error, load from cache
-        data = load_cache()
+    # Check if the cache needs to be updated
+    if (current_time - last_update_time) >= config.CACHE_SMOKE_UPDATE_INTERVAL:
+        # URL of the external API
+        api_url = "https://spotdegifwolk.nl/api/clouds"
+        # Try fetching data from the external API
+        try:
+            response = requests.get(api_url)
+            response.raise_for_status()  # Raise an exception for HTTP errors
+            data = response.json()
+            # Save the response data to cache file
+            save_to_cache(data, config.CACHE_SMOKE_FILE)
+            # Update the last update time
+            update_last_update_time(config.CACHE_SMOKE_LAST_UPDATE_FILE)
+        except requests.RequestException as e:
+            # If there is an error, load from cache
+            data = load_cache(config.CACHE_SMOKE_FILE)
+            if not data:
+                # If no cached data is available, return an error response
+                return jsonify({"error": "External API is down and no cache available"}), 503
+            return jsonify(data), 200
+    else:
+        # Load cached data if cache is still valid
+        data = load_cache(config.CACHE_SMOKE_FILE)
         if not data:
             # If no cached data is available, return an error response
-            return jsonify({"error": "External API is down and no cache available"}), 503
+            return jsonify({"error": "Cache is invalid and no fresh data available"}), 503
         return jsonify(data), 200
 
     return jsonify(data), 200

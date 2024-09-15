@@ -61,7 +61,9 @@ class Config(object):
     GOOGLE_SIGNIN_CLIENT_ID = gid_path.read_text().strip()
 
     # Set the file path to store the cached smoke events
-    CACHE_FILE = "../cache/cached_smoke.json"
+    CACHE_SMOKE_FILE = "../cache/cached_smoke.json"
+    CACHE_SMOKE_LAST_UPDATE_FILE = "../cache/cached_smoke_last_update" # epochtime in seconds
+    CACHE_SMOKE_UPDATE_INTERVAL = 86400 # cache update interval in seconds
 
 
 class StagingConfig(Config):
