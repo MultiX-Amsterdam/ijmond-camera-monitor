@@ -402,23 +402,41 @@ rsync -av "USER_NAME_PRODUCTION@SERVER_ADDRESS_PRODUCTION:/tmp/ijmond_camera_mon
 # For specifying a port number
 rsync -av -e "ssh -p PORT_NUMBER" "USER_NAME_PRODUCTION@SERVER_ADDRESS_PRODUCTION:/tmp/ijmond_camera_monitor_production.out" "/tmp/"
 ```
-Import the dumped production database file to the staging database.
+Import the dumped production database file to the staging database. Notice that you need to stop the service first to prevent an error that the database is being accessed by other users.
 ```sh
+# For Ubuntu, stop the service
+sudo systemctl stop ijmond-camera-monitor-staging
+
 # For Ubuntu
 sudo -u postgres psql postgres
 # For Mac OS
 psql postgres
 
-DROP DATABASE ijmond_camera_monitor_staging;
-CREATE DATABASE ijmond_camera_monitor_staging OWNER ijmond_camera_monitor;
-\q
+# Drop the old database
+> DROP DATABASE ijmond_camera_monitor_staging;
+> CREATE DATABASE ijmond_camera_monitor_staging OWNER ijmond_camera_monitor;
+> \q
+
+sh db.sh upgrade
 
 # For Ubuntu
-sudo -u postgres pg_dump -d ijmond_camera_monitor_staging < /tmp/ijmond_camera_monitor_production.out
+sudo -u postgres psql postgres -d ijmond_camera_monitor_staging
+# For Mac OS
+psql postgres -d ijmond_camera_monitor_staging
+
+# Drop existing database schema to prevent conflicts
+> DROP SCHEMA public CASCADE;
+> CREATE SCHEMA public;
+> GRANT ALL ON SCHEMA public TO postgres;
+> GRANT ALL ON SCHEMA public TO public;
+
+# For Ubuntu
+sudo -u postgres psql -d ijmond_camera_monitor_staging < /tmp/ijmond_camera_monitor_production.out
 # For Mac OS
 psql -d ijmond_camera_monitor_staging < /tmp/ijmond_camera_monitor_production.out
 
-sh db.sh upgrade
+# For Ubuntu, start the service
+sudo systemctl start ijmond-camera-monitor-staging
 ```
 We provide a script to backup the database:
 ```sh
