@@ -74,6 +74,7 @@
   }
 
   function onUserIdChangeSuccess(new_user_id) {
+    $("#review-user").prop("href", "label-gallery.html" + "?user_id=" + new_user_id);
     if (is_first_time) {
       is_first_time = false;
       $next = $("#next");
@@ -81,13 +82,8 @@
         nextBatch();
       });
       nextBatch();
-      google_account_dialog.isAuthenticatedWithGoogle({
-        success: function (is_signed_in) {
-          if (!is_signed_in) {
-            google_account_dialog.getDialog().dialog("open");
-          }
-        }
-      });
+      google_account_dialog.isAuthenticatedWithGoogle();
+      console.log("User ID:", new_user_id);
     } else {
       // Each video batch is signed with the user id
       // So we need to load a new batch after the user id changes
@@ -184,6 +180,7 @@
     //  video_labeling_tool: video_labeling_tool
     //});
     ga_tracker = new edaplotjs.GoogleAnalyticsTracker({
+      consent: true, // we only run this function after the user gives consent
       ready: function (ga_obj) {
         google_account_dialog.isAuthenticatedWithGoogle({
           success: function (is_signed_in) {
@@ -218,5 +215,26 @@
     });
   }
 
-  $(init);
+  function consent() {
+    var widgets = new edaplotjs.Widgets();
+    var $dialog_consent = widgets.createCustomDialog({
+      selector: "#dialog-consent",
+      action_text: "Ik ga akkoord",
+      reverse_button_positions: true,
+      show_close_button: false,
+      full_width_button: true,
+      close_dialog_on_cancel: false,
+      action_callback: function () {
+        $(".content-container").css("visibility", "visible");
+        init();
+      },
+      cancel_text: "Nee, ga naar homepage",
+      cancel_callback: function () {
+        window.location.href = "index.html";
+      }
+    });
+    $dialog_consent.dialog("open");
+  }
+
+  $(consent);
 })();

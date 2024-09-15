@@ -38,7 +38,7 @@
 
 <body>
   <div class="menu-container"></div>
-  <div class="content-container">
+  <div class="content-container" style="visibility: hidden;">
     <div class="content">
       <div class="content-table flex-column">
         <div class="flex-row">
@@ -50,6 +50,9 @@
               Als het kader niet goed past bij de rookuitstoot, <span class="custom-text-danger-dark-theme">klik en versleep dan de hoeken van het kader in rode kleur om het aan te passen</span>.
               Als er geen rookemissies zijn in de kader, klik dan op de knop "Verwijder kader" om het vakje te verwijderen.
             </p>
+            <div class="control-group">
+              <a id="review-user" class="custom-button-flat stretch-on-mobile large" href="" target="_blank">Mijn Bijdrage</a>
+            </div>
             <p class="text">
               <span class="custom-text-info-dark-theme">
                 Let op: Als er meerdere dozen moeten zijn (vanwege meerdere rookemissies), controleer dan alleen de rookuitstoot in het oorspronkelijke kader (en niet de andere gebieden).
@@ -69,6 +72,11 @@
         </div>
       </div>
     </div>
+  </div>
+  <div id="dialog-consent" title="Toestemming" data-role="none">
+    <p>
+      We hebben uw toestemming nodig om Google Analytics anoniem te gebruiken om de kwaliteit van de gegevens te controleren en de labels van meerdere gebruikers te combineren (<a href="consent.html">lees meer</a>).
+    </p>
   </div>
 </body>
 

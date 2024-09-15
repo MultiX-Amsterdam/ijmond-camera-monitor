@@ -23,6 +23,7 @@
     var GA_MEASUREMENT_ID = getGoogleAnalyticsId();
     var isGoogleAnalyticsActive = false;
     var thisObj = this;
+    var consent = safeGet(settings["consent"], false);
 
     /**
      * Get the measurement ID of the Google Analytics tracker.
@@ -104,19 +105,31 @@
           "dimension3": "custom_timestamp"
         }
       });
-      // To comply with GDPR, we need to disable all the consent by default.
-      // We will only enable some features when users specifically give consent.
-      // TODO: we need to implement a consent banner
-      gtag("consent", "default", {
-        "ad_storage": "denied",
-        "ad_user_data": "denied",
-        "ad_personalization": "denied",
-        "analytics_storage": "denied",
-        "functionality_storage": "denied",
-        "personalization_storage": "denied",
-        "security_storage": "granted", // necessary cookies for security purposes
-        "wait_for_update": 500
-      });
+      if (consent) {
+        gtag("consent", "default", {
+          "ad_storage": "denied",
+          "ad_user_data": "denied",
+          "ad_personalization": "denied",
+          "analytics_storage": "granted", // we need this to identify anonymous users across sessions
+          "functionality_storage": "denied",
+          "personalization_storage": "denied",
+          "security_storage": "granted", // necessary cookies for security purposes
+          "wait_for_update": 500
+        });
+      } else {
+        // To comply with GDPR, we need to disable all the consent by default.
+        // We will only enable some features when users specifically give consent.
+        gtag("consent", "default", {
+          "ad_storage": "denied",
+          "ad_user_data": "denied",
+          "ad_personalization": "denied",
+          "analytics_storage": "denied",
+          "functionality_storage": "denied",
+          "personalization_storage": "denied",
+          "security_storage": "granted", // necessary cookies for security purposes
+          "wait_for_update": 500
+        });
+      }
       gtag("get", GA_MEASUREMENT_ID, "client_id", function (gaClientId) {
         clientId = "ga." + gaClientId;
         gtag("get", GA_MEASUREMENT_ID, "session_id", function (gaSessionId) {

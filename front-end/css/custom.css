@@ -45,6 +45,11 @@ body,
   font-weight: normal;
 }
 
+.content-table h1 {
+  color: white;
+  font-weight: normal;
+}
+
 .content-table ul {
   color: white;
   font-size: 18px;
@@ -509,6 +514,10 @@ body,
 .home-image {
   background-image: url("../img/home-image.png");
   min-height: 300px;
+}
+
+#review-community {
+  display: none;
 }
 
 @media screen and (min-width: 900px) {

@@ -1,0 +1,96 @@
+<!doctype html>
+<html>
+
+<head>
+  <title>IJmondCAM</title>
+  <meta charset="utf-8" name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" media="screen" rel="stylesheet" type="text/css" />
+  <link href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css" media="screen" rel="stylesheet" type="text/css" />
+  <link href="css/frame.css" media="screen" rel="stylesheet" type="text/css" />
+  <link href="css/controls.css" media="screen" rel="stylesheet" type="text/css" />
+  <link href="css/widgets.css" media="screen" rel="stylesheet" type="text/css" />
+  <link href="css/custom.css" media="screen" rel="stylesheet" type="text/css" />
+  <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+  <link href='https://fonts.googleapis.com/css?family=Open+Sans+Condensed:300,700' rel='stylesheet' type='text/css'>
+  <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700" rel="stylesheet">
+  <!-- Start for Google Sign-In -->
+  <script src="https://accounts.google.com/gsi/client"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jwt-decode@3/build/jwt-decode.min.js"></script>
+  <!-- End for Google Sign-In -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+  <script src="js/widgets.js"></script>
+  <script src="js/menu.js"></script>
+  <script src="js/Util.js"></script>
+  <script src="js/GoogleAnalyticsTracker.js"></script>
+  <script src="js/GoogleAccountDialog.js"></script>
+  <script src="js/task.js"></script>
+</head>
+
+<body>
+  <div class="menu-container"></div>
+  <div class="content-container">
+    <div class="content">
+      <div class="content-table flex-column">
+        <div class="flex-row">
+          <div class="flex-item flex-column">
+            <h1 class="">Geïnformeerde Toestemming</h1>
+            <h3 class="add-top-margin custom-text-info-dark-theme">Doel van het onderzoek</h3>
+            <hr class="custom-text-info-dark-theme">
+            <p class="text">
+              Hierbij bent u uitgenodigd om deel te nemen aan een onderzoek uitgevoerd door de <a href="https://ivi.uva.nl/research/multimedia-analytics-lab-amsterdam-multix.html" target="_blank">Multimedia Analytics Lab</a> aan het Universiteit van Amsterdam.
+              Het doel van het onderzoek is om te kijken in hoeverre onze toepassing ervoor kan zorgen dat burgers de luchtkwaliteit in lokale gebieden kunnen monitoren.
+            </p>
+            <h3 class="add-top-margin custom-text-info-dark-theme">Onderzoeksprocedure</h3>
+            <hr class="custom-text-info-dark-theme">
+            <p class="text">
+              Voor het onderzoek wordt je gevraagd om gegevens te labelen en feedback te geven op de output van het AI-model.
+            </p>
+            <h3 class="add-top-margin custom-text-info-dark-theme">Voordelen en risico's van deelnemen</h3>
+            <hr class="custom-text-info-dark-theme">
+            <p class="text">
+              De mogelijke risico's van dit onderzoek zullen niet groter zijn dan de risico's in het dagelijks leven rondom privacy.
+              Hierbij zijn er geen directe voordelen voor u persoonlijk, maar zorgt dit onderzoek ervoor dat er meer kennis beschikbaar is binnen de samenleving rondom het monitoren van de luchtkwaliteit.
+            </p>
+            <h3 class="add-top-margin custom-text-info-dark-theme">Procedure van het terugtrekken uit het onderzoek</h3>
+            <hr class="custom-text-info-dark-theme">
+            <p class="text">
+              Uw deelname aan dit onderzoek is volledig op vrijwillige basis, wat betekent dat u kan stoppen wanneer u dat zou willen.
+              Je gegevens zijn anoniem en hebben direct invloed op de logica van het combineren van gegevenslabels van meerdere gebruikers.
+              We kunnen je gegevens dus niet verwijderen zodra je gegevenslabels hebt bijgedragen.
+            </p>
+            <h3 class="add-top-margin custom-text-info-dark-theme">Dataverzameling en -verwerking</h3>
+            <hr class="custom-text-info-dark-theme">
+            <p class="text">
+              Binnen dit onderzoek zullen wij geen persoonlijke identificatiegegevens verzamelen.
+              Alleen de anonieme gegevens worden gebruikt voor het verwerken.
+              We gebruiken Google Analytics anoniem om de kwaliteit van de gegevens te controleren en labels van meerdere gebruikers te combineren.
+              In meer detail schakelen we de toestemming "analytics_storage" in Google Analytics in (<a href="https://support.google.com/tagmanager/answer/10718549?hl=nl" target="_blank">lees meer</a>).
+            </p>
+            <h3 class="add-top-margin custom-text-info-dark-theme">Data gebruik en privacy</h3>
+            <hr class="custom-text-info-dark-theme">
+            <p class="text">
+              De analyseresultaten en de methodologie voor het verzamelen van gegevens kunnen worden gepubliceerd in onderzoeksartikelen of technische rapporten.
+              Hierbij streven wij naar publicatie met open toegang voor iedereen.
+              Gedurende het onderzoek zal de projectleider toezien op de toegang tot de gegevens en eventuele verzoeken voor toegang van externe partijen.
+              Het delen van gegevens met anderen zal alleen gebeuren op zo een manier dat de deelnemers niet geïdentificeerd kunnen worden.
+            </p>
+            <h3 class="add-top-margin custom-text-info-dark-theme">Geef uw toestemming</h3>
+            <hr class="custom-text-info-dark-theme">
+            <p class="text">
+              Hierbij heb ik de onderzoeksinformatie gelezen en begrepen.
+              Ik geef vrijwillig toestemming voor deelname aan dit onderzoek en begrijp dat ik kan weigeren vragen te beantwoorden en dat ik me op elk moment zonder opgaaf van reden uit het onderzoek kan terugtrekken.
+              Ik begrijp dat deelname aan het onderzoek gepaard gaat met het labelen van gegevens.
+              Ik begrijp dat Google Analytics wordt ingeschakeld om het onderzoek te helpen wanneer ik interactie heb met de tool om mijn gegevens te verstrekken.
+              Ik begrijp dat de informatie die ik geef, zal worden gebruikt voor gegevensanalyse en dat de anonieme gegevens en de resultaten openbaar kunnen worden gemaakt in onderzoeksresultaten, waaronder academische artikelen, technische rapporten en online artikelen.
+              Ik ga ermee akkoord dat de gegevens die ik in het onderzoek heb verstrekt, kunnen worden geciteerd in onderzoeksresultaten.
+              Ik geef toestemming om de niet-identificeerbare gegevens die ik aanlever te archiveren in een geanonimiseerde dataset, zodat deze gebruikt kunnen worden voor toekomstig onderzoek en leren.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+
+</html>

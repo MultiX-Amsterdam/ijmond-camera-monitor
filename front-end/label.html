@@ -39,7 +39,7 @@
 
 <body>
   <div class="menu-container"></div>
-  <div class="content-container">
+  <div class="content-container" style="visibility: hidden;">
     <div class="content">
       <div class="content-table flex-column">
         <div class="flex-row">
@@ -53,6 +53,9 @@
                 <!-- You have <span class="custom-text-info-dark-theme">reviewed <span class="user-raw-score-text">[...]</span> pages</span>, of which <span class="custom-text-info-dark-theme"><span class="user-score-text">[...]</span> have passed the quality check</span> (<a href="faq.html#q5" target="_blank">learn more</a>). -->
               </span>
             </p>
+            <div class="control-group">
+              <a id="review-user" class="custom-button-flat stretch-on-mobile large" href="" target="_blank">Mijn Bijdrage</a>
+            </div>
             <p class="text" id="quality-check-passed-text">
               <span class="custom-text-primary-dark-theme">(Goed gedaan! Uw vorige review is door de test heen gekomen!)</span>
               <!-- <span class="custom-text-primary-dark-theme">(Good job! Your previous batch passed the system's quality check!)</span> -->
@@ -93,6 +96,11 @@
   <div id="tutorial-prompt-dialog" class="custom-dialog-large" title="Tutorial" data-role="none">
     <p>Found smoke labeling difficult? Try our tutorial!</p>
     <button id="take-tutorial-button" class="custom-button">Take Tutorial</button>
+  </div>
+  <div id="dialog-consent" title="Toestemming" data-role="none">
+    <p>
+      We hebben uw toestemming nodig om Google Analytics anoniem te gebruiken om de kwaliteit van de gegevens te controleren en de labels van meerdere gebruikers te combineren (<a href="consent.html">lees meer</a>).
+    </p>
   </div>
 </body>
 

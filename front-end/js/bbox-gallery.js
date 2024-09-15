@@ -248,6 +248,7 @@
           google_account_dialog.isAuthenticatedWithGoogle({
             success: function (is_signed_in, google_id_token) {
               if (is_signed_in) {
+                $("#review-community").show();
                 util.login({
                   google_id_token: google_id_token
                 }, {
@@ -255,6 +256,7 @@
                   complete: onLoginComplete
                 });
               } else {
+                $("#review-community").hide();
                 util.login({
                   client_id: ga_obj.getClientId()
                 }, {
@@ -265,6 +267,7 @@
             },
             error: function (error) {
               console.error("Error with Google sign-in: ", error);
+              $("#review-community").hide();
               util.login({
                 client_id: ga_obj.getClientId()
               }, {
