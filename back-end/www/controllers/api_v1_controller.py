@@ -737,7 +737,7 @@ def save_to_cache(data):
 
 
 @bp.route("/cached_smoke", methods=["GET"])
-def proxy():
+def cached_smoke():
     # URL of the external API
     api_url = "https://spotdegifwolk.nl/api/clouds"
 
