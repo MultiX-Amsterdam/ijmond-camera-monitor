@@ -188,13 +188,13 @@
     // Update date and time information
     var src_url = util.buildVideoURL(v);
     var $i = $item.children(".label-control").find("i").removeClass();
-    var date_str = (new Date(parseInt(v["start_time"]) * 1000)).toLocaleString("en-GB", {
+    var date_str = (new Date(parseInt(v["start_time"]) * 1000)).toLocaleString("nl-NL", {
       timeZone: "Europe/Amsterdam",
-      hour: "2-digit",
-      minute: "2-digit",
-      year: "numeric",
-      month: "2-digit",
-      day: "2-digit",
+      day: 'numeric', // Day of the month (e.g., 25)
+      month: 'long', // Full month name (e.g., juni)
+      year: 'numeric', // Full year (e.g., 2024)
+      hour: '2-digit', // Hour (e.g., 15)
+      minute: '2-digit', // Minutes (e.g., 45)
       hour12: false
     });
     $($i.get(0)).html("<a target='_blank' href='" + util.buildVideoPanoramaURL(v) + "'>" + date_str + "</a>");

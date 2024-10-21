@@ -279,7 +279,6 @@ def jsonify_data(data, sign=False, batch_id=None, total=None, is_admin=False, us
             data_json = videos_schema_with_detail.dump(data) if with_detail else videos_schema.dump(data)
     else:
         if is_admin:
-            print("yooo")
             data_json = segmentations_schema_is_admin.dump(data)
         else:
             data_json = segmentations_schema_with_detail.dump(data) if with_detail else segmentations_schema.dump(data)
@@ -290,7 +289,6 @@ def jsonify_data(data, sign=False, batch_id=None, total=None, is_admin=False, us
         if sign:
             data_id_list.append(data_json[i]["id"])
     return_json = {"data": data_json}
-    print(return_json)
     if sign:
         # TODO: change video_token to something like content_token to make it more generaliable
         return_json["video_token"] = encode_video_jwt(video_id_list=data_id_list, batch_id=batch_id, user_id=user_id)
@@ -713,7 +711,6 @@ def get_segmentation_masks(labels, allow_user_id=False, only_admin=False, use_ad
             # TODO: implement the SegmentationView table and the operations
             #if not is_researcher: # ignore researcher
             #    create_views_from_video_batch(q.items, user_jwt, query_type=0)
-            print(q.items)
             return jsonify_data(q.items, total=q.total, is_admin=is_admin, with_detail=True, is_video=False)
     else:
         q = get_pos_segmentation_query_by_user_id(user_id, page_number, page_size, is_researcher)
