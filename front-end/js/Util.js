@@ -364,6 +364,99 @@
     this.isMobile = function () {
       return isMobileDevice;
     };
+
+    // Check if user consent is valid or expired
+    this.checkUserConsent = function () {
+      const consentTime = localStorage.getItem("userConsentTime");
+      if (consentTime) {
+        const now = Date.now();
+        const oneYearInMs = 365 * 24 * 60 * 60 * 1000;
+        if (now - consentTime < oneYearInMs) {
+          // Consent is still valid
+          return true;
+        } else {
+          // Consent is expired
+          localStorage.removeItem("userConsentTime");
+          return false;
+        }
+      }
+      // If no consent time is stored, this means no user consent
+      return false;
+    }
+
+    // Create the user consent dialog
+    this.createUserConsentDialog = function (after_action) {
+      var widgets = new edaplotjs.Widgets();
+      $("#dialog-consent").remove();
+      $("<div>", {
+        "id": "dialog-consent",
+        "title": "Toestemming",
+        "data-role": "none",
+        "html": "<p>We hebben uw toestemming nodig om Google Analytics anoniem te gebruiken om de kwaliteit van de gegevens te controleren en de labels van meerdere gebruikers te combineren (<a href='consent.html'>lees meer</a>).</p>"
+      }).appendTo("body");
+      var $dialog_consent = widgets.createCustomDialog({
+        selector: "#dialog-consent",
+        action_text: "Ik ga akkoord",
+        reverse_button_positions: true,
+        show_close_button: false,
+        full_width_button: true,
+        close_dialog_on_cancel: false,
+        action_callback: function () {
+          localStorage.setItem("userConsentTime", Date.now());
+          if (typeof after_action === "function") {
+            after_action();
+          }
+        },
+        cancel_text: "Nee, ga naar homepage",
+        cancel_callback: function () {
+          window.location.href = "index.html";
+        }
+      });
+      return $dialog_consent;
+    }
+
+    // Create the user consent management dialog
+    this.createUserConsentManagementDialog = function (after_action) {
+      var widgets = new edaplotjs.Widgets();
+      const consentTime = localStorage.getItem("userConsentTime");
+      var dialogHTML;
+      if (consentTime) {
+        const dateObject = new Date(parseInt(consentTime));
+        dialogHTML = "<p>U heeft op " + dateObject.toLocaleString() + " toestemming gegeven (<a href='consent.html'>lees meer</a>).</p>"
+      } else {
+        dialogHTML = "<p>U heeft geen toestemming gegeven (<a href='consent.html'>lees meer</a>).</p>"
+      }
+      $("#dialog-consent-manage").remove();
+      $("<div>", {
+        "id": "dialog-consent-manage",
+        "title": "Toestemming",
+        "data-role": "none",
+        "html": dialogHTML
+      }).appendTo("body");
+      var $dialog_consent_manage;
+      if (consentTime) {
+        $dialog_consent_manage = widgets.createCustomDialog({
+          selector: "#dialog-consent-manage",
+          action_text: "Toestemming intrekken",
+          full_width_button: true,
+          action_callback: function () {
+            localStorage.removeItem("userConsentTime");
+            if (typeof after_action === "function") {
+              after_action();
+            }
+          },
+          cancel_text: "Niets doen"
+        });
+      } else {
+        $dialog_consent_manage = widgets.createCustomDialog({
+          selector: "#dialog-consent-manage",
+          has_action_callback: false,
+          full_width_button: true,
+          cancel_text: "Niets doen"
+        });
+      }
+      return $dialog_consent_manage;
+    }
   };
 
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////

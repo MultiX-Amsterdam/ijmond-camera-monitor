@@ -99,6 +99,7 @@
   }
 
   function init() {
+    $(".content-container").css("visibility", "visible");
     util.addVideoClearEvent();
     $quality_check_passed_text = $("#quality-check-passed-text");
     $user_score_text = $(".user-score-text");
@@ -192,24 +193,17 @@
   }
 
   function consent() {
-    var widgets = new edaplotjs.Widgets();
-    var $dialog_consent = widgets.createCustomDialog({
-      selector: "#dialog-consent",
-      action_text: "Ik ga akkoord",
-      reverse_button_positions: true,
-      show_close_button: false,
-      full_width_button: true,
-      close_dialog_on_cancel: false,
-      action_callback: function () {
-        $(".content-container").css("visibility", "visible");
-        init();
-      },
-      cancel_text: "Nee, ga naar homepage",
-      cancel_callback: function () {
-        window.location.href = "index.html";
-      }
-    });
-    $dialog_consent.dialog("open");
+    // Check user consent
+    if (util.checkUserConsent()) {
+      init();
+    } else {
+      var $dialog_consent = util.createUserConsentDialog(
+        function () {
+          init();
+        }
+      );
+      $dialog_consent.dialog("open");
+    }
   }
 
   $(consent);

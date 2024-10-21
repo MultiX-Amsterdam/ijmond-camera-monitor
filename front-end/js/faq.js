@@ -33,6 +33,10 @@
     });
     window.addEventListener("hashchange", handleHashChange, false);
     handleHashChange();
+    $("#manage-consent").on("click", function () {
+      var $dialog_manage_consent = util.createUserConsentManagementDialog();
+      $dialog_manage_consent.dialog("open");
+    });
   }
   $(init);
 })();

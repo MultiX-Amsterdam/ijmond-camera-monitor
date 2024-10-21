@@ -90,7 +90,6 @@
       day: "2-digit",
       hour12: false
     });
-    console.log(v)
     $($i.get(0)).html("<a target='_blank' href='" + util.segmentationFeedbackToVideoPanoramaURL(v) + "'>" + date_str + "</a>");
     var $img = $item.find("img");
     $img.prop("src", src_url);
