@@ -511,6 +511,7 @@
     if (util.browserSupported()) {
       showGalleryLoadingMsg();
       var ga_tracker = new edaplotjs.GoogleAnalyticsTracker({
+        consent: util.checkUserConsent(),
         ready: function (ga_obj) {
           google_account_dialog.isAuthenticatedWithGoogle({
             success: function (is_signed_in, google_id_token) {

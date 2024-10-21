@@ -5,7 +5,6 @@ from sqlalchemy import func
 from sqlalchemy import and_
 from sqlalchemy import or_
 from sqlalchemy import desc
-from sqlalchemy.orm import load_only
 from random import shuffle
 from models.model import db
 from models.model import SegmentationMask
@@ -143,22 +142,22 @@ def get_segmentation_query(labels, page_number, page_size, use_admin_label_state
     The query object of the SegmentationMask table.
     """
     page_size = config.MAX_PAGE_SIZE if page_size > config.MAX_PAGE_SIZE else page_size
-    q = None
+    q = SegmentationMask.query
     if type(labels) == list:
         if len(labels) > 1:
             if use_admin_label_state:
-                q = SegmentationMask.query.filter(SegmentationMask.label_state_admin.in_(labels))
+                q = q.filter(SegmentationMask.label_state_admin.in_(labels))
             else:
                 # Exclude gold standards and bad labels for normal request
-                q = SegmentationMask.query.filter(and_(
+                q = q.filter(and_(
                     SegmentationMask.label_state.in_(labels),
                     SegmentationMask.label_state_admin.notin_(m.bad_labels_seg + m.gold_labels_seg)))
         elif len(labels) == 1:
             if use_admin_label_state:
-                q = SegmentationMask.query.filter(SegmentationMask.label_state_admin==labels[0])
+                q = q.filter(SegmentationMask.label_state_admin==labels[0])
             else:
                 # Exclude gold standards and bad labels for normal request
-                q = SegmentationMask.query.filter(and_(
+                q = q.filter(and_(
                     SegmentationMask.label_state==labels[0],
                     SegmentationMask.label_state_admin.notin_(m.bad_labels_seg + m.gold_labels_seg)))
     elif type(labels) == str:
@@ -166,7 +165,7 @@ def get_segmentation_query(labels, page_number, page_size, use_admin_label_state
         # Researcher labels override citizen labels
         if labels == "pos":
             # Exclude gold standards and bad labels for normal request
-            q = SegmentationMask.query.filter(and_(
+            q = q.filter(and_(
                 SegmentationMask.label_state_admin.notin_(m.bad_labels_seg + m.gold_labels_seg),
                 or_(
                     SegmentationMask.label_state_admin.in_(m.pos_labels_seg),
@@ -175,7 +174,7 @@ def get_segmentation_query(labels, page_number, page_size, use_admin_label_state
                         SegmentationMask.label_state.in_(m.pos_labels_seg)))))
         elif labels == "neg":
             # Exclude gold standards and bad labels for normal request
-            q = SegmentationMask.query.filter(and_(
+            q = q.filter(and_(
                 SegmentationMask.label_state_admin.notin_(m.bad_labels_seg + m.gold_labels_seg),
                 or_(
                     SegmentationMask.label_state_admin.in_(m.neg_labels_seg),

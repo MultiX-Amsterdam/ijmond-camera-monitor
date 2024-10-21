@@ -70,12 +70,13 @@ def update_segmentation_labels(labels, user_id, connection_id, batch_id, client_
     # Find the user
     user = User.query.filter(User.id==user_id).first()
     # Update batch data
+    is_admin_researcher = True if client_type == 0 else False
     batch_score = None
     if batch_id is not None and connection_id is not None:
         batch = SegmentationBatch.query.filter(SegmentationBatch.id==batch_id).first()
         batch.return_time = get_current_time()
         batch.connection_id = connection_id
-        if client_type != 0: # do not update the score for reseacher
+        if not is_admin_researcher: # do not update the score for reseacher
             batch_score = compute_segmentation_batch_score(segmentation_batch_hashed, labels)
             batch.score = batch_score
             batch.user_score = user.score
@@ -89,7 +90,7 @@ def update_segmentation_labels(labels, user_id, connection_id, batch_id, client_
         user_raw_score = user.raw_score + batch.num_unlabeled
         user.raw_score = user_raw_score
         # Update user score
-        if client_type != 0: # do not update the score for reseacher
+        if not is_admin_researcher: # do not update the score for reseacher
             user_score = user.score + batch_score
             user.score = user_score
         app.logger.info("Update user: %r" % user)
@@ -97,7 +98,7 @@ def update_segmentation_labels(labels, user_id, connection_id, batch_id, client_
         # Update labels
         for s in labels:
             bbox = s["relative_boxes"]
-            fc = bbox_to_feedback_code(bbox)
+            fc = bbox_to_feedback_code(bbox, is_researcher=is_admin_researcher)
             if bbox == None:
                 # This means the box looks good
                 x_bbox, y_bbox, h_bbox, w_bbox = None, None, None, None
@@ -109,12 +110,12 @@ def update_segmentation_labels(labels, user_id, connection_id, batch_id, client_
             feedback = create_feedback_label(s["id"], fc, x_bbox, y_bbox, w_bbox, h_bbox, user_id, batch_id)
             segmentation = segmentation_batch_hashed[s["id"]]
             segmentation.label_update_time = feedback.time
-            if client_type == 0: # admin researcher
+            if is_admin_researcher: # admin researcher
                 next_s = label_state_machine(segmentation.label_state_admin, fc, client_type)
             else: # normal user
                 next_s = label_state_machine(segmentation.label_state, fc, client_type)
             if next_s is not None:
-                if client_type == 0: # admin researcher
+                if is_admin_researcher: # admin researcher
                     # Researchers should not override the labels provided by normal users
                     # Because we need to compare the reliability of the labels provided by normal users
                     segmentation.label_state_admin = next_s
@@ -201,10 +202,10 @@ def compute_segmentation_batch_score(segmentation_batch_hashed, labels, threshol
     return max(len(labels) - config.GOLD_STANDARD_IN_BATCH_SEG, 0)
 
 
-def bbox_to_feedback_code(bbox):
+def bbox_to_feedback_code(bbox, is_researcher=False):
     """
     This function converts a bounding box feedback to a feedback code.
-    The feedback code will be passed to the label_state_machine.
+    The feedback code will be passed to the `label_state_machine` function.
 
     Parameters
     ----------
@@ -222,21 +223,29 @@ def bbox_to_feedback_code(bbox):
         Height of the box in pixels.
     bbox.relative_boxes.w_bbox : int
         Width of the box in pixels.
+    is_researcher : bool
+        Is the researcher role or not.
 
     Returns
     ----------
     label : int
         Below is the definition of label:
-        0 : One person checked the box; the box is good
-        1 : One person checked the box; the person edited the box
-        2 : One person checked the box; the person removed the box due to no smoke
+        0 : One lay person checked the box; the box is good
+        1 : One lay person checked the box; the person edited the box
+        2 : One lay person checked the box; the person removed the box due to no smoke
+        3 : One researcher checked the box; the box is good
+        4 : One researcher checked the box; the person edited the box
+        5 : One researcher checked the box; the person removed the box due to no smoke
     """
     if bbox == None:
-        return 0
+        if is_researcher: return 3
+        else: return 0
     elif bbox == False:
-        return 2
+        if is_researcher: return 5
+        else: return 2
     elif type(bbox) == dict:
-        return 1
+        if is_researcher: return 4
+        else: return 1
     else:
         return None
 
@@ -250,10 +259,8 @@ def label_state_machine(s, label, client_type):
     s : int
         The current state (see the definition of the states below).
     label : int
-        The labeling result.
-        0 means the box is good.
-        1 means the box needs editing.
-        2 means the box should be removed.
+        Feedback code from the `bbox_to_feedback_code` function.
+        This can also be gold standards (16, 17, 18), no data (-1), or bad data (-2).
     client_type : int
         Type of the client, see the User table.
 
@@ -307,9 +314,9 @@ def label_state_machine(s, label, client_type):
     next_s = None
     # Researchers
     if client_type == 0:
-        if label == 0: next_s = 0
-        elif label == 1: next_s = 1
-        elif label == 2: next_s = 2
+        if label == 3: next_s = 3
+        elif label == 4: next_s = 4
+        elif label == 5: next_s = 5
         elif label == 16: next_s = 16
         elif label == 17: next_s = 17
         elif label == 18: next_s = 18

@@ -3,6 +3,7 @@
 from flask_marshmallow import Marshmallow
 from models.model import Video
 from models.model import SegmentationMask
+from models.model import SegmentationFeedback
 
 # Use Marshmallow to simplify object–relational mapping
 ma = Marshmallow()
@@ -10,7 +11,7 @@ ma = Marshmallow()
 
 class VideoSchema(ma.SQLAlchemyAutoSchema):
     """
-    The schema for the video table, used for jsonify (for normal users in label mode).
+    The schema for the Video table, used for jsonify (for normal users in label mode).
     """
     class Meta:
         model = Video # the class for the model
@@ -21,7 +22,7 @@ videos_schema = VideoSchema(many=True)
 
 class VideoSchemaWithDetail(ma.SQLAlchemyAutoSchema):
     """
-    The schema for the video table, used for jsonify (for normal users in gallery mode).
+    The schema for the Video table with detail, used for jsonify (for normal users in gallery mode).
     """
     class Meta:
         model = Video # the class for the model
@@ -32,7 +33,7 @@ videos_schema_with_detail = VideoSchemaWithDetail(many=True)
 
 class VideoSchemaIsAdmin(ma.SQLAlchemyAutoSchema):
     """
-    The schema for the video table, used for jsonify (for admin users).
+    The schema for the Video table with detail, used for jsonify (for admin users).
     """
     class Meta:
         model = Video # the class for the model
@@ -41,9 +42,19 @@ class VideoSchemaIsAdmin(ma.SQLAlchemyAutoSchema):
 videos_schema_is_admin = VideoSchemaIsAdmin(many=True)
 
 
+class SegmentationFeedbackSchema(ma.SQLAlchemyAutoSchema):
+    """
+    The schema for the SegmentationFeedback table, used for jsonify.
+    """
+    class Meta:
+        model = SegmentationFeedback # the class for the model
+        load_instance = True
+        fields = ("x_bbox", "y_bbox", "w_bbox", "h_bbox", "feedback_code")
+
+
 class SegmentationSchema(ma.SQLAlchemyAutoSchema):
     """
-    The schema for the video table, used for jsonify (for normal users in label mode).
+    The schema for the SegmentationMask table, used for jsonify (for normal users in label mode).
     """
     class Meta:
         model = SegmentationMask # the class for the model
@@ -55,26 +66,30 @@ segmentations_schema = SegmentationSchema(many=True)
 
 class SegmentationSchemaWithDetail(ma.SQLAlchemyAutoSchema):
     """
-    The schema for the video table, used for jsonify (for normal users in gallery mode).
+    The schema for the SegmentationMask table with detail, used for jsonify (for normal users in gallery mode).
     """
+    feedback = ma.Nested(SegmentationFeedbackSchema, many=True)
     class Meta:
         model = SegmentationMask # the class for the model
         load_instance = True
+        include_relationships = True
         fields = ("id", "mask_file_name", "image_file_name", "frame_number", "file_path", "frame_timestamp",
                   "x_bbox", "y_bbox", "w_bbox", "h_bbox", "w_image", "h_image", "url_part",
-                  "video_id")
+                  "video_id", "feedback")
 segmentations_schema_with_detail = SegmentationSchemaWithDetail(many=True)
 
 
 class SegmentationSchemaIsAdmin(ma.SQLAlchemyAutoSchema):
     """
-    The schema for the video table, used for jsonify (for admin users).
+    The schema for the SegmentationMask table with detail, used for jsonify (for admin users in galley mode).
     """
+    feedback = ma.Nested(SegmentationFeedbackSchema, many=True)
     class Meta:
         model = SegmentationMask # the class for the model
         load_instance = True
+        include_relationships = True
         fields = ("id", "mask_file_name", "image_file_name", "frame_number", "file_path", "frame_timestamp",
                   "x_bbox", "y_bbox", "w_bbox", "h_bbox", "w_image", "h_image", "url_part",
-                  "video_id",
+                  "video_id", "feedback",
                   "label_state", "label_state_admin", "label_update_time")
 segmentations_schema_is_admin = SegmentationSchemaIsAdmin(many=True)

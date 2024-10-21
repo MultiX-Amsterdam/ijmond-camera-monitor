@@ -279,6 +279,7 @@ def jsonify_data(data, sign=False, batch_id=None, total=None, is_admin=False, us
             data_json = videos_schema_with_detail.dump(data) if with_detail else videos_schema.dump(data)
     else:
         if is_admin:
+            print("yooo")
             data_json = segmentations_schema_is_admin.dump(data)
         else:
             data_json = segmentations_schema_with_detail.dump(data) if with_detail else segmentations_schema.dump(data)
@@ -289,6 +290,7 @@ def jsonify_data(data, sign=False, batch_id=None, total=None, is_admin=False, us
         if sign:
             data_id_list.append(data_json[i]["id"])
     return_json = {"data": data_json}
+    print(return_json)
     if sign:
         # TODO: change video_token to something like content_token to make it more generaliable
         return_json["video_token"] = encode_video_jwt(video_id_list=data_id_list, batch_id=batch_id, user_id=user_id)
