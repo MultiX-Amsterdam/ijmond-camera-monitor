@@ -389,7 +389,9 @@ This section assumes that you want to dump the production database to a file and
 ssh USER_NAME_PRODUCTION@SERVER_ADDRESS_PRODUCTION
 
 # For Ubuntu
+cd /tmp/
 sudo -u postgres pg_dump -d ijmond_camera_monitor_production > /tmp/ijmond_camera_monitor_production.out
+
 # For Mac OS
 pg_dump -d ijmond_camera_monitor_production > /tmp/ijmond_camera_monitor_production.out
 
@@ -405,6 +407,7 @@ rsync -av -e "ssh -p PORT_NUMBER" "USER_NAME_PRODUCTION@SERVER_ADDRESS_PRODUCTIO
 Import the dumped production database file to the staging database. Notice that you need to stop the service first to prevent an error that the database is being accessed by other users.
 ```sh
 # For Ubuntu, stop the service
+# No need for doing this on Mac OS
 sudo systemctl stop ijmond-camera-monitor-staging
 
 # For Ubuntu
@@ -412,23 +415,26 @@ sudo -u postgres psql postgres
 # For Mac OS
 psql postgres
 
-# Drop the old database
+# Drop the old database and create a new one
 > DROP DATABASE ijmond_camera_monitor_staging;
 > CREATE DATABASE ijmond_camera_monitor_staging OWNER ijmond_camera_monitor;
 > \q
 
+# Upgrade the database to the newest migration
 sh db.sh upgrade
 
 # For Ubuntu
-sudo -u postgres psql postgres -d ijmond_camera_monitor_staging
+sudo -u postgres psql postgres
 # For Mac OS
-psql postgres -d ijmond_camera_monitor_staging
+psql postgres
 
 # Drop existing database schema to prevent conflicts
+> \c ijmond_camera_monitor_staging
 > DROP SCHEMA public CASCADE;
 > CREATE SCHEMA public;
 > GRANT ALL ON SCHEMA public TO postgres;
 > GRANT ALL ON SCHEMA public TO public;
+> \q
 
 # For Ubuntu
 sudo -u postgres psql -d ijmond_camera_monitor_staging < /tmp/ijmond_camera_monitor_production.out
@@ -436,6 +442,7 @@ sudo -u postgres psql -d ijmond_camera_monitor_staging < /tmp/ijmond_camera_moni
 psql -d ijmond_camera_monitor_staging < /tmp/ijmond_camera_monitor_production.out
 
 # For Ubuntu, start the service
+# No need for doing this on Mac OS
 sudo systemctl start ijmond-camera-monitor-staging
 ```
 We provide a script to backup the database:
