@@ -51,6 +51,14 @@
     // Add the date and time information
     var $dt = $("<p class='text-small-margin'><i></i></p>");
     $control.append($dt)
+    if (typeof user_id === "undefined") {
+      if (is_admin) {
+        var $seg_id = $("<p class='text-small-margin'><i></i></p>");
+        $control.append($seg_id);
+        var $link_to_video = $("<p class='text-small-margin'><i></i></p>");
+        $control.append($link_to_video);
+      }
+    }
     $item.append($control);
     return $item;
   }
@@ -72,7 +80,14 @@
       minute: '2-digit', // Minutes (e.g., 45)
       hour12: false
     });
+    v["video"]["url_root"] = v["url_root"];
     $($i.get(0)).html("<a target='_blank' href='" + util.segmentationFeedbackToVideoPanoramaURL(v) + "'>" + date_str + "</a>");
+    if (typeof user_id === "undefined") {
+      if (is_admin) {
+        $($i.get(1)).text("ID: " + v["video"]["id"]).addClass("custom-text-info-dark-theme");
+        $($i.get(2)).html("<a target='_blank' href='" + util.buildVideoURL(v["video"]) + "'>Link to Video</a>");
+      }
+    }
     var $img = $item.find("img");
     $img.prop("src", src_url);
 

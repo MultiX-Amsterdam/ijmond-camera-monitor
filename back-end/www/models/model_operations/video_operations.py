@@ -82,9 +82,12 @@ def query_video_batch(user_id, use_admin_label_state=False):
     if use_admin_label_state:
         # For admin researcher, do not add gold standards
         # Exclude the videos that were labeled by the same user
-        q = Video.query.filter(and_(
-            Video.label_state_admin.in_((-1, 0b11, 0b100, 0b101)),
-            Video.id.notin_(labeled_video_ids)))
+        q = Video.query.filter(
+                and_(
+                    Video.label_state_admin.in_((-1, 0b11, 0b100, 0b101)),
+                    Video.id.notin_(labeled_video_ids)
+                )
+            )
         return q.order_by(func.random()).limit(config.BATCH_SIZE).all()
     else:
         if config.GOLD_STANDARD_IN_BATCH > 0:

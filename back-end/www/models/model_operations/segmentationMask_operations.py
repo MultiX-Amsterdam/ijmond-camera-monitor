@@ -9,6 +9,7 @@ from random import shuffle
 from models.model import db
 from models.model import SegmentationMask
 from models.model import SegmentationFeedback
+from models.model import Video
 from app.app import app
 from config.config import config
 import models.model as m
@@ -79,13 +80,17 @@ def query_segmentation_batch(user_id, use_admin_label_state=False):
     """
     # Get the segmentation IDs labeled by the user before
     labeled_segmentation_ids = get_segmentation_ids_labeled_by_user(user_id)
+    seg_ids = None
     if use_admin_label_state:
         # For admin researcher, do not add gold standards
         # Exclude the segmentations that were labeled by the same user
-        q = SegmentationMask.query.filter(and_(
-            SegmentationMask.label_state_admin==-1),
-            SegmentationMask.id.notin_(labeled_segmentation_ids))
-        return q.order_by(func.random()).limit(config.BATCH_SIZE_SEG).all()
+        q = SegmentationMask.query.filter(
+                and_(
+                    SegmentationMask.label_state_admin==-1,
+                    SegmentationMask.id.notin_(labeled_segmentation_ids)
+                )
+            )
+        segmentations = q.order_by(func.random()).limit(config.BATCH_SIZE_SEG).all()
     else:
         if config.GOLD_STANDARD_IN_BATCH_SEG > 0:
             # Select gold standards (at least one bbox that needs editing and anothe one that should be removed to prevent spamming)
@@ -114,7 +119,36 @@ def query_segmentation_batch(user_id, use_admin_label_state=False):
         # Assemble the segmentation masks
         segmentations = gold_need_editing + gold_need_removed + not_labeled + partially_labeled
         shuffle(segmentations)
-        return segmentations
+
+    # Join the video table to get video data
+    return segmentatio_mask_join_video_table(segmentations)
+
+
+def segmentatio_mask_join_video_table(segmentations):
+    """
+    Join the segmentation records with the video table.
+
+    Parameters
+    ----------
+    segmentations : SegmentationMask
+        The SegmentationMask records.
+
+    Returns
+    -------
+    SegmentationMask
+        SegmentationMask records with the video field.
+    """
+    seg_ids = [s.id for s in segmentations]
+    joined_tuple = (
+            db.session.query(SegmentationMask, Video)
+            .filter(SegmentationMask.id.in_(seg_ids))
+            .join(Video, SegmentationMask.video_id == Video.id)
+        ).all()
+    seg_with_video = []
+    for seg_mask, video in joined_tuple:
+        seg_mask.video = video
+        seg_with_video.append(seg_mask)
+    return seg_with_video
 
 
 def get_segmentation_query(labels, page_number, page_size, use_admin_label_state=False):

@@ -409,8 +409,9 @@
 
     // Build the original video panarama URL from the segmentation feedback data
     this.segmentationFeedbackToVideoPanoramaURL = function (v) {
-      const url_part = v["file_path"].split("/")[1].split("-")[0];
-      var src_url = "https://www.youtube.com/watch?v=" + url_part;
+      var parts = v["file_path"].split("/")[1].split("-");
+      parts.pop();
+      var src_url = "https://www.youtube.com/watch?v=" + parts.join("-");
       return src_url;
     };
 

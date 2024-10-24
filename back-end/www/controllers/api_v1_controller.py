@@ -42,6 +42,7 @@ from models.model_operations.segmentationMask_operations import query_segmentati
 from models.model_operations.segmentationMask_operations import get_segmentation_query
 from models.model_operations.segmentationMask_operations import get_all_segmentations
 from models.model_operations.segmentationMask_operations import get_pos_segmentation_query_by_user_id
+from models.model_operations.segmentationMask_operations import segmentatio_mask_join_video_table
 from models.model_operations.segmentationFeedback_operations import update_segmentation_labels
 
 from models.schema import videos_schema_is_admin
@@ -810,17 +811,19 @@ def get_segmentation_masks(labels, allow_user_id=False, only_admin=False, use_ad
             return jsonify_data(get_all_segmentations(), is_admin=True, is_video=False)
         else:
             q = get_segmentation_query(labels, page_number, page_size, use_admin_label_state=use_admin_label_state)
+            joined_q = segmentatio_mask_join_video_table(q.items)
             # TODO: implement the SegmentationView table and the operations
             #if not is_researcher: # ignore researcher
             #    create_views_from_video_batch(q.items, user_jwt, query_type=0)
-            return jsonify_data(q.items, total=q.total, is_admin=is_admin, with_detail=True, is_video=False)
+            return jsonify_data(joined_q, total=q.total, is_admin=is_admin, with_detail=True, is_video=False)
     else:
         q = get_pos_segmentation_query_by_user_id(user_id, page_number, page_size, is_researcher)
+        joined_q = segmentatio_mask_join_video_table(q.items)
         # TODO: implement the SegmentationView table and the operations
         #if not is_researcher: # ignore researcher
         #    create_views_from_video_batch(q.items, user_jwt, query_type=1)
         # We need to set is_admin to True here because we want to show user agreements in the data
-        return jsonify_data(q.items, total=q.total, is_admin=True, is_video=False)
+        return jsonify_data(joined_q, total=q.total, is_admin=True, is_video=False)
 
 
 def ensure_cache_directory(file_path):
