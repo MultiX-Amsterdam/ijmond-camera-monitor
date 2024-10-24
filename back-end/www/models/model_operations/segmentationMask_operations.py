@@ -213,7 +213,7 @@ def get_pos_segmentation_query_by_user_id(user_id, page_number, page_size, is_re
     if is_researcher: # researcher
         q = SegmentationFeedback.query.filter(and_(
             SegmentationFeedback.user_id==user_id,
-            SegmentationFeedback.feedback_code.in_([0, 1]))).subquery()
+            SegmentationFeedback.feedback_code.in_([3, 4]))).subquery()
     else:
         q = SegmentationFeedback.query.filter(and_(
             SegmentationFeedback.user_id==user_id,

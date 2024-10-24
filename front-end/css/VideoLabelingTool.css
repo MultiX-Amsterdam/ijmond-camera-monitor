@@ -11,8 +11,7 @@
     min-height: 200px;
 }
 
-.video-labeling-tool .video-labeling-tool-videos,
-.gallery .gallery-images {
+.video-labeling-tool .video-labeling-tool-video {
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
@@ -24,18 +23,15 @@
     padding: 0;
 }
 
-.video-labeling-tool .video-labeling-tool-videos .segmentation-container,
-.gallery .gallery-images .segmentation-container {
+.video-labeling-tool .video-labeling-tool-videos .segmentation-container {
     cursor: default;
 }
 
-.video-labeling-tool .video-labeling-tool-videos .segmentation-container img,
-.gallery .gallery-images .segmentation-container img {
+.video-labeling-tool .video-labeling-tool-videos .segmentation-container img {
     pointer-events: none;
 }
 
-.video-labeling-tool .video-labeling-tool-videos .segmentation-container .control-group,
-.gallery .gallery-images .segmentation-container .label-control {
+.video-labeling-tool .video-labeling-tool-videos .segmentation-container .control-group {
     justify-content: center;
 }
 
@@ -43,21 +39,11 @@
     margin-right: 15px;
 }
 
-.gallery .gallery-images .segmentation-container .label-control p {
-    margin-left: 10px;
-    margin-top: 0;
-}
-
-.video-labeling-tool .video-labeling-tool-videos .segmentation-container .bbox,
-.gallery .gallery-images .segmentation-container .bbox {
+.video-labeling-tool .video-labeling-tool-videos .segmentation-container .bbox {
     position: absolute;
     display: flex;
     border: 0;
     outline: 3px solid rgba(255, 0, 0, 0.75);
-}
-
-.gallery .gallery-images .segmentation-container .bbox.researcher {
-    outline: 3px solid rgba(0, 0, 255, 0.75);
 }
 
 .video-labeling-tool .video-labeling-tool-videos .segmentation-container .resizer {
@@ -139,8 +125,7 @@
 }
 
 .video-labeling-tool a video,
-.video-labeling-tool a img,
-.gallery a img.seg-img {
+.video-labeling-tool a img {
     border-radius: 2px;
     width: 100%;
     box-sizing: border-box;

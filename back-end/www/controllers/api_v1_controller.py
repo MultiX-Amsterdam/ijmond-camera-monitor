@@ -523,7 +523,7 @@ def get_bad_labels():
 @bp.route("/get_all_labels", methods=["POST"])
 def get_all_labels():
     """
-    Get all data.
+    Get all videos data.
     Only admin (client type 0) can use this call.
     """
     return get_video_labels(None, only_admin=True)
@@ -644,6 +644,71 @@ def get_pos_labels_seg():
     return get_segmentation_masks("pos", allow_user_id=True)
 
 
+@bp.route("/get_neg_labels_seg", methods=["GET", "POST"])
+def get_neg_labels_seg():
+    """
+    Get segmentation masks with negative labels.
+    The label state is aggregated from both researcher and citizens.
+    """
+    return get_segmentation_masks("neg")
+
+
+@bp.route("/get_pos_gold_labels_seg", methods=["POST"])
+def get_pos_gold_labels_seg():
+    """
+    Get segmentation masks with positive gold standard labels.
+    Only admin (client type 0) can use this call.
+    Gold standard labels will only be set by researchers.
+    """
+    return get_segmentation_masks(m.pos_gold_labels_seg, only_admin=True, use_admin_label_state=True)
+
+
+@bp.route("/get_neg_gold_labels_seg", methods=["POST"])
+def get_neg_gold_labels_seg():
+    """
+    Get segmentation masks with negative gold standard labels.
+    Only admin (client type 0) can use this call.
+    Gold standard labels will only be set by researchers.
+    """
+    return get_segmentation_masks(m.neg_gold_labels_seg, only_admin=True, use_admin_label_state=True)
+
+
+@bp.route("/get_pos_labels_seg_by_researcher", methods=["POST"])
+def get_pos_labels_seg_by_researcher():
+    """
+    Get researcher-labeled positive segmentation masks, exclude gold standards.
+    Only admin (client type 0) can use this call.
+    """
+    return get_segmentation_masks(m.pos_labels_seg, only_admin=True, use_admin_label_state=True)
+
+
+@bp.route("/get_neg_labels_seg_by_researcher", methods=["POST"])
+def get_neg_labels_seg_by_researcher():
+    """
+    Get researcher-labeled negative segmentation masks, exclude gold standards.
+    Only admin (client type 0) can use this call.
+    """
+    return get_segmentation_masks(m.neg_labels_seg, only_admin=True, use_admin_label_state=True)
+
+
+@bp.route("/get_pos_labels_seg_by_citizen", methods=["POST"])
+def get_pos_labels_seg_by_citizen():
+    """
+    Get citizen-labeled positive segmentation masks, exclude gold standards.
+    Only admin (client type 0) can use this call.
+    """
+    return get_segmentation_masks(m.pos_labels_seg, only_admin=True)
+
+
+@bp.route("/get_neg_labels_seg_by_citizen", methods=["POST"])
+def get_neg_labels_seg_by_citizen():
+    """
+    Get citizen-labeled negative segmentation masks, exclude gold standards.
+    Only admin (client type 0) can use this call.
+    """
+    return get_segmentation_masks(m.neg_labels_seg, only_admin=True)
+
+
 @bp.route("/get_maybe_pos_labels_seg", methods=["GET", "POST"])
 def get_maybe_pos_labels_seg():
     """
@@ -651,6 +716,43 @@ def get_maybe_pos_labels_seg():
     This type of label will only be set by citizens.
     """
     return get_segmentation_masks(m.maybe_pos_labels_seg)
+
+
+@bp.route("/get_maybe_neg_labels_seg", methods=["GET", "POST"])
+def get_maybe_neg_labels_seg():
+    """
+    Get segmentation masks with insufficient citizen-provided negative labels.
+    This type of label will only be set by citizens.
+    """
+    return get_segmentation_masks(m.maybe_neg_labels_seg)
+
+
+@bp.route("/get_discorded_labels_seg", methods=["GET", "POST"])
+def get_discorded_labels_seg():
+    """
+    Get segmentation masks with citizen discorded labels.
+    Partial labels will only be set by citizens.
+    """
+    return get_segmentation_masks(m.discorded_labels_seg)
+
+
+@bp.route("/get_bad_labels_seg", methods=["POST"])
+def get_bad_labels_seg():
+    """
+    Get segmentation masks that were discarded.
+    Only admin (client type 0) can use this call.
+    Bad labels will only be set by researchers.
+    """
+    return get_segmentation_masks(m.bad_labels_seg, only_admin=True, use_admin_label_state=True)
+
+
+@bp.route("/get_all_labels_seg", methods=["POST"])
+def get_all_labels_seg():
+    """
+    Get all segmentation masks data.
+    Only admin (client type 0) can use this call.
+    """
+    return get_segmentation_masks(None, only_admin=True)
 
 
 def get_segmentation_masks(labels, allow_user_id=False, only_admin=False, use_admin_label_state=False):

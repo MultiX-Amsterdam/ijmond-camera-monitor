@@ -42,27 +42,6 @@
   var admin_marked_item = {};
   var is_video_autoplay_tested = false;
 
-  function unpackVars(str) {
-    var vars = {};
-    if (str) {
-      var keyvals = str.split(/[#?&]/);
-      for (var i = 0; i < keyvals.length; i++) {
-        var keyval = keyvals[i].split('=');
-        vars[keyval[0]] = keyval[1];
-      }
-    }
-    // Delete null/undefined values
-    Object.keys(vars).forEach(function (key) {
-      return (vars[key] == null || key == "") && delete vars[key];
-    });
-    return vars;
-  };
-
-  // Get the parameters from the query string
-  function getQueryParas() {
-    return unpackVars(window.location.search);
-  }
-
   function updateGallery($new_content) {
     $gallery_videos.detach(); // detatch prevents the click event from being removed
     $gallery.empty().append($new_content);
@@ -289,6 +268,7 @@
       showGoButton: true,
       showPrevious: false,
       showNext: false,
+      goButtonText: "Gaan",
       callback: function (data, pagination) {
         if (typeof data !== "undefined" && data.length > 0) {
           $(window).scrollTop(0);
@@ -359,11 +339,6 @@
         if (typeof callback["complete"] === "function") callback["complete"]();
       }
     });
-  }
-
-  // Read the payload in a JWT
-  function getJwtPayload(jwt) {
-    return JSON.parse(window.atob(jwt.split('.')[1]));
   }
 
   function initConfirmDialog() {
@@ -438,7 +413,7 @@
   function onLoginSuccess(data) {
     user_token = data["user_token"];
     user_token_for_other_app = data["user_token_for_other_app"];
-    var payload = getJwtPayload(user_token);
+    var payload = util.getJwtPayload(user_token);
     var client_type = payload["client_type"];
     var desired_href_review = "label-gallery.html" + "?user_id=" + payload["user_id"];
     $("#review-community").prop("href", desired_href_review);
@@ -463,28 +438,38 @@
       $s.text("alle volledig gelabelde video's met rook");
       //$s.text("fully labeled videos with smoke");
     } else if (method == "get_neg_labels") {
-      $s.text("fully labeled videos with no smoke");
+      $s.text("alle volledig gelabelde video's zonder rook");
+      //$s.text("fully labeled videos with no smoke");
     } else if (method == "get_pos_labels_by_researcher") {
-      $s.text("researcher-labeled videos with smoke");
+      $s.text("alle volledig gelabelde video's met rook door onderzoekers");
+      //$s.text("researcher-labeled videos with smoke");
     } else if (method == "get_neg_labels_by_researcher") {
-      $s.text("researcher-labeled videos with no smoke");
+      $s.text("alle volledig gelabelde video's zonder rook door onderzoekers");
+      //$s.text("researcher-labeled videos with no smoke");
     } else if (method == "get_pos_labels_by_citizen") {
-      $s.text("citizen-labeled videos with smoke");
+      $s.text("alle volledig gelabelde video's met rook door burgers");
+      //$s.text("citizen-labeled videos with smoke");
     } else if (method == "get_neg_labels_by_citizen") {
-      $s.text("citizen-labeled videos with no smoke");
+      $s.text("alle volledig gelabelde video's zonder rook door burgers");
+      //$s.text("citizen-labeled videos with no smoke");
     } else if (method == "get_pos_gold_labels") {
-      $s.text("researcher-labeled gold standards with smoke");
+      $s.text("'gold standard' video's met rook");
+      //$s.text("researcher-labeled gold standards with smoke");
     } else if (method == "get_neg_gold_labels") {
-      $s.text("researcher-labeled gold standards with no smoke");
+      $s.text("'gold standard' video's zonder rook");
+      //$s.text("researcher-labeled gold standards with no smoke");
     } else if (method == "get_discorded_labels") {
-      $s.text("citizen-labeled videos with discord");
+      $s.text("video's met onenigheid");
+      //$s.text("citizen-labeled videos with discord");
     } else if (method == "get_bad_labels") {
-      $s.text("videos with bad labels");
+      $s.text("slechte data");
+      //$s.text("videos with bad labels");
     } else if (method == "get_maybe_pos_labels") {
       $s.text("gelabelde video's die mogelijk rook bevatten");
       //$s.text("citizen-labeled videos that may have smoke");
     } else if (method == "get_maybe_neg_labels") {
-      $s.text("citizen-labeled videos that may not have smoke");
+      $s.text("gelabelde video's die mogelijk geen rook bevatten");
+      //$s.text("citizen-labeled videos that may not have smoke");
     }
   }
 
@@ -492,7 +477,7 @@
     util.addVideoClearEvent();
     $gallery = $(".gallery");
     $gallery_videos = $(".gallery-videos");
-    var query_paras = getQueryParas();
+    var query_paras = util.getQueryParas();
     user_id = query_paras["user_id"];
     var method = query_paras["method"];
     if (typeof method !== "undefined") {

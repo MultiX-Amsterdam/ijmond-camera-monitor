@@ -384,6 +384,24 @@
     };
     this.reverseBBox = reverseBBox;
 
+    // Unpack the parameters in the search query in the URL
+    var unpackVars = function (str) {
+      var vars = {};
+      if (str) {
+        var keyvals = str.split(/[#?&]/);
+        for (var i = 0; i < keyvals.length; i++) {
+          var keyval = keyvals[i].split('=');
+          vars[keyval[0]] = keyval[1];
+        }
+      }
+      // Delete null/undefined values
+      Object.keys(vars).forEach(function (key) {
+        return (vars[key] == null || key == "") && delete vars[key];
+      });
+      return vars;
+    };
+    this.unpackVars = unpackVars;
+
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //
     // Public methods
@@ -635,7 +653,7 @@
       }
       // If no consent time is stored, this means no user consent
       return false;
-    }
+    };
 
     // Create the user consent dialog
     this.createUserConsentDialog = function (after_action) {
@@ -666,7 +684,7 @@
         }
       });
       return $dialog_consent;
-    }
+    };
 
     // Create the user consent management dialog
     this.createUserConsentManagementDialog = function (after_action) {
@@ -709,7 +727,12 @@
         });
       }
       return $dialog_consent_manage;
-    }
+    };
+
+    // Get the parameters from the query string
+    this.getQueryParas = function () {
+      return unpackVars(window.location.search);
+    };
   };
 
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////

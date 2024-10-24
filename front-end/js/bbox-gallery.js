@@ -17,28 +17,10 @@
   var $page_next;
   var $page_control;
   var user_id;
+  var is_admin = false; // including expert and researcher
+  var is_researcher = false;
   var user_token;
-
-  function unpackVars(str) {
-    var vars = {};
-    if (str) {
-      var keyvals = str.split(/[#?&]/);
-      for (var i = 0; i < keyvals.length; i++) {
-        var keyval = keyvals[i].split('=');
-        vars[keyval[0]] = keyval[1];
-      }
-    }
-    // Delete null/undefined values
-    Object.keys(vars).forEach(function (key) {
-      return (vars[key] == null || key == "") && delete vars[key];
-    });
-    return vars;
-  };
-
-  // Get the parameters from the query string
-  function getQueryParas() {
-    return unpackVars(window.location.search);
-  }
+  var user_token_for_other_app;
 
   function updateGallery($new_content) {
     $gallery_images.detach(); // detatch prevents the click event from being removed
@@ -131,8 +113,8 @@
         meta_data["w_bbox"] = b["w_bbox"];
         meta_data["h_bbox"] = b["h_bbox"];
       }
-      var is_researcher = [3, 4, 5].indexOf(b["feedback_code"]) !== -1 ? true : false;
-      var $bbox = util.createBBox(meta_data, $item.find(".seg-img"), true, is_researcher);
+      var is_researcher_feedback = [3, 4, 5].indexOf(b["feedback_code"]) !== -1 ? true : false;
+      var $bbox = util.createBBox(meta_data, $item.find(".seg-img"), true, is_researcher_feedback);
       $item.append($bbox);
     }
   }
@@ -193,6 +175,7 @@
       showGoButton: true,
       showPrevious: false,
       showNext: false,
+      goButtonText: "Gaan",
       callback: function (data, pagination) {
         if (typeof data !== "undefined" && data.length > 0) {
           $(window).scrollTop(0);
@@ -238,17 +221,57 @@
     });
   }
 
-  // Read the payload in a JWT
-  function getJwtPayload(jwt) {
-    return JSON.parse(window.atob(jwt.split('.')[1]));
+  function initDownloadButton() {
+    $("#download-data").on("click", function () {
+      var $this = $(this);
+      $this.prop("disabled", true);
+      $.ajax({
+        url: api_url_root + "get_all_labels_seg",
+        type: "POST",
+        data: {
+          user_token: user_token
+        },
+        contentType: "application/x-www-form-urlencoded; charset=UTF-8",
+        dataType: "json",
+        success: function (data) {
+          // Download data
+          util.downloadJSON(data, "segmentation_labels.json");
+          // Reset button
+          $this.prop("disabled", false);
+        },
+        error: function (xhr) {
+          console.error("Error when getting segmentation json!", xhr);
+        }
+      });
+    });
+    $("#download-user-token").on("click", function () {
+      var $this = $(this);
+      $this.prop("disabled", true);
+      // Download data
+      util.downloadJSON({
+        user_token: user_token_for_other_app
+      }, "user_token.json");
+      // Reset button
+      $this.prop("disabled", false);
+    });
   }
 
   function onLoginSuccess(data) {
     user_token = data["user_token"];
-    var payload = getJwtPayload(user_token);
+    user_token_for_other_app = data["user_token_for_other_app"];
+    var payload = util.getJwtPayload(user_token);
+    var client_type = payload["client_type"];
     var desired_href_review = "bbox-gallery.html" + "?user_id=" + payload["user_id"];
     $("#review-community").prop("href", desired_href_review);
-    $(".community-control").css("display", "flex");
+    $("#review-admin").prop("href", desired_href_review);
+    is_admin = (client_type == 0 || client_type == 1) ? true : false;
+    is_researcher = client_type == 0 ? true : false;
+    if (is_admin) {
+      $(".admin-text").show();
+      $(".admin-control").css("display", "flex");
+    } else {
+      $(".community-control").css("display", "flex");
+    }
   }
 
   function onLoginComplete() {
@@ -259,15 +282,47 @@
     var $s = $("#image-type-text");
     if (method == "get_pos_labels_seg") {
       $s.text("alle volledig gecontroleerd kaders met rook");
+      //$s.text("fully checked boxes with smoke");
+    } else if (method == "get_neg_labels_seg") {
+      $s.text("alle volledig gecontroleerd kaders zonder rook");
+      //$s.text("fully checked boxes with no smoke");
+    } else if (method == "get_pos_labels_seg_by_researcher") {
+      $s.text("alle volledig gecontroleerd kaders met rook door onderzoekers");
+      //$s.text("researcher-checked boxes with smoke");
+    } else if (method == "get_neg_labels_seg_by_researcher") {
+      $s.text("alle volledig gecontroleerd kaders zonder rook door onderzoekers");
+      //$s.text("researcher-checked boxes with no smoke");
+    } else if (method == "get_pos_labels_seg_by_citizen") {
+      $s.text("alle volledig gecontroleerd kaders met rook door burgers");
+      //$s.text("citizen-checked boxes with smoke");
+    } else if (method == "get_neg_labels_seg_by_citizen") {
+      $s.text("alle volledig gecontroleerd kaders zonder rook door burgers");
+      //$s.text("citizen-checked boxes with no smoke");
+    } else if (method == "get_pos_gold_labels_seg") {
+      $s.text("'gold standard' kaders met rook");
+      //$s.text("researcher-checked gold standards with smoke");
+    } else if (method == "get_neg_gold_labels_seg") {
+      $s.text("'gold standard' kaders zonder rook");
+      //$s.text("researcher-checked gold standards with no smoke");
+    } else if (method == "get_discorded_labels_seg") {
+      $s.text("kaders met onenigheid");
+      //$s.text("citizen-checked boxes with discord");
+    } else if (method == "get_bad_labels_seg") {
+      $s.text("slechte data");
+      //$s.text("boxes with bad labels");
     } else if (method == "get_maybe_pos_labels_seg") {
       $s.text("gecontroleerd kaders die mogelijk rook bevatten");
+      //$s.text("citizen-checked boxes that may have smoke");
+    } else if (method == "get_maybe_neg_labels_seg") {
+      $s.text("gecontroleerd kaders die mogelijk geen rook bevatten");
+      //$s.text("citizen-checked boxes that may not have smoke");
     }
   }
 
   function init() {
     $gallery = $(".gallery");
     $gallery_images = $(".gallery-images");
-    var query_paras = getQueryParas();
+    var query_paras = util.getQueryParas();
     user_id = query_paras["user_id"];
     var method = query_paras["method"];
     if (typeof method !== "undefined") {
@@ -280,6 +335,7 @@
     } else {
       $(".intro-text").show();
     }
+    initDownloadButton();
     google_account_dialog = new edaplotjs.GoogleAccountDialog();
     if (util.browserSupported()) {
       showGalleryLoadingMsg();

@@ -44,9 +44,15 @@
       <div class="content-table flex-column">
         <div class="flex-row">
           <div class="flex-item flex-column">
+            <p class="text admin-text no-bottom-margin">
+              Uw log in als <span class="custom-text-info-dark-theme">onderzoeker of expert</span>.
+              De galerij wordt weergegeven in de dashboardmodus.
+              <a id="download-user-token">Klik om het gebruikerstoken te downloaden.</a>
+              U kunt het token gebruiken om de metadata van gelabelde video's te verkrijgen via onze API.
+            </p>
             <p class="text intro-text no-bottom-margin">
               Wij willen u graag bedanken voor uw inzet!
-              Dit zijn <span class="custom-text-info-dark-theme" id="image-type-text">kaders met rook, gecontroleerd door drie mensen</span>.
+              Dit zijn <span class="custom-text-info-dark-theme" id="image-type-text">alle volledig gecontroleerd kaders met rook</span>.
             </p>
             <p class="text user-text no-bottom-margin">
               Wij willen u graag bedanken voor uw inzet!
@@ -57,9 +63,30 @@
               <a class="custom-button-flat stretch-on-mobile large" href="?method=get_maybe_pos_labels_seg">Mogelijk met Rook</a>
               <a id="review-community" class="custom-button-flat stretch-on-mobile large" href="javascript:void(0)">Mijn Bijdrage</a>
             </div>
+            <div class="control-group admin-control add-bottom-margin add-top-margin">
+              <div class="custom-dropdown stretch-on-mobile large">
+                <a tabindex="0" href="javascript:void(0)"><span>Select Labels by a Filtering Method</span></a>
+                <div>
+                  <a href="?method=get_pos_labels_seg">Positive Labels</a>
+                  <a href="?method=get_neg_labels_seg">Negative Labels</a>
+                  <a href="?method=get_pos_labels_seg_by_citizen">Positive Labels by Citizens</a>
+                  <a href="?method=get_neg_labels_seg_by_citizen">Negative Labels by Citizens</a>
+                  <a href="?method=get_pos_labels_seg_by_researcher">Positive Labels by Researchers</a>
+                  <a href="?method=get_neg_labels_seg_by_researcher">Negative Labels by Researchers</a>
+                  <a href="?method=get_pos_gold_labels_seg">Positive Gold Standards</a>
+                  <a href="?method=get_neg_gold_labels_seg">Negative Gold Standards</a>
+                  <a href="?method=get_maybe_pos_labels_seg">Maybe Positive Labels</a>
+                  <a href="?method=get_maybe_neg_labels_seg">Maybe Negative Labels</a>
+                  <a href="?method=get_discorded_labels_seg">Discorded Labels</a>
+                  <a href="?method=get_bad_labels_seg">Bad Labels</a>
+                  <a id="review-admin" href="">My Contribution</a>
+                </div>
+              </div>
+              <button id="download-data" class="custom-button-flat stretch-on-mobile">Download All Data</button>
+            </div>
           </div>
         </div>
-        <div class="gallery">
+        <div class="gallery no-padding">
           <div class="gallery-images"></div>
         </div>
         <div class="flex-row">
