@@ -18,9 +18,9 @@ def create_label(video_id, y, user_id, batch_id):
         user_id=user_id,
         batch_id=batch_id
     )
-    app.logger.info("Create label: %r" % label)
     db.session.add(label)
     db.session.commit()
+    app.logger.info("Create label: %r" % label)
     return label
 
 
@@ -40,8 +40,10 @@ def update_labels(labels, user_id, connection_id, batch_id, client_type):
 
     Parameters
     ----------
-    labels : int
-        Video labels that were returned by the front-end (0 or 1).
+    labels : list of dicts
+        Video labels that were returned by the front-end.
+        Below is an example:
+        > [{"video_id": 1, "label": 1}, {"video_id": 2, "label": 0}]
     user_id : int
         The user id (defined in the user table).
     connection_id : int

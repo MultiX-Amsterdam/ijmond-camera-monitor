@@ -43,6 +43,7 @@ from models.model_operations.segmentationMask_operations import get_segmentation
 from models.model_operations.segmentationMask_operations import get_all_segmentations
 from models.model_operations.segmentationMask_operations import get_pos_segmentation_query_by_user_id
 from models.model_operations.segmentationMask_operations import segmentatio_mask_join_video_table
+from models.model_operations.segmentationMask_operations import only_latest_researcher_feedback
 from models.model_operations.segmentationFeedback_operations import update_segmentation_labels
 
 from models.schema import videos_schema_is_admin
@@ -171,10 +172,13 @@ def encode_user_token(**kwargs):
     payload["iat"] = t
     payload["jti"] = uuid.uuid4().hex
     # This is a hack that we have not deal with token expiration yet
+    # TODO: We shound deal with token expiration
     #payload["exp"] = t + 3600 # the token will expire after one hour
     for k in kwargs:
         payload[k] = kwargs[k]
+    payload["iat"] -= 5 # Prevent some delay in the system time
     return encode_jwt(payload, config.JWT_PRIVATE_KEY)
+
 
 def batch_check_request(request_json):
     if request_json is None:
@@ -307,6 +311,7 @@ def encode_video_jwt(**kwargs):
     payload["jti"] = uuid.uuid4().hex
     for k in kwargs:
         payload[k] = kwargs[k]
+    payload["iat"] -= 5 # Prevent some delay in the system time
     return encode_jwt(payload, config.JWT_PRIVATE_KEY)
 
 
@@ -405,6 +410,37 @@ def set_label_state():
     # Update database
     try:
         update_labels(request_json["data"], user_jwt["user_id"], None, None, user_jwt["client_type"])
+        return make_response("", 204)
+    except Exception as ex:
+        raise InvalidUsage(ex.args[0], status_code=400)
+
+
+@bp.route("/set_segmentation_label_state", methods=["POST"])
+def set_segmentation_label_state():
+    """
+    Set segmentation labels.
+    Only admin (client type 0) can use this call.
+    """
+    request_json = request.get_json()
+    if request_json is None:
+        raise InvalidUsage("Missing json", status_code=400)
+    if "data" not in request_json:
+        raise InvalidUsage("Missing field: data", status_code=400)
+    if "user_token" not in request_json:
+        raise InvalidUsage("Missing field: user_token", status_code=400)
+    # Decode user jwt
+    try:
+        user_jwt = decode_jwt(request_json["user_token"], config.JWT_PRIVATE_KEY)
+    except jwt.InvalidSignatureError as ex:
+        raise InvalidUsage(ex.args[0], status_code=401)
+    except Exception as ex:
+        raise InvalidUsage(ex.args[0], status_code=401)
+    # Verify if the user is a researcher
+    if user_jwt["client_type"] != 0:
+        raise InvalidUsage("Permission denied", status_code=403)
+    # Update database
+    try:
+        update_segmentation_labels(request_json["data"], user_jwt["user_id"], None, None, user_jwt["client_type"])
         return make_response("", 204)
     except Exception as ex:
         raise InvalidUsage(ex.args[0], status_code=400)
@@ -812,18 +848,20 @@ def get_segmentation_masks(labels, allow_user_id=False, only_admin=False, use_ad
         else:
             q = get_segmentation_query(labels, page_number, page_size, use_admin_label_state=use_admin_label_state)
             joined_q = segmentatio_mask_join_video_table(q.items)
+            filtered_q = only_latest_researcher_feedback(joined_q)
             # TODO: implement the SegmentationView table and the operations
             #if not is_researcher: # ignore researcher
             #    create_views_from_video_batch(q.items, user_jwt, query_type=0)
-            return jsonify_data(joined_q, total=q.total, is_admin=is_admin, with_detail=True, is_video=False)
+            return jsonify_data(filtered_q, total=q.total, is_admin=is_admin, with_detail=True, is_video=False)
     else:
         q = get_pos_segmentation_query_by_user_id(user_id, page_number, page_size, is_researcher)
         joined_q = segmentatio_mask_join_video_table(q.items)
+        filtered_q = only_latest_researcher_feedback(joined_q)
         # TODO: implement the SegmentationView table and the operations
         #if not is_researcher: # ignore researcher
         #    create_views_from_video_batch(q.items, user_jwt, query_type=1)
         # We need to set is_admin to True here because we want to show user agreements in the data
-        return jsonify_data(joined_q, total=q.total, is_admin=True, is_video=False)
+        return jsonify_data(filtered_q, total=q.total, is_admin=True, is_video=False)
 
 
 def ensure_cache_directory(file_path):

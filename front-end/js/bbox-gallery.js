@@ -2,6 +2,7 @@
   "use strict";
 
   var util = new edaplotjs.Util();
+  var widgets = new edaplotjs.Widgets();
   var google_account_dialog;
   var api_url_root = util.getRootApiUrl();
   var api_url_path_get = "get_pos_labels_seg";
@@ -21,6 +22,7 @@
   var is_researcher = false;
   var user_token;
   var user_token_for_other_app;
+  var $set_label_confirm_dialog;
 
   function updateGallery($new_content) {
     $gallery_images.detach(); // detatch prevents the click event from being removed
@@ -57,6 +59,30 @@
         $control.append($seg_id);
         var $link_to_video = $("<p class='text-small-margin'><i></i></p>");
         $control.append($link_to_video);
+        if (is_researcher) {
+          var $label_control = $('<div class="control-group"></div>');
+          var $edit_btn = $('<button class="custom-button-flat stretch-on-mobile">Edit the box</button>');
+          $edit_btn.on("click", function () {
+            var $this = $(this);
+            var $seg_container = $this.parent().parent().parent();
+            var $researcher_resizer = $seg_container.find(".bbox.researcher .resizer");
+            if ($researcher_resizer.length == 0) {
+              // This means there is no researcher label, so we need to create a bounding box.
+              var $img = $seg_container.find("img.seg-img");
+              var $bbox = util.createBBox($this.data("seg_mask"), $img, false, true);
+              $seg_container.append($bbox);
+            }
+            if ($this.hasClass("edit-mode")) {
+              $set_label_confirm_dialog.data("edit_btn", $this);
+              $set_label_confirm_dialog.dialog("open");
+            } else {
+              $this.addClass("edit-mode");
+              $this.text("Confirm editing");
+              $researcher_resizer.show();
+            }
+          });
+          $control.append($label_control.append($edit_btn));
+        }
       }
     }
     $item.append($control);
@@ -67,11 +93,11 @@
     return util.safeGet(v, default_val);
   }
 
-  function updateItem($item, v) {
+  function updateItem($item, seg_mask) {
     // Update date and time information
-    var src_url = util.buildSegmentationURL(v);
+    var src_url = util.buildSegmentationURL(seg_mask);
     var $i = $item.children(".label-control").find("i").removeClass();
-    var date_str = (new Date(parseInt(v["frame_timestamp"]) * 1000)).toLocaleString("nl-NL", {
+    var date_str = (new Date(parseInt(seg_mask["frame_timestamp"]) * 1000)).toLocaleString("nl-NL", {
       timeZone: "Europe/Amsterdam",
       day: 'numeric', // Day of the month (e.g., 25)
       month: 'long', // Full month name (e.g., juni)
@@ -80,12 +106,14 @@
       minute: '2-digit', // Minutes (e.g., 45)
       hour12: false
     });
-    v["video"]["url_root"] = v["url_root"];
-    $($i.get(0)).html("<a target='_blank' href='" + util.segmentationFeedbackToVideoPanoramaURL(v) + "'>" + date_str + "</a>");
+    seg_mask["video"]["url_root"] = seg_mask["url_root"];
+    $($i.get(0)).html("<a target='_blank' href='" + util.segmentationFeedbackToVideoPanoramaURL(seg_mask) + "'>" + date_str + "</a>");
     if (typeof user_id === "undefined") {
       if (is_admin) {
-        $($i.get(1)).text("ID: " + v["video"]["id"]).addClass("custom-text-info-dark-theme");
-        $($i.get(2)).html("<a target='_blank' href='" + util.buildVideoURL(v["video"]) + "'>Link to Video</a>");
+        $($i.get(1)).text("ID: " + seg_mask["id"]).addClass("custom-text-info-dark-theme");
+        $($i.get(2)).html("<a target='_blank' href='" + util.buildVideoURL(seg_mask["video"]) + "'>Link to Video</a>");
+        // Save data to DOM
+        $item.find("button").data("seg_mask", seg_mask);
       }
     }
     var $img = $item.find("img");
@@ -98,30 +126,30 @@
     var deferreds = [deferred];
     util.resolvePromises(deferreds, {
       success: function () {
-        $item.find(".bbox").remove();
-        overlayAllBBox($item, v);
+        resetAndOverlayAllBBox($item, seg_mask);
       }
     });
 
     return $item;
   }
 
-  function overlayAllBBox($item, v) {
-    var bbox_list = v["feedback"];
+  function resetAndOverlayAllBBox($item, seg_mask) {
+    $item.find(".bbox").remove();
+    var bbox_list = seg_mask["feedback_filtered"];
     for (var i = 0; i < bbox_list.length; i++) {
       var b = bbox_list[i];
       if (b["x_bbox"] == -1 && b["y_bbox"] == -1 && b["w_bbox"] == -1 && b["h_bbox"] == -1) {
         continue;
       }
       var meta_data = {
-        w_image: v["w_image"],
-        h_image: v["h_image"]
+        w_image: seg_mask["w_image"],
+        h_image: seg_mask["h_image"]
       };
       if (b["x_bbox"] == null && b["y_bbox"] == null && b["w_bbox"] == null && b["h_bbox"] == null) {
-        meta_data["x_bbox"] = v["x_bbox"];
-        meta_data["y_bbox"] = v["y_bbox"];
-        meta_data["w_bbox"] = v["w_bbox"];
-        meta_data["h_bbox"] = v["h_bbox"];
+        meta_data["x_bbox"] = seg_mask["x_bbox"];
+        meta_data["y_bbox"] = seg_mask["y_bbox"];
+        meta_data["w_bbox"] = seg_mask["w_bbox"];
+        meta_data["h_bbox"] = seg_mask["h_bbox"];
       } else {
         meta_data["x_bbox"] = b["x_bbox"];
         meta_data["y_bbox"] = b["y_bbox"];
@@ -137,7 +165,7 @@
   function updateImages(meta_data) {
     // Add DOM elements
     for (var i = 0; i < meta_data.length; i++) {
-      var v = meta_data[i];
+      var seg_mask = meta_data[i];
       var $item;
       if (typeof image_items[i] === "undefined") {
         $item = createImage();
@@ -146,7 +174,7 @@
       } else {
         $item = image_items[i];
       }
-      $item = updateItem($item, v);
+      $item = updateItem($item, seg_mask);
       if ($item.hasClass("force-hidden")) {
         $item.removeClass("force-hidden");
       }
@@ -233,6 +261,66 @@
     $page_next.on("click", function () {
       showGalleryLoadingMsg();
       $page_nav.pagination("next");
+    });
+  }
+
+  function initConfirmDialog() {
+    $set_label_confirm_dialog = widgets.createCustomDialog({
+      selector: "#set-label-confirm-dialog",
+      action_text: "Yes",
+      action_callback: function () {
+        var $edit_btn = $set_label_confirm_dialog.data("edit_btn");
+        var $seg_container = $edit_btn.parent().parent().parent();
+        var $bbox = $seg_container.find(".bbox.researcher");
+        var seg_mask = $edit_btn.data("seg_mask");
+        var labels = [{
+          id: seg_mask["id"],
+          relative_boxes: util.reverseBBox($bbox)
+        }];
+        setLabelState(labels, {
+          success: function () {
+            console.log("Set label state successfully");
+            console.log(labels);
+            // Get out of the edit mode
+            $edit_btn.removeClass("edit-mode");
+            $edit_btn.text("Edit the box");
+            var $researcher_resizer = $seg_container.find(".bbox.researcher .resizer");
+            $researcher_resizer.hide();
+            $set_label_confirm_dialog.removeData("edit_btn");
+          },
+          error: function () {
+            console.log("Error when setting label state");
+            console.log(labels);
+          }
+        });
+      },
+      cancel_text: "No, do nothing",
+      no_body_scroll: true,
+      show_close_button: false,
+      full_width_button: true
+    });
+  }
+
+  function setLabelState(labels, callback) {
+    callback = safeGet(callback, {});
+    $.ajax({
+      url: api_url_root + "set_segmentation_label_state",
+      type: "POST",
+      data: JSON.stringify({
+        "data": labels,
+        "user_token": user_token
+      }),
+      contentType: "application/json",
+      dataType: "json",
+      success: function (data) {
+        if (typeof callback["success"] === "function") callback["success"](data);
+      },
+      error: function (xhr) {
+        if (typeof callback["error"] === "function") callback["error"](xhr);
+      },
+      complete: function () {
+        if (typeof callback["complete"] === "function") callback["complete"]();
+      }
     });
   }
 
@@ -352,6 +440,7 @@
     }
     initDownloadButton();
     google_account_dialog = new edaplotjs.GoogleAccountDialog();
+    initConfirmDialog();
     if (util.browserSupported()) {
       showGalleryLoadingMsg();
       var ga_tracker = new edaplotjs.GoogleAnalyticsTracker({

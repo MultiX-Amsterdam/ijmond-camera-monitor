@@ -8,9 +8,9 @@ from app.app import app
 def create_user(client_id):
     """Create a user."""
     user = User(client_id=client_id)
-    app.logger.info("Create user: %r" % user)
     db.session.add(user)
     db.session.commit()
+    app.logger.info("Create user: %r" % user)
     return user
 
 
@@ -35,8 +35,8 @@ def update_client_type_by_user_id(user_id, client_type):
     if user is None:
         raise Exception("No user found in the database to update.")
     user.client_type = client_type
-    app.logger.info("Update user: %r" % user)
     db.session.commit()
+    app.logger.info("Update user: %r" % user)
     return user
 
 
@@ -56,6 +56,6 @@ def update_best_tutorial_action_by_user_id(user_id, best_tutorial_action):
     if user is None:
         raise Exception("No user found in the database to update.")
     user.best_tutorial_action = best_tutorial_action
-    app.logger.info("Update user: %r" % user)
     db.session.commit()
+    app.logger.info("Update user: %r" % user)
     return user

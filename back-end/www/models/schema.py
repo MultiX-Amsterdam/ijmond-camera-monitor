@@ -49,7 +49,7 @@ class SegmentationFeedbackSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = SegmentationFeedback # the class for the model
         load_instance = True
-        fields = ("x_bbox", "y_bbox", "w_bbox", "h_bbox", "feedback_code")
+        fields = ("x_bbox", "y_bbox", "w_bbox", "h_bbox", "feedback_code", "time")
 
 
 class SegmentationSchema(ma.SQLAlchemyAutoSchema):
@@ -71,14 +71,14 @@ class SegmentationSchemaWithDetail(ma.SQLAlchemyAutoSchema):
     The schema for the SegmentationMask table with detail, used for jsonify (for normal users in gallery mode).
     """
     video = ma.Nested(VideoSchema)
-    feedback = ma.Nested(SegmentationFeedbackSchema, many=True)
+    feedback_filtered = ma.Nested(SegmentationFeedbackSchema, many=True)
     class Meta:
         model = SegmentationMask # the class for the model
         load_instance = True
         include_relationships = True
         fields = ("id", "mask_file_name", "image_file_name", "frame_number", "file_path", "frame_timestamp",
                   "x_bbox", "y_bbox", "w_bbox", "h_bbox", "w_image", "h_image", "url_part",
-                  "video", "feedback")
+                  "video", "feedback_filtered")
 segmentations_schema_with_detail = SegmentationSchemaWithDetail(many=True)
 
 
@@ -87,13 +87,13 @@ class SegmentationSchemaIsAdmin(ma.SQLAlchemyAutoSchema):
     The schema for the SegmentationMask table with detail, used for jsonify (for admin users in galley mode).
     """
     video = ma.Nested(VideoSchema)
-    feedback = ma.Nested(SegmentationFeedbackSchema, many=True)
+    feedback_filtered = ma.Nested(SegmentationFeedbackSchema, many=True)
     class Meta:
         model = SegmentationMask # the class for the model
         load_instance = True
         include_relationships = True
         fields = ("id", "mask_file_name", "image_file_name", "frame_number", "file_path", "frame_timestamp",
                   "x_bbox", "y_bbox", "w_bbox", "h_bbox", "w_image", "h_image", "url_part",
-                  "video", "feedback",
+                  "video", "feedback_filtered",
                   "label_state", "label_state_admin", "label_update_time")
 segmentations_schema_is_admin = SegmentationSchemaIsAdmin(many=True)

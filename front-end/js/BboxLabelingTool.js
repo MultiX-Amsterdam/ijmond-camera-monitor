@@ -245,7 +245,7 @@
                     parent_element.find(".bbox").remove();
                     for (var i = 0; i < segment_data.length; i++) {
                         var v = segment_data[i];
-                        var $bbox = util.createBBox(v, $($element.get(i)), true);
+                        var $bbox = util.createBBox(v, $($element.get(i)));
                         $(parent_element[i]).append($bbox);
                     }
                 }

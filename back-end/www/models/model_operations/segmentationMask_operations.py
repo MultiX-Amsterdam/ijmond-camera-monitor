@@ -5,6 +5,8 @@ from sqlalchemy import func
 from sqlalchemy import and_
 from sqlalchemy import or_
 from sqlalchemy import desc
+from sqlalchemy.orm import aliased
+from sqlalchemy.orm import contains_eager
 from random import shuffle
 from models.model import db
 from models.model import SegmentationMask
@@ -32,9 +34,9 @@ def create_segmentation(mask_fn, img_fn, x_bbox, y_bbox, w_bbox, h_bbox, img_w, 
         file_path=fp,
         frame_timestamp=ft
     )
-    app.logger.info("Create segmentation: %r" % segment)
     db.session.add(segment)
     db.session.commit()
+    app.logger.info("Create segmentation: %r" % segment)
     return segment
 
 
@@ -151,6 +153,42 @@ def segmentatio_mask_join_video_table(segmentations):
     return seg_with_video
 
 
+def only_latest_researcher_feedback(segmentations):
+    """
+    Only gives the latest researcher feedback.
+
+    For labels that are not provided by researchers, we want to return all of them.
+    For labels that are provided by researchers, we want only the latest record.
+
+    Parameters
+    ----------
+    segmentations : SegmentationMask
+        The SegmentationMask records.
+
+    Returns
+    -------
+    SegmentationMask
+        SegmentationMask records with the filtered researcher feedback.
+    """
+    for s in segmentations:
+        feedback_filtered = []
+        latest_reseacher_feedback = None
+        for f in s.feedback:
+            if f.feedback_code in [3, 4, 5]:
+                # This means the feedback is provided by researchers
+                if latest_reseacher_feedback is None:
+                    latest_reseacher_feedback = f
+                else:
+                    if f.time > latest_reseacher_feedback.time:
+                        latest_reseacher_feedback = f
+            else:
+                feedback_filtered.append(f)
+        if latest_reseacher_feedback is not None:
+            feedback_filtered.append(latest_reseacher_feedback)
+        s.feedback_filtered = feedback_filtered
+    return segmentations
+
+
 def get_segmentation_query(labels, page_number, page_size, use_admin_label_state=False):
     """
     Get SegmentationMask query from the database by the type of labels.
@@ -177,6 +215,7 @@ def get_segmentation_query(labels, page_number, page_size, use_admin_label_state
     """
     page_size = config.MAX_PAGE_SIZE if page_size > config.MAX_PAGE_SIZE else page_size
     q = SegmentationMask.query
+
     if type(labels) == list:
         if len(labels) > 1:
             if use_admin_label_state:
@@ -215,6 +254,7 @@ def get_segmentation_query(labels, page_number, page_size, use_admin_label_state
                     and_(
                         SegmentationMask.label_state_admin.notin_(m.pos_labels_seg + m.neg_labels_seg),
                         SegmentationMask.label_state.in_(m.neg_labels_seg)))))
+
     q = q.order_by(desc(SegmentationMask.label_update_time))
     if page_number is not None and page_size is not None:
         q = q.paginate(page=page_number, per_page=page_size, max_per_page=100)
@@ -253,7 +293,6 @@ def get_pos_segmentation_query_by_user_id(user_id, page_number, page_size, is_re
             SegmentationFeedback.user_id==user_id,
             SegmentationFeedback.feedback_code.in_([0, 1]))).subquery()
     # Exclude gold standards
-    #q = q.from_self(SegmentationMask).join(SegmentationMask).distinct().filter(SegmentationMask.label_state_admin!=0b101111)
     q = (
         SegmentationMask.query
         .join(q, SegmentationMask.id == q.c.segmentation_id)

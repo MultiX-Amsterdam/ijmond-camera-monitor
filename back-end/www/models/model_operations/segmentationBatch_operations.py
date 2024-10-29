@@ -12,9 +12,9 @@ def create_segmentation_batch(num_gold_standard, num_unlabeled, connection_id):
         num_unlabeled=num_unlabeled,
         connection_id=connection_id
     )
-    app.logger.info("Create segmentation batch: %r" % batch)
     db.session.add(batch)
     db.session.commit()
+    app.logger.info("Create segmentation batch: %r" % batch)
     return batch
 
 

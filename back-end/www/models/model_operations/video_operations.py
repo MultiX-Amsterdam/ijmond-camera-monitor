@@ -27,9 +27,9 @@ def create_video(fn, st, et, up, vid, cid):
             view_id=vid,
             camera_id=cid
         )
-        app.logger.info("Create video: %r" % video)
         db.session.add(video)
         db.session.commit()
+        app.logger.info("Update user: %r" % user)
         return video
     except IntegrityError as e:
         app.logger.warning("Error message\n %s" % e)
@@ -218,7 +218,6 @@ def get_pos_video_query_by_user_id(user_id, page_number, page_size, is_researche
     else:
         q = Label.query.filter(and_(Label.user_id==user_id, Label.label==1)).subquery()
     # Exclude gold standards
-    #q = q.from_self(Video).join(Video).distinct().filter(Video.label_state_admin!=0b101111)
     q = (
         Video.query
         .join(q, Video.id == q.c.video_id)

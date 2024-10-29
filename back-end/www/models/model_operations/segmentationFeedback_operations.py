@@ -22,9 +22,9 @@ def create_feedback_label(sid, fc, x_bbox, y_bbox, w_bbox, h_bbox, user_id, batc
         user_id = user_id,
         batch_id = batch_id,
     )
-    app.logger.info("Create segmentation feedback: %r" % feedback)
     db.session.add(feedback)
     db.session.commit()
+    app.logger.info("Create segmentation feedback: %r" % feedback)
     return feedback
 
 
@@ -44,8 +44,30 @@ def update_segmentation_labels(labels, user_id, connection_id, batch_id, client_
 
     Parameters
     ----------
-    labels : int
+    labels : list of dicts
         Segmentation labels that were returned by the front-end.
+        Below is an example:
+        > [
+        >     {
+        >         "id": 1,
+        >         "relative_boxes": {
+        >             "x_bbox": 343,
+        >             "y_bbox": 122,
+        >             "w_bbox": 101,
+        >             "h_bbox": 254
+        >         }
+        >     },
+        >     {
+        >         "id": 2,
+        >         "relative_boxes": null
+        >     },
+        >     {
+        >         "id": 3,
+        >         "relative_boxes": false
+        >     }
+        > ]
+        If relative_boxes is null, it means no change to the bounding box.
+        If relative_boxes is false, it means that the box should be removed.
     user_id : int
         The user id (defined in the user table).
     connection_id : int
@@ -82,7 +104,7 @@ def update_segmentation_labels(labels, user_id, connection_id, batch_id, client_
             batch.user_score = user.score
             batch.user_raw_score = user.raw_score
         app.logger.info("Update batch: %r" % batch)
-    # Add labeling history and update the video label state
+    # Add labeling history and update the segmentation label state
     # If the batch score is 0, do not update the label history since this batch is not reliable
     user_score = None
     user_raw_score = None

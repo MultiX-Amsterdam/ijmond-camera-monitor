@@ -8,9 +8,9 @@ from app.app import app
 def create_connection(user_id, client_type):
     """Create a connection."""
     connection = Connection(user_id=user_id, client_type=client_type)
-    app.logger.info("Create connection: %r" % connection)
     db.session.add(connection)
     db.session.commit()
+    app.logger.info("Create connection: %r" % connection)
     return connection
 
 

@@ -106,7 +106,7 @@
           });
           $control.append($desired_state_select);
           // Add the buttons for fast confirming citizen labels
-          var $group_pos_neg = $('<div class="control-group"></div>')
+          var $group_pos_neg = $('<div class="control-group"></div>');
           var $pos_btn = $('<button class="custom-button-flat stretch-on-mobile">Pos</button>');
           var $neg_btn = $('<button class="custom-button-flat stretch-on-mobile">Neg</button>');
           var setLabelStateByButton = function (video_id, label) {
@@ -371,7 +371,8 @@
         admin_marked_item = {};
       },
       no_body_scroll: true,
-      show_close_button: false
+      show_close_button: false,
+      full_width_button: true
     });
   }
 

@@ -12,9 +12,9 @@ def create_tutorial(connection_id, action_type, query_type):
         action_type=action_type,
         query_type=query_type
     )
-    app.logger.info("Create tutorial: %r" % tutorial)
     db.session.add(tutorial)
     db.session.commit()
+    app.logger.info("Create tutorial: %r" % tutorial)
     return tutorial
 
 

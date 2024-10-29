@@ -318,7 +318,7 @@
     this.handleVideoPromise = handleVideoPromise;
 
     // Create a bounding box element
-    var createBBox = function (meta_data, $container, add_resizer, is_researcher) {
+    var createBBox = function (meta_data, $container, hide_resizer, is_researcher_feedback) {
       const $bbox = $('<div class="bbox"></div>');
       const adjusted_data = calculateBBox(meta_data, $container);
 
@@ -335,15 +335,17 @@
         width: adjusted_data.width + 'px',
         height: adjusted_data.height + 'px'
       });
-      if (is_researcher) {
+      if (is_researcher_feedback) {
         $bbox.addClass("researcher");
       }
 
       // Add the resizer
-      if (add_resizer) {
-        const resize_boxes = createResizer($bbox, $container);
-        $bbox.append(resize_boxes[0]);
-        $bbox.append(resize_boxes[1]);
+      const resize_boxes = createResizer($bbox, $container);
+      $bbox.append(resize_boxes[0]);
+      $bbox.append(resize_boxes[1]);
+      if (hide_resizer == true) {
+        resize_boxes[0].hide();
+        resize_boxes[1].hide();
       }
 
       return $bbox;

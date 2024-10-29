@@ -12,9 +12,9 @@ def create_view(connection_id, video_id, query_type):
         video_id=video_id,
         query_type=query_type
     )
-    app.logger.info("Create view: %r" % view)
     db.session.add(view)
     db.session.commit()
+    app.logger.info("Create view: %r" % view)
     return view
 
 

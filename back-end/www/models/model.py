@@ -83,7 +83,7 @@ class User(db.Model):
         4 => passed the last batch (16 videos) in the tutorial during the first try.
     """
     id = db.Column(db.Integer, primary_key=True)
-    register_time = db.Column(db.Integer, default=get_current_time())
+    register_time = db.Column(db.Integer, default=get_current_time)
     client_id = db.Column(db.String(255), unique=True, nullable=False)
     client_type = db.Column(db.Integer, nullable=False, default=3)
     score = db.Column(db.Integer, nullable=False, default=0)
@@ -193,7 +193,7 @@ class Label(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     video_id = db.Column(db.Integer, db.ForeignKey("video.id"), nullable=False)
     label = db.Column(db.Integer, nullable=False)
-    time = db.Column(db.Integer, nullable=False, default=get_current_time())
+    time = db.Column(db.Integer, nullable=False, default=get_current_time)
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False, index=True)
     batch_id = db.Column(db.Integer, db.ForeignKey("batch.id"))
 
@@ -223,7 +223,7 @@ class Connection(db.Model):
         This indicates the user who connected to the server.
     """
     id = db.Column(db.Integer, primary_key=True)
-    time = db.Column(db.Integer, nullable=False, default=get_current_time())
+    time = db.Column(db.Integer, nullable=False, default=get_current_time)
     client_type = db.Column(db.Integer, nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
     # Relationships
@@ -265,7 +265,7 @@ class Batch(db.Model):
         Current raw score of the user (User.raw_score).
     """
     id = db.Column(db.Integer, primary_key=True)
-    request_time = db.Column(db.Integer, nullable=False, default=get_current_time())
+    request_time = db.Column(db.Integer, nullable=False, default=get_current_time)
     return_time = db.Column(db.Integer)
     connection_id = db.Column(db.Integer, db.ForeignKey("connection.id"))
     score = db.Column(db.Integer)
@@ -311,7 +311,7 @@ class View(db.Model):
     connection_id = db.Column(db.Integer, db.ForeignKey("connection.id"), nullable=False)
     video_id = db.Column(db.Integer, db.ForeignKey("video.id"), nullable=False)
     query_type = db.Column(db.Integer, nullable=False)
-    time = db.Column(db.Integer, default=get_current_time())
+    time = db.Column(db.Integer, default=get_current_time)
 
     def __repr__(self):
         return (
@@ -351,7 +351,7 @@ class Tutorial(db.Model):
     connection_id = db.Column(db.Integer, db.ForeignKey("connection.id"), nullable=False)
     action_type = db.Column(db.Integer, nullable=False)
     query_type = db.Column(db.Integer, nullable=False)
-    time = db.Column(db.Integer, default=get_current_time())
+    time = db.Column(db.Integer, default=get_current_time)
 
     def __repr__(self):
         return (
@@ -424,7 +424,7 @@ class SegmentationMask(db.Model):
     priority = db.Column(db.Integer, nullable=False, default=1)
     label_state = db.Column(db.Integer, nullable=False, default=-1, index=True)
     label_state_admin = db.Column(db.Integer, nullable=False, default=-1, index=True)
-    label_update_time = db.Column(db.Integer, default=get_current_time())
+    label_update_time = db.Column(db.Integer, default=get_current_time)
     frame_number = db.Column(db.Integer, nullable=True)
     frame_timestamp = db.Column(db.Integer, nullable=True)
     video_id = db.Column(db.Integer, db.ForeignKey("video.id"))
@@ -485,13 +485,13 @@ class SegmentationFeedback(db.Model):
     y_bbox = db.Column(db.Integer, nullable=True)
     w_bbox = db.Column(db.Integer, nullable=True)
     h_bbox = db.Column(db.Integer, nullable=True)
-    time = db.Column(db.Integer, nullable=False, default=get_current_time())
+    time = db.Column(db.Integer, nullable=False, default=get_current_time)
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
     batch_id = db.Column(db.Integer, db.ForeignKey("segmentation_batch.id"))
 
     def __repr__(self):
         return (
-            "<SegmentationFeedback id=%r segmentation_id=%r feedback_code=%r"
+            "<SegmentationFeedback id=%r segmentation_id=%r feedback_code=%r "
             "x_bbox=%r y_bbox=%r w_bbox=%r h_bbox=%r time=%r user_id=%r batch_id=%r>"
         ) % (
             self.id, self.segmentation_id, self.feedback_code,
@@ -531,7 +531,7 @@ class SegmentationBatch(db.Model):
     """
 
     id = db.Column(db.Integer, primary_key=True)
-    request_time = db.Column(db.Integer, nullable=False, default=get_current_time())
+    request_time = db.Column(db.Integer, nullable=False, default=get_current_time)
     return_time = db.Column(db.Integer)
     connection_id = db.Column(db.Integer, db.ForeignKey("connection.id"))
     score = db.Column(db.Integer)
