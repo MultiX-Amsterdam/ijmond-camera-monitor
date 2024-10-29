@@ -74,7 +74,8 @@
             if ($researcher_resizer.length == 0) {
               // This means there is no researcher label, so we need to create a bounding box.
               var $img = $seg_container.find("img.seg-img");
-              var $bbox = util.createBBox($this.data("seg_mask"), $img, false, true);
+              var feedback_code = 3; // this means that the model output looks good
+              var $bbox = util.createBBox($this.data("seg_mask"), $img, false, feedback_code);
               $seg_container.append($bbox);
             }
             if ($this.hasClass("edit-mode")) {
@@ -174,8 +175,7 @@
         meta_data["w_bbox"] = b["w_bbox"];
         meta_data["h_bbox"] = b["h_bbox"];
       }
-      var is_researcher_feedback = [3, 4, 5].indexOf(b["feedback_code"]) !== -1 ? true : false;
-      var $bbox = util.createBBox(meta_data, $item.find(".seg-img"), true, is_researcher_feedback);
+      var $bbox = util.createBBox(meta_data, $item.find(".seg-img"), true, b["feedback_code"]);
       // The is_orignal_box_null flag is used when we need to return the edited box the the back-end
       $bbox.data("is_orignal_box_null", is_orignal_box_null);
       $item.append($bbox);
@@ -320,9 +320,11 @@
           // This means the user said that there should be no bounding box
           bbox_original = false;
         }
+        const is_gold_standard = $("#gold-standard-toggle").is(":checked");
         var labels = [{
           id: seg_mask["id"],
-          relative_boxes: bbox_original
+          relative_boxes: bbox_original,
+          is_gold_standard: is_gold_standard
         }];
         setLabelState(labels, {
           success: function () {
@@ -432,40 +434,46 @@
   function setImageTypeText(method) {
     var $s = $("#image-type-text");
     if (method == "get_pos_labels_seg") {
-      $s.html("alle volledig gecontroleerd kaders met rook (<span class='custom-text-info2-dark-theme'>oranje kaders worden door burgers verstrekt</span>; cyaan kaders worden door onderzoekers verstrekt)");
+      var html = "";
+      html += "alle volledig gecontroleerd kaders met rook (";
+      html += "<span class='custom-text-primary-dark-theme'>groene kaders worden gecreëerd door het AI-model; </span>";
+      html += "<span class='custom-text-info2-dark-theme'>oranje kaders worden door burgers verstrekt; </span>";
+      html += "<span class='custom-text-info-dark-theme'>cyaan kaders worden door onderzoekers verstrekt</span>";
+      html += ")";
+      $s.html(html);
       //$s.text("fully checked boxes with smoke");
     } else if (method == "get_neg_labels_seg") {
-      $s.text("alle volledig gecontroleerd kaders zonder rook");
+      $s.html("<span class='custom-text-info-dark-theme'>alle volledig gecontroleerd kaders zonder rook</span>");
       //$s.text("fully checked boxes with no smoke");
     } else if (method == "get_pos_labels_seg_by_researcher") {
-      $s.text("alle volledig gecontroleerd kaders met rook door onderzoekers");
+      $s.html("<span class='custom-text-info-dark-theme'>alle volledig gecontroleerd kaders met rook door onderzoekers</span>");
       //$s.text("researcher-checked boxes with smoke");
     } else if (method == "get_neg_labels_seg_by_researcher") {
-      $s.text("alle volledig gecontroleerd kaders zonder rook door onderzoekers");
+      $s.html("<span class='custom-text-info-dark-theme'>alle volledig gecontroleerd kaders zonder rook door onderzoekers</span>");
       //$s.text("researcher-checked boxes with no smoke");
     } else if (method == "get_pos_labels_seg_by_citizen") {
-      $s.text("alle volledig gecontroleerd kaders met rook door burgers");
+      $s.html("<span class='custom-text-info-dark-theme'>alle volledig gecontroleerd kaders met rook door burgers</span>");
       //$s.text("citizen-checked boxes with smoke");
     } else if (method == "get_neg_labels_seg_by_citizen") {
-      $s.text("alle volledig gecontroleerd kaders zonder rook door burgers");
+      $s.html("<span class='custom-text-info-dark-theme'>alle volledig gecontroleerd kaders zonder rook door burgers</span>");
       //$s.text("citizen-checked boxes with no smoke");
     } else if (method == "get_pos_gold_labels_seg") {
-      $s.text("'gold standard' kaders met rook");
+      $s.html("<span class='custom-text-info-dark-theme'>'gold standard' kaders met rook</span>");
       //$s.text("researcher-checked gold standards with smoke");
     } else if (method == "get_neg_gold_labels_seg") {
-      $s.text("'gold standard' kaders zonder rook");
+      $s.html("<span class='custom-text-info-dark-theme'>'gold standard' kaders zonder rook</span>");
       //$s.text("researcher-checked gold standards with no smoke");
     } else if (method == "get_discorded_labels_seg") {
-      $s.text("kaders met onenigheid");
+      $s.html("<span class='custom-text-info-dark-theme'>kaders met onenigheid</span>");
       //$s.text("citizen-checked boxes with discord");
     } else if (method == "get_bad_labels_seg") {
-      $s.text("slechte data");
+      $s.html("<span class='custom-text-info-dark-theme'>slechte data</span>");
       //$s.text("boxes with bad labels");
     } else if (method == "get_maybe_pos_labels_seg") {
-      $s.text("gecontroleerd kaders die mogelijk rook bevatten");
+      $s.html("<span class='custom-text-info-dark-theme'>gecontroleerd kaders die mogelijk rook bevatten</span>");
       //$s.text("citizen-checked boxes that may have smoke");
     } else if (method == "get_maybe_neg_labels_seg") {
-      $s.text("gecontroleerd kaders die mogelijk geen rook bevatten");
+      $s.html("<span class='custom-text-info-dark-theme'>gecontroleerd kaders die mogelijk geen rook bevatten</span>");
       //$s.text("citizen-checked boxes that may not have smoke");
     }
   }

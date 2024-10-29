@@ -318,7 +318,7 @@
     this.handleVideoPromise = handleVideoPromise;
 
     // Create a bounding box element
-    var createBBox = function (meta_data, $container, hide_resizer, is_researcher_feedback) {
+    var createBBox = function (meta_data, $container, hide_resizer, feedback_code) {
       const $bbox = $('<div class="bbox"></div>');
       const adjusted_data = calculateBBox(meta_data, $container);
 
@@ -335,8 +335,12 @@
         width: adjusted_data.width + 'px',
         height: adjusted_data.height + 'px'
       });
-      if (is_researcher_feedback) {
+      if (feedback_code == 3 || feedback_code == 4 || feedback_code == 5) {
+        // Researcher labels
         $bbox.addClass("researcher");
+      } else if (feedback_code == 16 || feedback_code == 17 || feedback_code == 18) {
+        // Gold standards
+        $bbox.addClass("gold-standard");
       }
 
       // Add the resizer

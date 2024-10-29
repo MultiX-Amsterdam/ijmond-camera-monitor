@@ -45,14 +45,14 @@
         <div class="flex-row">
           <div class="flex-item flex-column">
             <p class="text admin-text no-bottom-margin">
-              Uw log in als <span class="custom-text-info-dark-theme">onderzoeker of expert</span>.
-              De galerij wordt weergegeven in de dashboardmodus.
+              Uw log in als onderzoeker of expert.
+              De galerij staat in dashboardmodus.
               <a id="download-user-token">Klik om het gebruikerstoken te downloaden.</a>
               U kunt het token gebruiken om de metadata van gelabelde video's te verkrijgen via onze API.
             </p>
             <p class="text intro-text no-bottom-margin">
               Wij willen u graag bedanken voor uw inzet!
-              Dit zijn <span class="custom-text-info-dark-theme" id="image-type-text">alle volledig gecontroleerd kaders met rook (<span class="custom-text-info2-dark-theme">oranje kaders worden door burgers verstrekt</span>; cyaan kaders worden door onderzoekers verstrekt)</span>.
+              Dit zijn <span id="image-type-text">alle volledig gecontroleerd kaders met rook (<span class="custom-text-primary-dark-theme">groene kaders worden gecreëerd door het AI-model; </span><span class="custom-text-info2-dark-theme">oranje kaders worden door burgers verstrekt; </span><span class="custom-text-info-dark-theme">cyaan kaders worden door onderzoekers verstrekt</span>)</span>.
             </p>
             <p class="text user-text no-bottom-margin">
               Wij willen u graag bedanken voor uw inzet!
@@ -103,6 +103,10 @@
   </div>
   <div id="set-label-confirm-dialog" title="Set Label" data-role="none">
     <p>Do you want to update the bounding box?</p>
+    <div>
+      <input type="checkbox" name="gold-standard-toggle" id="gold-standard-toggle">
+      <label for="gold-standard-toggle">Is gold standard?</label>
+    </div>
   </div>
 </body>
 

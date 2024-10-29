@@ -174,7 +174,7 @@ def only_latest_researcher_feedback(segmentations):
         feedback_filtered = []
         latest_reseacher_feedback = None
         for f in s.feedback:
-            if f.feedback_code in [3, 4, 5]:
+            if f.feedback_code in [3, 4, 5, 16, 17, 18]:
                 # This means the feedback is provided by researchers
                 if latest_reseacher_feedback is None:
                     latest_reseacher_feedback = f

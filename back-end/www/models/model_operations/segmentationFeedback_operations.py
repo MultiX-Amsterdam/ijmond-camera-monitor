@@ -68,6 +68,21 @@ def update_segmentation_labels(labels, user_id, connection_id, batch_id, client_
         > ]
         If relative_boxes is null, it means no change to the bounding box.
         If relative_boxes is false, it means that the box should be removed.
+        Optionally, the is_gold_standard field shows if the label should be a gold standard.
+        But this field can only be used by the admin researcher (i.e., client_type=0).
+        Below is an example:
+        > [
+        >     {
+        >         "id": 1,
+        >         "relative_boxes": {
+        >             "x_bbox": 343,
+        >             "y_bbox": 122,
+        >             "w_bbox": 101,
+        >             "h_bbox": 254
+        >         },
+        >         "is_gold_standard": true
+        >     }
+        > ]
     user_id : int
         The user id (defined in the user table).
     connection_id : int
@@ -120,7 +135,8 @@ def update_segmentation_labels(labels, user_id, connection_id, batch_id, client_
         # Update labels
         for s in labels:
             bbox = s["relative_boxes"]
-            fc = bbox_to_feedback_code(bbox, is_researcher=is_admin_researcher)
+            is_gold_standard = s.get("is_gold_standard", False)
+            fc = bbox_to_feedback_code(bbox, is_researcher=is_admin_researcher, is_gold_standard=is_gold_standard)
             if bbox == None:
                 # This means the box looks good
                 x_bbox, y_bbox, h_bbox, w_bbox = None, None, None, None
@@ -224,7 +240,7 @@ def compute_segmentation_batch_score(segmentation_batch_hashed, labels, threshol
     return max(len(labels) - config.GOLD_STANDARD_IN_BATCH_SEG, 0)
 
 
-def bbox_to_feedback_code(bbox, is_researcher=False):
+def bbox_to_feedback_code(bbox, is_researcher=False, is_gold_standard=False):
     """
     This function converts a bounding box feedback to a feedback code.
     The feedback code will be passed to the `label_state_machine` function.
@@ -247,6 +263,8 @@ def bbox_to_feedback_code(bbox, is_researcher=False):
         Width of the box in pixels.
     is_researcher : bool
         Is the researcher role or not.
+    is_gold_standard : bool
+        Is gold standard or not.
 
     Returns
     ----------
@@ -258,16 +276,34 @@ def bbox_to_feedback_code(bbox, is_researcher=False):
         3 : One researcher checked the box; the box is good
         4 : One researcher checked the box; the person edited the box
         5 : One researcher checked the box; the person removed the box due to no smoke
+        16 : Gold standard; the box is good
+        17 : Gold standard; the box needs editing
+        18 : Gold standard; the box should be removed
     """
     if bbox == None:
-        if is_researcher: return 3
-        else: return 0
+        if is_researcher:
+            if is_gold_standard:
+                return 16
+            else:
+                return 3
+        else:
+            return 0
     elif bbox == False:
-        if is_researcher: return 5
-        else: return 2
+        if is_researcher:
+            if is_gold_standard:
+                return 18
+            else:
+                return 5
+        else:
+            return 2
     elif type(bbox) == dict:
-        if is_researcher: return 4
-        else: return 1
+        if is_researcher:
+            if is_gold_standard:
+                return 17
+            else:
+                return 4
+        else:
+            return 1
     else:
         return None
 
