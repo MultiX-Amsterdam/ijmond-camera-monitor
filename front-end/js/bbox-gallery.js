@@ -432,7 +432,7 @@
   function setImageTypeText(method) {
     var $s = $("#image-type-text");
     if (method == "get_pos_labels_seg") {
-      $s.text("alle volledig gecontroleerd kaders met rook");
+      $s.html("alle volledig gecontroleerd kaders met rook (<span class='custom-text-info2-dark-theme'>oranje kaders worden door burgers verstrekt</span>; cyaan kaders worden door onderzoekers verstrekt)");
       //$s.text("fully checked boxes with smoke");
     } else if (method == "get_neg_labels_seg") {
       $s.text("alle volledig gecontroleerd kaders zonder rook");

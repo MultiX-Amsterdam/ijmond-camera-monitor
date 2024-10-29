@@ -400,22 +400,26 @@ body,
   position: absolute;
   display: flex;
   border: 0;
-  outline: 3px solid rgba(255, 0, 0, 0.75);
+  outline: 3px solid rgba(255, 180, 96, 0.8);
 }
 
 .gallery .gallery-images .segmentation-container .bbox.researcher {
-  outline: 3px solid rgba(0, 0, 255, 0.75);
+  outline: 3px solid rgba(59, 228, 255, 0.8);
 }
 
-.gallery .gallery-images .segmentation-container .resizer {
+.gallery .gallery-images .segmentation-container .bbox .resizer {
   width: 16px;
   height: 16px;
-  background: blue;
+  background: rgb(255, 180, 96);
   position: absolute;
   z-index: 1;
   border-radius: 50%;
   cursor: nwse-resize;
   border: 0;
+}
+
+.gallery .gallery-images .segmentation-container .bbox.researcher .resizer {
+  background: rgb(59, 228, 255);
 }
 
 .gallery .gallery-images .segmentation-container .resizer.top-left {

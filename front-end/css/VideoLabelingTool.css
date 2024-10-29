@@ -43,13 +43,13 @@
     position: absolute;
     display: flex;
     border: 0;
-    outline: 3px solid rgba(255, 0, 0, 0.75);
+    outline: 3px solid rgba(255, 180, 96, 0.8);
 }
 
-.video-labeling-tool .video-labeling-tool-videos .segmentation-container .resizer {
+.video-labeling-tool .video-labeling-tool-videos .segmentation-container .bbox .resizer {
     width: 16px;
     height: 16px;
-    background: blue;
+    background: rgb(255, 180, 96);
     position: absolute;
     z-index: 1;
     border-radius: 50%;
