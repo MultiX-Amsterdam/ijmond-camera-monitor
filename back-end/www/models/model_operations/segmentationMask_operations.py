@@ -99,6 +99,7 @@ def query_segmentation_batch(user_id, use_admin_label_state=False):
             # Spamming patterns include ignoring or selecting all segmentations
             num_gold_need_editing = np.random.choice(range(1, config.GOLD_STANDARD_IN_BATCH_SEG))
             num_gold_need_removed = config.GOLD_STANDARD_IN_BATCH_SEG - num_gold_need_editing
+            # We will not select the gold standards that do not need editing (because users can pass the check without doing anything)
             gold_need_editing = SegmentationMask.query.filter(SegmentationMask.label_state_admin==17).order_by(func.random()).limit(num_gold_need_editing).all()
             gold_need_removed = SegmentationMask.query.filter(SegmentationMask.label_state_admin==18).order_by(func.random()).limit(num_gold_need_removed).all()
             if (len(gold_need_editing + gold_need_removed) != config.GOLD_STANDARD_IN_BATCH_SEG):
@@ -162,13 +163,19 @@ def only_latest_researcher_feedback(segmentations):
 
     Parameters
     ----------
-    segmentations : SegmentationMask
+    segmentations : list of SegmentationMask
         The SegmentationMask records.
 
     Returns
     -------
-    SegmentationMask
+    list of SegmentationMask
         SegmentationMask records with the filtered researcher feedback.
+
+    Notes
+    ----------
+    If the gold standard segmentation mask has a lot of feedback,
+    ...this function can have performance issues.
+    The reason is because we also create feedback records for gold standard masks.
     """
     for s in segmentations:
         feedback_filtered = []

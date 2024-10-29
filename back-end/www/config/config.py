@@ -34,7 +34,7 @@ class Config(object):
 
     # Set the number of gold standard videos in the batch for citizens (not admin)
     # This variable is used for the segmentation masks
-    GOLD_STANDARD_IN_BATCH_SEG = 0
+    GOLD_STANDARD_IN_BATCH_SEG = 2
 
     # Set the ratio of partially labeled videos in a batch labeling request
     # 0.8 means that we want 80% of the videos in the batch to be partially labeled

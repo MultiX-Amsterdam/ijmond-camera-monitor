@@ -120,9 +120,10 @@
             // Fail the quality check
             $quality_check_passed_text.hide();
             consecutive_failed_batches += 1;
-            //if (consecutive_failed_batches >= 3) {
-            //  tutorial_prompt_dialog.getDialog().dialog("open");
-            //}
+            if (consecutive_failed_batches >= 3) {
+              console.log("You failed the data quality check more than 3 times.");
+              //tutorial_prompt_dialog.getDialog().dialog("open");
+            }
           } else {
             // Pass the quality check
             $quality_check_passed_text.show();
