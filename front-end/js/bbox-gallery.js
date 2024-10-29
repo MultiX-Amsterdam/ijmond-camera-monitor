@@ -61,7 +61,12 @@
         $control.append($link_to_video);
         if (is_researcher) {
           var $label_control = $('<div class="control-group"></div>');
-          var $edit_btn = $('<button class="custom-button-flat stretch-on-mobile">Edit the box</button>');
+          var $edit_btn = $('<button class="custom-button-flat stretch-on-mobile">Edit box</button>');
+          $label_control.append($edit_btn);
+          var $toggle_btn = $('<button class="custom-button-flat stretch-on-mobile">Toggle box</button>');
+          $toggle_btn.hide();
+          $label_control.append($toggle_btn);
+          $control.append($label_control);
           $edit_btn.on("click", function () {
             var $this = $(this);
             var $seg_container = $this.parent().parent().parent();
@@ -74,14 +79,25 @@
             }
             if ($this.hasClass("edit-mode")) {
               $set_label_confirm_dialog.data("edit_btn", $this);
+              $set_label_confirm_dialog.data("toggle_btn", $toggle_btn);
               $set_label_confirm_dialog.dialog("open");
             } else {
               $this.addClass("edit-mode");
               $this.text("Confirm editing");
               $researcher_resizer.show();
+              $toggle_btn.show();
             }
           });
-          $control.append($label_control.append($edit_btn));
+          $toggle_btn.on("click", function () {
+            var $this = $(this);
+            var $seg_container = $this.parent().parent().parent();
+            var $bbox_researcher = $seg_container.find(".bbox.researcher");
+            if ($bbox_researcher.css("visibility") == "visible") {
+              $bbox_researcher.css("visibility", "hidden");
+            } else {
+              $bbox_researcher.css("visibility", "visible");
+            }
+          });
         }
       }
     }
@@ -137,6 +153,7 @@
     $item.find(".bbox").remove();
     var bbox_list = seg_mask["feedback_filtered"];
     for (var i = 0; i < bbox_list.length; i++) {
+      var is_orignal_box_null = false;
       var b = bbox_list[i];
       if (b["x_bbox"] == -1 && b["y_bbox"] == -1 && b["w_bbox"] == -1 && b["h_bbox"] == -1) {
         continue;
@@ -146,6 +163,7 @@
         h_image: seg_mask["h_image"]
       };
       if (b["x_bbox"] == null && b["y_bbox"] == null && b["w_bbox"] == null && b["h_bbox"] == null) {
+        is_orignal_box_null = true;
         meta_data["x_bbox"] = seg_mask["x_bbox"];
         meta_data["y_bbox"] = seg_mask["y_bbox"];
         meta_data["w_bbox"] = seg_mask["w_bbox"];
@@ -158,6 +176,8 @@
       }
       var is_researcher_feedback = [3, 4, 5].indexOf(b["feedback_code"]) !== -1 ? true : false;
       var $bbox = util.createBBox(meta_data, $item.find(".seg-img"), true, is_researcher_feedback);
+      // The is_orignal_box_null flag is used when we need to return the edited box the the back-end
+      $bbox.data("is_orignal_box_null", is_orignal_box_null);
       $item.append($bbox);
     }
   }
@@ -270,12 +290,39 @@
       action_text: "Yes",
       action_callback: function () {
         var $edit_btn = $set_label_confirm_dialog.data("edit_btn");
+        var $toggle_btn = $set_label_confirm_dialog.data("toggle_btn");
         var $seg_container = $edit_btn.parent().parent().parent();
         var $bbox = $seg_container.find(".bbox.researcher");
         var seg_mask = $edit_btn.data("seg_mask");
+        var bbox_original = null; // null means that the model's output looks good
+        if ($bbox.css("visibility") == "visible") {
+          // This means there should be a bounding box
+          if ($bbox.data("interacted")) {
+            // This means the user edited the bounding box
+            bbox_original = util.reverseBBox($bbox);
+          } else {
+            // The reason of using safeGet() here is because if the box is created by pressing the edit button,
+            // The value of is_orignal_box_null would be undefined.
+            // So the default value should be true,
+            // because when the box is created, initially it fits the AI model's output,
+            // which means that the box should be null when returning the feedback to the back-end.
+            if (!safeGet($bbox.data("is_orignal_box_null"), true)) {
+              // Although the use did not edit the bounding box,
+              // it is still possible that the box was orignally null,
+              // which means that the model output is good enough and does not require editing.
+              // But if the original box is not null,
+              // This means that the box was edited before,
+              // So we need to respect this by returning the box.
+              bbox_original = util.reverseBBox($bbox);
+            }
+          }
+        } else {
+          // This means the user said that there should be no bounding box
+          bbox_original = false;
+        }
         var labels = [{
           id: seg_mask["id"],
-          relative_boxes: util.reverseBBox($bbox)
+          relative_boxes: bbox_original
         }];
         setLabelState(labels, {
           success: function () {
@@ -283,7 +330,8 @@
             console.log(labels);
             // Get out of the edit mode
             $edit_btn.removeClass("edit-mode");
-            $edit_btn.text("Edit the box");
+            $edit_btn.text("Edit box");
+            $toggle_btn.hide();
             var $researcher_resizer = $seg_container.find(".bbox.researcher .resizer");
             $researcher_resizer.hide();
             $set_label_confirm_dialog.removeData("edit_btn");

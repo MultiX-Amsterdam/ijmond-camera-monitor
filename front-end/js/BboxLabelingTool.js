@@ -139,8 +139,7 @@
                 const $bbox = $bboxes.eq(i);
                 const meta_data = $bbox.data("metadata");
                 if (typeof meta_data === "undefined") return;
-                // Null means that the bounding box looks good
-                var bbox_original = null;
+                var bbox_original = null; // null means that the model's output looks good
                 if ($bbox.css("visibility") == "visible") {
                     // This means there should be a bounding box
                     if ($bbox.data("interacted")) {
@@ -162,22 +161,24 @@
         // Create a segmentation label element
         function createSegmentation(i) {
             var $item = $("<a href='javascript:void(0)' class='flex-column segmentation-container'></a>");
-            var $caption = $("<div class='control-group'><span>Beeld " + (i + 1) + "</span><button class='box-toggle custom-button-flat'>Verwijder kader</button></div>");
+            var $toggle_btn = $("<button class='box-toggle custom-button-flat'>Verwijder kader</button>");
+            var $caption = $("<div class='control-group'><span>Beeld " + (i + 1) + "</span></div>");
             // Add the event for users to remove and add the bounding box.
             // Users can indicate if the image has or does not have smoke.
             // Notice that we cannot use the "hide" or "show" function because it will break when users resize the browser window.
-            $caption.on("click", function () {
+            $toggle_btn.on("click", function () {
                 var $this = $(this);
                 var $bbox = $item.find(".bbox");
                 if ($bbox.css("visibility") == "visible") {
                     $bbox.css("visibility", "hidden");
-                    $this.find("button").text("Plaats kader");
+                    $this.text("Plaats kader");
                 } else {
                     $bbox.css("visibility", "visible");
-                    $this.find("button").text("Verwijder kader");
+                    $this.text("Verwijder kader");
                 }
             });
             var $img = $("<img class='seg-img' src=''>");
+            $caption.append($toggle_btn);
             $item.append($img).append($caption);
             return $item;
         }
