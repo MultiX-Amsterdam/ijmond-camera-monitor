@@ -340,6 +340,7 @@
         $bbox.addClass("researcher");
       } else if (feedback_code == 16 || feedback_code == 17 || feedback_code == 18) {
         // Gold standards
+        $bbox.addClass("researcher"); // we need this, do not delete this line
         $bbox.addClass("gold-standard");
       }
 

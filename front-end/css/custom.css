@@ -407,7 +407,7 @@ body,
   outline: 3px solid rgba(59, 228, 255, 0.8);
 }
 
-.gallery .gallery-images .segmentation-container .bbox.gold-standard {
+.gallery .gallery-images .segmentation-container .bbox.researcher.gold-standard {
   outline: 3px solid rgba(62, 59, 255, 0.8);
 }
 
@@ -426,7 +426,7 @@ body,
   background: rgb(59, 228, 255);
 }
 
-.gallery .gallery-images .segmentation-container .bbox.gold-standard .resizer {
+.gallery .gallery-images .segmentation-container .bbox.researcher.gold-standard .resizer {
   background: rgb(62, 59, 255);
 }
 
