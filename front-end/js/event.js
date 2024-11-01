@@ -65,6 +65,7 @@
       year: 'numeric', // Full year (e.g., 2024)
       hour: '2-digit', // Hour (e.g., 15)
       minute: '2-digit', // Minutes (e.g., 45)
+      second: '2-digit', // Seconds
       hour12: false
     });
     $($i.get(0)).text(v["camera_str"]).addClass("custom-text-info-dark-theme");
