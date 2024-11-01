@@ -27,12 +27,17 @@
     cursor: default;
 }
 
-.video-labeling-tool .video-labeling-tool-videos .segmentation-container img {
+.video-labeling-tool .video-labeling-tool-videos .segmentation-container img.seg-img {
     pointer-events: none;
 }
 
 .video-labeling-tool .video-labeling-tool-videos .segmentation-container .control-group {
     justify-content: center;
+}
+
+.video-labeling-tool .video-labeling-tool-videos .segmentation-container .control-group span {
+    color: white;
+    font-size: 24px;
 }
 
 .video-labeling-tool .video-labeling-tool-videos .segmentation-container .control-group span:first-of-type {
@@ -125,7 +130,7 @@
 }
 
 .video-labeling-tool a video,
-.video-labeling-tool a img {
+.video-labeling-tool a img.seg-img {
     border-radius: 2px;
     width: 100%;
     box-sizing: border-box;
@@ -138,7 +143,7 @@
 }
 
 .video-labeling-tool a.selected video,
-.video-labeling-tool a.selected img {
+.video-labeling-tool a.selected img.seg-img {
     border: 10px solid #ff5e5e;
 }
 
@@ -152,6 +157,15 @@
 
 .video-labeling-tool a.selected>div:first-of-type {
     color: #ff5e5e;
+}
+
+.play-video-dialog {
+    max-width: 700px;
+}
+
+#smoke-video {
+    width: 100%;
+    margin-top: 10px;
 }
 
 @media screen and (min-width: 500px) {

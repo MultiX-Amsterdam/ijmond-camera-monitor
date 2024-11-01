@@ -109,7 +109,7 @@
     function renderGoogleSignInButton() {
       google.accounts.id.renderButton(document.getElementById("google-sign-in-button"), {
         theme: "filled_blue",
-        width: 231,
+        width: 211,
         height: 46
       })
     }

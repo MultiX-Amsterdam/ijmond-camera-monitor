@@ -11,6 +11,7 @@
         // Variables
         //
         var util = new edaplotjs.Util();
+        var widgets = new edaplotjs.Widgets();
         settings = safeGet(settings, {});
         var $container = $(container_selector);
         var $tool;
@@ -34,6 +35,7 @@
         var user_raw_score;
         var on_user_score_update = settings["on_user_score_update"];
         var is_admin;
+        var $video_playback_dialog;
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////
         //
@@ -44,6 +46,7 @@
             $tool_videos = $('<div class="video-labeling-tool-videos"></div>');
             $container.append($tool.append($tool_videos));
             showLoadingMsg();
+            initVideoPlaybackDialog();
         }
 
         // Get the user id from the server
@@ -163,6 +166,7 @@
             var $item = $("<a href='javascript:void(0)' class='flex-column segmentation-container'></a>");
             var $toggle_btn = $("<button class='box-toggle custom-button-flat'>Verwijder kader</button>");
             var $caption = $("<div class='control-group'><span>Beeld " + (i + 1) + "</span></div>");
+            var $play_video_btn = $("<button class='play-video custom-button-flat'><img src='img/play.png'></button>");
             // Add the event for users to remove and add the bounding box.
             // Users can indicate if the image has or does not have smoke.
             // Notice that we cannot use the "hide" or "show" function because it will break when users resize the browser window.
@@ -177,9 +181,27 @@
                     $this.text("Verwijder kader");
                 }
             });
+            $play_video_btn.on("click", function () {
+                var $this = $(this);
+                var v = $this.parent().parent().data("img_data");
+                v["video"]["url_root"] = v["url_root"];
+                var vid_src_url = util.buildVideoURL(v["video"]);
+                var $vid = $("#smoke-video");
+                $vid.one("canplay", function () {
+                    // Play the video automatically
+                    $vid.get(0).playbackRate = 0.5;
+                    util.handleVideoPromise(this, "play");
+                });
+                $vid.prop("src", vid_src_url);
+                util.handleVideoPromise($vid.get(0), "load"); // load to reset video
+                util.handleVideoPromise(this, "play");
+                $video_playback_dialog.dialog("open");
+            });
             var $img = $("<img class='seg-img' src=''>");
             $caption.append($toggle_btn);
-            $item.append($img).append($caption);
+            $caption.append($play_video_btn);
+            $item.append($img);
+            $item.append($caption);
             return $item;
         }
 
@@ -198,6 +220,7 @@
                     $item = img_items[i];
                     $item.find(".box-toggle").text("Verwijder kader");
                 }
+                $item.data("img_data", v);
                 $item.data("id", v["id"]);
                 var $img = $item.find("img").first();
 
@@ -352,6 +375,44 @@
             if (typeof on_user_score_update === "function") on_user_score_update(user_score, user_raw_score);
         }
 
+        function initVideoPlaybackDialog() {
+            $video_playback_dialog = widgets.createCustomDialog({
+                class: "play-video-dialog",
+                selector: "#play-video-dialog",
+                action_text: "Close",
+                action_callback: function () {
+                    $("#smoke-video").get(0).pause();
+                },
+                show_cancel_btn: false,
+                no_body_scroll: true,
+                show_close_button: false
+            });
+
+            // Handle window resize
+            $(window).resize(function () {
+                fitDialogToScreen($video_playback_dialog);
+            });
+            fitDialogToScreen($video_playback_dialog);
+        }
+
+        /**
+        * Resize a jQuery dialog to fit the screen.
+        * @public
+        * @param {Object} $dialog - a jQuery dialog object.
+        */
+        function fitDialogToScreen($dialog) {
+            var $window = $(window);
+            $dialog.parent().css({
+                "width": $window.width(),
+                "height": $window.height(),
+                "left": 0,
+                "top": 0
+            });
+            $dialog.dialog("option", "height", $window.height());
+            $dialog.dialog("option", "width", $window.width());
+        }
+        this.fitDialogToScreen = fitDialogToScreen;
+
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////
         //
         // Public methods
@@ -440,11 +501,4 @@
         window.edaplotjs = {};
         window.edaplotjs.BboxLabelingTool = BboxLabelingTool;
     }
-
-    ////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    //
-    // Register to window
-    //
-
-
 })();

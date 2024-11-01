@@ -189,7 +189,7 @@ body,
   font-size: 16px !important;
   height: 46px !important;
   border-radius: 0 !important;
-  width: 231px !important;
+  width: 211px !important;
   margin-top: 17px !important;
   background-color: #7d7d7d !important;
   border-color: #7d7d7d !important;
@@ -198,8 +198,12 @@ body,
 }
 
 #google-sign-in-button {
-  margin-top: 17px !important;
+  margin-top: 25px !important;
   box-sizing: border-box;
+}
+
+#guest-button {
+  margin-bottom: 5px;
 }
 
 #sign-in-text {
@@ -282,7 +286,7 @@ body,
 }
 
 .gallery video,
-.gallery img {
+.gallery img.seg-img {
   cursor: default;
   -webkit-touch-callout: default;
   -webkit-user-select: auto;
@@ -394,6 +398,10 @@ body,
 .gallery .gallery-images .segmentation-container .label-control p {
   margin-left: 10px;
   margin-top: 0;
+}
+
+.gallery .gallery-images .segmentation-container .label-control .control-group .custom-button-flat:first-child {
+  margin-left: 10px;
 }
 
 .gallery .gallery-images .segmentation-container .bbox {
@@ -585,6 +593,10 @@ body,
 
 #review-community {
   display: none;
+}
+
+.large-text {
+  font-size: 20px;
 }
 
 @media screen and (min-width: 900px) {

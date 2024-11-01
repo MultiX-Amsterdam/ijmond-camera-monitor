@@ -87,7 +87,7 @@
       var show_cancel_btn = safeGet(settings["show_cancel_btn"], true);
 
       // Specify the style
-      var style_class = "custom-dialog-flat";
+      var style_class = "custom-dialog-flat " + safeGet(settings["class"], "");
 
       // Specify the selector of the dialog
       // If no selector, a <div></div> will be created

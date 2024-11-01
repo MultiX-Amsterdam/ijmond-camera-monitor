@@ -52,7 +52,7 @@
     var $control = $("<div class='label-control'></div>");
     // Add the date and time information
     var $dt = $("<p class='text-small-margin'><i></i></p>");
-    $control.append($dt)
+    $control.append($dt);
     if (typeof user_id === "undefined") {
       if (is_admin) {
         var $seg_id = $("<p class='text-small-margin'><i></i></p>");
