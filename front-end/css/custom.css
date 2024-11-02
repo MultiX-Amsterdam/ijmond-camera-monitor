@@ -270,6 +270,10 @@ body,
   padding: 10px 0;
 }
 
+.gallery {
+  min-height: 150px;
+}
+
 .gallery a {
   position: relative;
   cursor: default;
