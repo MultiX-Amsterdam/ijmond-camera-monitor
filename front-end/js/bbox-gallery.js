@@ -480,7 +480,7 @@
   }
 
   function init() {
-    $gallery = $(".gallery").addClass("min-height-600");
+    $gallery = $(".gallery");
     $gallery_images = $(".gallery-images");
     var query_paras = util.getQueryParas();
     user_id = query_paras["user_id"];
