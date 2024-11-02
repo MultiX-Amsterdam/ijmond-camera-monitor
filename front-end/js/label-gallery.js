@@ -477,7 +477,7 @@
 
   function init() {
     util.addVideoClearEvent();
-    $gallery = $(".gallery");
+    $gallery = $(".gallery").addClass("min-height-600");
     $gallery_videos = $(".gallery-videos");
     var query_paras = util.getQueryParas();
     user_id = query_paras["user_id"];

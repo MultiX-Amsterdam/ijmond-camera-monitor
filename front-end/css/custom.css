@@ -270,7 +270,7 @@ body,
   padding: 10px 0;
 }
 
-.gallery {
+.min-height-600 {
   min-height: 600px;
 }
 
