@@ -582,7 +582,7 @@
       return ((docViewTop < elemBottom) && (elemTop < docViewBottom));
     };
 
-    // Update label statistics
+    // Update label statistics for videos
     this.updateLabelStatistics = function () {
       $.getJSON(getRootApiUrl() + "get_label_statistics", function (data) {
         var num_all_videos = data["num_all_videos"];
@@ -592,6 +592,21 @@
         $(".num-fully-labeled-text").text(num_fully_labeled + " (" + num_fully_labeled_p + "%)");
         var num_partially_labeled = data["num_partially_labeled"];
         var num_partially_labeled_p = Math.round(num_partially_labeled / num_all_videos * 10000) / 100;
+        $(".num-partially-labeled-text").text(num_partially_labeled + " (" + num_partially_labeled_p + "%)");
+        $("#label-statistics").show();
+      });
+    };
+
+    // Update label statistics for segmentation masks
+    this.updateLabelStatisticsSegmentation = function () {
+      $.getJSON(getRootApiUrl() + "get_label_statistics_seg", function (data) {
+        var num_all_masks = data["num_all_masks"];
+        $(".num-all-masks-text").text(num_all_masks);
+        var num_fully_labeled = data["num_fully_labeled"];
+        var num_fully_labeled_p = Math.round(num_fully_labeled / num_all_masks * 10000) / 100;
+        $(".num-fully-labeled-text").text(num_fully_labeled + " (" + num_fully_labeled_p + "%)");
+        var num_partially_labeled = data["num_partially_labeled"];
+        var num_partially_labeled_p = Math.round(num_partially_labeled / num_all_masks * 10000) / 100;
         $(".num-partially-labeled-text").text(num_partially_labeled + " (" + num_partially_labeled_p + "%)");
         $("#label-statistics").show();
       });

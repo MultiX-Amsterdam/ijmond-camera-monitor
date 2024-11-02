@@ -44,6 +44,7 @@ from models.model_operations.segmentationMask_operations import get_all_segmenta
 from models.model_operations.segmentationMask_operations import get_pos_segmentation_query_by_user_id
 from models.model_operations.segmentationMask_operations import segmentatio_mask_join_video_table
 from models.model_operations.segmentationMask_operations import only_latest_researcher_feedback
+from models.model_operations.segmentationMask_operations import get_statistics_seg
 from models.model_operations.segmentationFeedback_operations import update_segmentation_labels
 
 from models.schema import videos_schema_is_admin
@@ -634,8 +635,14 @@ def get_video_labels(labels, allow_user_id=False, only_admin=False, use_admin_la
 
 @bp.route("/get_label_statistics", methods=["GET"])
 def get_label_statistics():
-    """Get statistics of the video labels."""
+    """Get statistics of the Video labels."""
     return jsonify(get_statistics())
+
+
+@bp.route("/get_label_statistics_seg", methods=["GET"])
+def get_label_statistics_seg():
+    """Get statistics of the SegmentationMask labels."""
+    return jsonify(get_statistics_seg())
 
 
 @bp.route("/api/v1/add_tutorial_record", methods=["POST"])

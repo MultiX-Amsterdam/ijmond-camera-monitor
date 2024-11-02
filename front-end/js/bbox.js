@@ -48,7 +48,7 @@
     bbox_labeling_tool.next({
       success: function () {
         countDown();
-        util.updateLabelStatistics();
+        util.updateLabelStatisticsSegmentation();
       },
       abort: function () {
         $next.prop("disabled", false);
@@ -190,7 +190,7 @@
         });
       }
     });
-    util.updateLabelStatistics();
+    util.updateLabelStatisticsSegmentation();
   }
 
   function consent() {
