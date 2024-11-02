@@ -23,6 +23,13 @@
 
     function init() {
       // The dialog for users to manually enable video autoplay
+      $("#video-test-dialog").remove();
+      $("<div>", {
+        "id": "video-test-dialog",
+        "title": "Video",
+        "data-role": "none",
+        "html": "<p>Schakel automatisch afspelen van video in.</p><button id='play-video-button' class='custom-button'>Video afspelen</button>"
+      }).appendTo("body");
       $video_test_dialog = widgets.createCustomDialog({
         selector: "#video-test-dialog",
         show_cancel_btn: false,
