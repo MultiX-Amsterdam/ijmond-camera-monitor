@@ -215,7 +215,7 @@ def compute_iou(bbox1, bbox2):
     return iou
 
 
-def compute_segmentation_batch_score(segmentation_batch_hashed, labels, threshold=0.75):
+def compute_segmentation_batch_score(segmentation_batch_hashed, labels, threshold=0.7):
     """
     Compute the score of a segmenation batch.
 
@@ -242,9 +242,6 @@ def compute_segmentation_batch_score(segmentation_batch_hashed, labels, threshol
         label_state_admin = seg.label_state_admin
         b = v["relative_boxes"]
         if label_state_admin == 16: # Gold standard; the box is good
-            # Technically, this part of the code will not be reached,
-            # ...because we do not give this type of gold standards to the users.
-            # The reason is because the user can pass the quality check without doing anything.
             if b == False: continue
             if b == None:
                 # This means that the user also thinks that the model output is good.

@@ -97,17 +97,16 @@ def query_segmentation_batch(user_id, use_admin_label_state=False):
         if config.GOLD_STANDARD_IN_BATCH_SEG > 0:
             # Select gold standards (at least one bbox that needs editing and anothe one that should be removed to prevent spamming)
             # Spamming patterns include ignoring or selecting all segmentations
-            num_gold_need_editing = np.random.choice(range(1, config.GOLD_STANDARD_IN_BATCH_SEG))
-            num_gold_need_removed = config.GOLD_STANDARD_IN_BATCH_SEG - num_gold_need_editing
-            # We will not select the gold standards that do not need editing (because users can pass the check without doing anything)
-            gold_need_editing = SegmentationMask.query.filter(SegmentationMask.label_state_admin==17).order_by(func.random()).limit(num_gold_need_editing).all()
-            gold_need_removed = SegmentationMask.query.filter(SegmentationMask.label_state_admin==18).order_by(func.random()).limit(num_gold_need_removed).all()
-            if (len(gold_need_editing + gold_need_removed) != config.GOLD_STANDARD_IN_BATCH_SEG):
+            num_gold_pos = np.random.choice(range(1, config.GOLD_STANDARD_IN_BATCH_SEG))
+            num_gold_neg = config.GOLD_STANDARD_IN_BATCH_SEG - num_gold_pos
+            gold_pos = SegmentationMask.query.filter(SegmentationMask.label_state_admin.in_([16,17])).order_by(func.random()).limit(num_gold_pos).all()
+            gold_neg = SegmentationMask.query.filter(SegmentationMask.label_state_admin==18).order_by(func.random()).limit(num_gold_neg).all()
+            if (len(gold_pos + gold_neg) != config.GOLD_STANDARD_IN_BATCH_SEG):
                 # This means that there are not enough or no gold standard segmentations
                 return None
         else:
-            gold_need_editing = []
-            gold_need_removed = []
+            gold_pos = []
+            gold_neg = []
         # Exclude segmentations labeled by the same user, also the gold standards and other terminal states of reseacher labels
         # (We do not want citizens to do the double work to confirm reseacher labeled segmentations)
         excluded_labels = m.gold_labels_seg + m.pos_labels_seg + m.neg_labels_seg + m.bad_labels_seg
@@ -120,7 +119,7 @@ def query_segmentation_batch(user_id, use_admin_label_state=False):
         partially_labeled = q.filter(SegmentationMask.label_state.in_(m.partial_labels_seg)).order_by(func.random()).limit(num_partially_labeled).all()
         not_labeled = q.filter(SegmentationMask.label_state==-1).order_by(func.random()).limit(num_unlabeled - len(partially_labeled)).all()
         # Assemble the segmentation masks
-        segmentations = gold_need_editing + gold_need_removed + not_labeled + partially_labeled
+        segmentations = gold_pos + gold_neg + not_labeled + partially_labeled
         shuffle(segmentations)
 
     # Join the video table to get video data

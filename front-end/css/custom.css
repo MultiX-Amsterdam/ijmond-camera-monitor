@@ -599,6 +599,10 @@ body,
   font-size: 20px;
 }
 
+.dimgray-background {
+  background-color: rgb(100, 100, 100);
+}
+
 @media screen and (min-width: 900px) {
   .gallery .gallery-videos a {
     flex: 1 0 25% !important;
