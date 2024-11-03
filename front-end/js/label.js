@@ -2,10 +2,11 @@
   "use strict";
 
   var util = new edaplotjs.Util();
+  var widgets = new edaplotjs.Widgets();
   var video_labeling_tool;
   var google_account_dialog;
   var video_test_dialog;
-  //var tutorial_prompt_dialog;
+  var tutorial_prompt_dialog;
   var $next;
   var counter = 0;
   var max_counter = 10;
@@ -105,6 +106,19 @@
     });
   }
 
+  function createTutorialPromptDialog() {
+    tutorial_prompt_dialog = widgets.createCustomDialog({
+      class: "tutorial-prompt-dialog",
+      selector: "#tutorial-prompt-dialog",
+      action_text: "Volg de tutorial",
+      action_callback: function () {
+        window.location.replace("learn-label.html");
+      },
+      no_body_scroll: true,
+      full_width_button: true
+    });
+  }
+
   function init() {
     $(".content-container").css("visibility", "visible");
     util.addVideoClearEvent();
@@ -122,7 +136,7 @@
             consecutive_failed_batches += 1;
             if (consecutive_failed_batches >= 3) {
               console.log("You failed the data quality check more than 3 times.");
-              //tutorial_prompt_dialog.getDialog().dialog("open");
+              tutorial_prompt_dialog.dialog("open");
             }
           } else {
             // Pass the quality check
@@ -178,9 +192,7 @@
     });
     $user_score_container = $("#user-score-container");
     video_test_dialog = new edaplotjs.VideoTestDialog();
-    //tutorial_prompt_dialog = new edaplotjs.TutorialPromptDialog({
-    //  video_labeling_tool: video_labeling_tool
-    //});
+    createTutorialPromptDialog();
     ga_tracker = new edaplotjs.GoogleAnalyticsTracker({
       consent: true, // we only run this function after the user gives consent
       ready: function (ga_obj) {

@@ -43,8 +43,213 @@
         <div class="flex-row">
           <div class="flex-item flex-column">
             <p class="text">
-              In aanbouw...
+              Deze pagina introduceert de taak om te controleren of het AI-model rook correct detecteert of niet.
             </p>
+            <p class="text">
+              Elk beeld heeft <span class="custom-text-primary-dark-theme">een kader (in groene kleur) die het AI-model creëert</span>.
+              De box toont de locatie waarvan de AI denkt dat er rookuitstoot is.
+              Als het kader er goed uitziet, hoef je niets te doen.
+              Als het kader niet goed past bij de rookuitstoot, <span class="custom-text-info2-dark-theme">klik en versleep dan de hoeken van het kader in oranje kleur om het aan te passen</span>.
+              Als er geen rookemissies zijn in het kader, klik dan op de knop "Verwijder kader" om het kader te verwijderen.
+              Klik op het afspeelpictogram om de video te bekijken (bijvoorbeeld om te controleren of er rook in de doos zit).
+            </p>
+            <p class="text add-bottom-margin">
+              <span class="custom-text-info-dark-theme">
+                Let op: Als er meerdere kaders moeten zijn (vanwege meerdere rookemissies), controleer dan alleen de rookuitstoot in het oorspronkelijke kader (en niet de andere gebieden).
+              </span>
+            </p>
+          </div>
+        </div>
+        <div class="flex-row">
+          <div class="flex-item flex-column">
+            <h2>Kader Past Niet op de Rook (Pas het Kader aan)</h2>
+            <hr>
+            <p class="text">
+              Als het kader niet goed past bij de rookuitstoot, <span class="custom-text-info2-dark-theme">klik en versleep dan de hoeken van het kader in oranje kleur om het aan te passen</span>.
+              Let op dat het kader niet te groot of te klein mag zijn.
+            </p>
+          </div>
+        </div>
+        <div class="gallery gallery-bbox-learn add-bottom-margin">
+          <div class="gallery-images">
+            <a href="javascript:void(0)" class="flex-column">
+              <div class="label-control">
+                <span>Voorbeeld: kader past niet op de rook</span>
+              </div>
+              <img src="img/bbox-case/5-initial.png" class="initial">
+            </a>
+            <a href="javascript:void(0)" class="flex-column">
+              <div class="label-control">
+                <span class="custom-text-info-dark-theme">Goed: pas het kader aan</span>
+              </div>
+              <img src="img/bbox-case/5-good.png" class="good">
+            </a>
+            <a href="javascript:void(0)" class="flex-column">
+              <div class="label-control">
+                <span class="custom-text-danger-dark-theme">Slecht: kader is te groot</span>
+              </div>
+              <img src="img/bbox-case/5-bad-a.png" class="bad">
+            </a>
+            <a href="javascript:void(0)" class="flex-column">
+              <div class="label-control">
+                <span class="custom-text-danger-dark-theme">Slecht: kader is te klein</span>
+              </div>
+              <img src="img/bbox-case/5-bad-b.png" class="bad">
+            </a>
+          </div>
+        </div>
+        <div class="flex-row">
+          <div class="flex-item flex-column">
+            <h2>Geen Rook in het Kader (Verwijder het Kader)</h2>
+            <hr>
+            <p class="text">
+              Als er geen rookemissies zijn in het kader, klik dan op de knop "Verwijder kader" om het kader te verwijderen.
+              Soms bevat het kader geen rook, maar verschijnt er rook op andere plekken in de afbeelding.
+              <span class="custom-text-info-dark-theme">Verwijder in deze situatie het kader en pas deze niet aan.</span>
+            </p>
+          </div>
+        </div>
+        <div class="gallery gallery-bbox-learn add-bottom-margin">
+          <div class="gallery-images">
+            <a href="javascript:void(0)" class="flex-column">
+              <div class="label-control">
+                <span>Voorbeeld: geen rook in het kader</span>
+              </div>
+              <img src="img/bbox-case/2-initial.png" class="initial">
+            </a>
+            <a href="javascript:void(0)" class="flex-column">
+              <div class="label-control">
+                <span class="custom-text-info-dark-theme">Goed: verwijder het kader</span>
+              </div>
+              <img src="img/bbox-case/2-good.png" class="good">
+            </a>
+            <a href="javascript:void(0)" class="flex-column">
+              <div class="label-control">
+                <span class="custom-text-danger-dark-theme">Slecht: pas het kader aan</span>
+              </div>
+              <img src="img/bbox-case/2-bad-a.png" class="bad">
+            </a>
+            <a href="javascript:void(0)" class="flex-column">
+              <div class="label-control">
+                <span class="custom-text-danger-dark-theme">Slecht: pas het kader aan</span>
+              </div>
+              <img src="img/bbox-case/2-bad-b.png" class="bad">
+            </a>
+          </div>
+        </div>
+        <div class="flex-row">
+          <div class="flex-item flex-column">
+            <h2>Alleen Stoom in het Kader (Verwijder de Kader)</h2>
+            <hr>
+            <p class="text">
+              <span class="custom-text-info-dark-theme">Als er alleen stoom in het kader zit, moet deze verwijderd worden.</span>
+              Als u niet zeker weet of het stoom of rook is, klikt u op het afspeelpictogram om de video te bekijken.
+              Stoom verdwijnt sneller en heeft scherpe randen in vergelijking met rook.
+              Stoom heeft meestal een hoge opaciteit, waardoor de achtergrond niet zichtbaar is.
+          </div>
+        </div>
+        <div class="gallery gallery-bbox-learn add-bottom-margin">
+          <div class="gallery-images">
+            <a href="javascript:void(0)" class="flex-column">
+              <div class="label-control">
+                <span>Voorbeeld: aleen stoom in het kader</span>
+              </div>
+              <img src="img/bbox-case/3-initial.png" class="initial">
+            </a>
+            <a href="javascript:void(0)" class="flex-column">
+              <div class="label-control">
+                <span class="custom-text-info-dark-theme">Goed: verwijder het kader</span>
+              </div>
+              <img src="img/bbox-case/3-good.png" class="good">
+            </a>
+            <a href="javascript:void(0)" class="flex-column">
+              <div class="label-control">
+                <span class="custom-text-danger-dark-theme">Slecht: pas het kader aan</span>
+              </div>
+              <img src="img/bbox-case/3-bad-a.png" class="bad">
+            </a>
+            <a href="javascript:void(0)" class="flex-column">
+              <div class="label-control">
+                <span class="custom-text-danger-dark-theme">Slecht: laat het kader ongewijzigd</span>
+              </div>
+              <img src="img/bbox-case/3-initial.png" class="bad">
+            </a>
+          </div>
+        </div>
+        <div class="flex-row">
+          <div class="flex-item flex-column">
+            <h2>Rook en Stoom in het Kader (Plaats het Karder op de Rook)</h2>
+            <hr>
+            <p class="text">
+              Rook en stoom kunnen tegelijkertijd verschijnen.
+              Als het kader zowel stoom als rook bevat, <span class="custom-text-info-dark-theme">pas het kader dan aan zodat het op de rook past (en niet op de stoom)</span>.
+          </div>
+        </div>
+        <div class="gallery gallery-bbox-learn add-bottom-margin">
+          <div class="gallery-images">
+            <a href="javascript:void(0)" class="flex-column">
+              <div class="label-control">
+                <span>Voorbeeld: rook en stoom in het kader</span>
+              </div>
+              <img src="img/bbox-case/4-initial.png" class="initial">
+            </a>
+            <a href="javascript:void(0)" class="flex-column">
+              <div class="label-control">
+                <span class="custom-text-info-dark-theme">Goed: plaats het karder op de rook</span>
+              </div>
+              <img src="img/bbox-case/4-good.png" class="good">
+            </a>
+            <a href="javascript:void(0)" class="flex-column">
+              <div class="label-control">
+                <span class="custom-text-danger-dark-theme">Slecht: plaats het karder op de stoom</span>
+              </div>
+              <img src="img/bbox-case/4-bad-a.png" class="bad">
+            </a>
+            <a href="javascript:void(0)" class="flex-column">
+              <div class="label-control">
+                <span class="custom-text-danger-dark-theme">Slecht: laat het kader ongewijzigd</span>
+              </div>
+              <img src="img/bbox-case/4-initial.png" class="bad">
+            </a>
+          </div>
+        </div>
+        <div class="flex-row">
+          <div class="flex-item flex-column">
+            <h2>Slecht Weer (Verwijder het Kader)</h2>
+            <hr>
+            <p class="text">
+              Verschillende slechte weersomstandigheden kunnen het zicht van de camera beïnvloeden.
+              <span class="custom-text-info-dark-theme">Verwijder in deze situatie altijd het kader en pas het niet aan.</span>
+              De reden hiervoor is dat we bij slecht weer niet precies kunnen weten of het om rook of stoom gaat.
+            </p>
+          </div>
+        </div>
+        <div class="gallery gallery-bbox-learn add-bottom-margin">
+          <div class="gallery-images">
+            <a href="javascript:void(0)" class="flex-column">
+              <div class="label-control">
+                <span>Voorbeeld: slecht weer</span>
+              </div>
+              <img src="img/bbox-case/1-initial.png" class="initial">
+            </a>
+            <a href="javascript:void(0)" class="flex-column">
+              <div class="label-control">
+                <span class="custom-text-info-dark-theme">Goed: verwijder het kader</span>
+              </div>
+              <img src="img/bbox-case/1-good.png" class="good">
+            </a>
+            <a href="javascript:void(0)" class="flex-column">
+              <div class="label-control">
+                <span class="custom-text-danger-dark-theme">Slecht: pas het kader aan</span>
+              </div>
+              <img src="img/bbox-case/1-bad-a.png" class="bad">
+            </a>
+            <a href="javascript:void(0)" class="flex-column">
+              <div class="label-control">
+                <span class="custom-text-danger-dark-theme">Slecht: pas het kader aan</span>
+              </div>
+              <img src="img/bbox-case/1-bad-b.png" class="bad">
+            </a>
           </div>
         </div>
         <div class="flex-row">

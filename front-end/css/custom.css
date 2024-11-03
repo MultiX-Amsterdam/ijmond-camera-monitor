@@ -603,6 +603,27 @@ body,
   background-color: rgb(100, 100, 100);
 }
 
+.gallery.gallery-bbox-learn a img.initial {
+  box-shadow: 0px 0px 12px rgba(0, 0, 0, 0.5);
+}
+
+.gallery.gallery-bbox-learn a img.good {
+  box-shadow: 0px 0px 12px rgba(59, 228, 255, 0.5);
+}
+
+.gallery.gallery-bbox-learn a img.bad {
+  box-shadow: 0px 0px 12px rgba(255, 94, 94, 0.5);
+}
+
+.gallery.gallery-bbox-learn a .label-control {
+  text-align: center;
+}
+
+.gallery.gallery-bbox-learn a .label-control span {
+  font-size: 18px;
+  color: white;
+}
+
 @media screen and (min-width: 900px) {
   .gallery .gallery-videos a {
     flex: 1 0 25% !important;
