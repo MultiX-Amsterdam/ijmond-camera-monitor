@@ -388,6 +388,9 @@
                 show_close_button: false
             });
 
+            var title_html = 'Let op: <span class="custom-text-danger">De video kan afwijken van de afbeelding</span> vanwege bijsnijden bij het detecteren van rookemissies met behulp van AI.';
+            $("#play-video-dialog").parent().find(".ui-dialog-title").html(title_html);
+
             // Handle window resize
             $(window).resize(function () {
                 fitDialogToScreen($video_playback_dialog);

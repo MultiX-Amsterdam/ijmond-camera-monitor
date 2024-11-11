@@ -163,9 +163,17 @@
     max-width: 700px;
 }
 
+.play-video-dialog .ui-dialog-title {
+    white-space: normal !important;
+    font-size: 16px !important;
+    text-align: left !important;
+}
+
 #smoke-video {
     width: 100%;
-    margin-top: 10px;
+    height: 98%;
+    margin: 0;
+    padding: 0;
 }
 
 @media screen and (min-width: 500px) {
