@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <link href="css/VideoFrameViewer.css" media="screen" rel="stylesheet" type="text/css" />
+    <script src="js/VideoFrameViewer.js"></script>
+    <style>
+        .container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            padding: 20px;
+            display: none;
+        }
+
+        .container.loaded {
+            display: grid;
+        }
+
+        .main-loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: transparent;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .loader {
+            width: 48px;
+            height: 48px;
+            border: 5px solid #f3f3f3;
+            border-radius: 50%;
+            border-top: 5px solid #3498db;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="main-loader">
+        <div class="loader"></div>
+    </div>
+    <div class="container" id="viewersContainer"></div>
+
+    <script>
+        const videoData = [
+            {"url": "https://ijmondcam.multix.io/videos/hoogovens/inNVmNqCfDM/inNVmNqCfDM-3.mp4", "frame_number": 11},
+            {"url": "https://ijmondcam.multix.io/videos/kooksfabriek_1/rsBRGyFrPwM/rsBRGyFrPwM-1.mp4", "frame_number": 15},
+            {"url": "https://ijmondcam.multix.io/videos/kooksfabriek_1/9J-4qvCueZw/9J-4qvCueZw-2.mp4", "frame_number": 18},
+            {"url": "https://ijmondcam.multix.io/videos/kooksfabriek_1/bTuGDZ7RVUI/bTuGDZ7RVUI-0.mp4", "frame_number": 13},
+            {"url": "https://ijmondcam.multix.io/videos/hoogovens/uyVS40OrpVs/uyVS40OrpVs-4.mp4", "frame_number": 21},
+            {"url": "https://ijmondcam.multix.io/videos/kooksfabriek_1/4CA-G8uUtyA/4CA-G8uUtyA-3.mp4", "frame_number": 14},
+            {"url": "https://ijmondcam.multix.io/videos/kooksfabriek_1/wbgPJvmGsw4/wbgPJvmGsw4-2.mp4", "frame_number": 17},
+            {"url": "https://ijmondcam.multix.io/videos/kooksfabriek_2/VdJCUH5PFm4/VdJCUH5PFm4-0.mp4", "frame_number": 31}
+        ];
+
+        async function initializeViewers() {
+            const viewers = videoData.map((data, index) => {
+                var viewerObj = new VideoFrameViewer(data.url, index, data.frame_number);
+                const container = document.getElementById('viewersContainer');
+                container.appendChild(viewerObj.getViewer());
+                return viewerObj;
+            });
+
+            await Promise.all(viewers.map(viewer => viewer.captureFrames()));
+
+            document.querySelector('.main-loader').style.display = 'none';
+            document.getElementById('viewersContainer').classList.add('loaded');
+        }
+
+        window.addEventListener('load', initializeViewers);
+    </script>
+</body>
+
+</html>

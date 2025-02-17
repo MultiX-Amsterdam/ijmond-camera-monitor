@@ -24,6 +24,10 @@
   var user_token_for_other_app;
   var $set_label_confirm_dialog;
 
+  // The html page creates a padding of 10px on both sides.
+  // The bounding box coordinates will be adjusted based on the padding.
+  var BORDER_SIZE = 20;
+
   function updateGallery($new_content) {
     $gallery_images.detach(); // detatch prevents the click event from being removed
     $gallery.empty().append($new_content);
@@ -75,7 +79,7 @@
               // This means there is no researcher label, so we need to create a bounding box.
               var $img = $seg_container.find("img.seg-img");
               var feedback_code = 3; // this means that the model output looks good
-              var $bbox = util.createBBox($this.data("seg_mask"), $img, false, feedback_code);
+              var $bbox = util.createBBox($this.data("seg_mask"), $img, false, feedback_code, BORDER_SIZE);
               $seg_container.append($bbox);
             }
             if ($this.hasClass("edit-mode")) {
@@ -176,7 +180,7 @@
         meta_data["w_bbox"] = b["w_bbox"];
         meta_data["h_bbox"] = b["h_bbox"];
       }
-      var $bbox = util.createBBox(meta_data, $item.find(".seg-img"), true, b["feedback_code"]);
+      var $bbox = util.createBBox(meta_data, $item.find(".seg-img"), true, b["feedback_code"], BORDER_SIZE);
       // The is_orignal_box_null flag is used when we need to return the edited box the the back-end
       $bbox.data("is_orignal_box_null", is_orignal_box_null);
       $item.append($bbox);
@@ -300,7 +304,7 @@
           // This means there should be a bounding box
           if ($bbox.data("interacted")) {
             // This means the user edited the bounding box
-            bbox_original = util.reverseBBox($bbox);
+            bbox_original = util.reverseBBox($bbox, BORDER_SIZE);
           } else {
             // The reason of using safeGet() here is because if the box is created by pressing the edit button,
             // The value of is_orignal_box_null would be undefined.
@@ -314,7 +318,7 @@
               // But if the original box is not null,
               // This means that the box was edited before,
               // So we need to respect this by returning the box.
-              bbox_original = util.reverseBBox($bbox);
+              bbox_original = util.reverseBBox($bbox, BORDER_SIZE);
             }
           }
         } else {

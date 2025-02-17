@@ -1,0 +1,32 @@
+.frames-view {
+    background: white;
+    padding: 15px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.frames-view .frame-display {
+    display: grid;
+}
+
+.frames-view .frame-display canvas {
+    width: 100%;
+    height: auto;
+}
+
+.frames-view .slider-controls {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.frames-view .slider-controls .slider {
+    width: 100%;
+}
+
+.frames-view .slider-controls button {
+    padding: 5px 10px;
+    cursor: pointer;
+}

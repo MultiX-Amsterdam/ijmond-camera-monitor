@@ -136,6 +136,9 @@ class Video(db.Model):
         Note that this is not the key for the View table.
     camera_id : int
         ID of the camera.
+        - 0 is hoogovens (hoogovens 7)
+        - 1 is kooksfabriek_1 (kooksgasfabriek 1)
+        - 2 is kooksfabriek_2 (kooksgasfabriek 2)
     priority : int
         The priority of the video.
         Higher priority indicates that the mask should get feedback faster.

@@ -35,18 +35,20 @@
         var user_raw_score;
         var on_user_score_update = settings["on_user_score_update"];
         var is_admin;
-        var $video_playback_dialog;
+
+        // The html page creates a padding of 10px on both sides.
+        // The bounding box coordinates will be adjusted based on the padding.
+        var BORDER_SIZE = 20;
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////
         //
         // Private methods
         //
         function init() {
-            $tool = $('<div class="video-labeling-tool"></div>');
-            $tool_videos = $('<div class="video-labeling-tool-videos"></div>');
+            $tool = $('<div class="box-labeling-tool"></div>');
+            $tool_videos = $('<div class="box-labeling-tool-videos"></div>');
             $container.append($tool.append($tool_videos));
             showLoadingMsg();
-            initVideoPlaybackDialog();
         }
 
         // Get the user id from the server
@@ -147,7 +149,7 @@
                     // This means there should be a bounding box
                     if ($bbox.data("interacted")) {
                         // This means the user edited the bounding box
-                        bbox_original = util.reverseBBox($bbox);
+                        bbox_original = util.reverseBBox($bbox, BORDER_SIZE);
                     }
                 } else {
                     // This means the user said that there should be no bounding box
@@ -162,11 +164,10 @@
         }
 
         // Create a segmentation label element
-        function createSegmentation(i) {
-            var $item = $("<a href='javascript:void(0)' class='flex-column segmentation-container'></a>");
+        function createSegmentation(i, v) {
+            var container_id = "segmentation-container-" + i;
+            var $item = $(`<div class="flex-column segmentation-container" id="${container_id}"></div>`);
             var $toggle_btn = $("<button class='box-toggle custom-button-flat'>Verwijder kader</button>");
-            var $caption = $("<div class='control-group'><span>Beeld " + (i + 1) + "</span></div>");
-            var $play_video_btn = $("<button class='play-video custom-button-flat'><img src='img/play.png'></button>");
             // Add the event for users to remove and add the bounding box.
             // Users can indicate if the image has or does not have smoke.
             // Notice that we cannot use the "hide" or "show" function because it will break when users resize the browser window.
@@ -181,27 +182,14 @@
                     $this.text("Verwijder kader");
                 }
             });
-            $play_video_btn.on("click", function () {
-                var $this = $(this);
-                var v = $this.parent().parent().data("img_data");
-                v["video"]["url_root"] = v["url_root"];
-                var vid_src_url = util.buildVideoURL(v["video"]);
-                var $vid = $("#smoke-video");
-                $vid.one("canplay", function () {
-                    // Play the video automatically
-                    $vid.get(0).playbackRate = 0.5;
-                    util.handleVideoPromise(this, "play");
-                });
-                $vid.prop("src", vid_src_url);
-                util.handleVideoPromise($vid.get(0), "load"); // load to reset video
-                util.handleVideoPromise(this, "play");
-                $video_playback_dialog.dialog("open");
-            });
-            var $img = $("<img class='seg-img' src=''>");
-            $caption.append($toggle_btn);
-            $caption.append($play_video_btn);
-            $item.append($img);
-            $item.append($caption);
+            v["video"]["url_root"] = v["url_root"];
+            var vid_src_url = util.buildVideoURL(v["video"]);
+            var $control = $("<div class='control-group'><span>Beeld " + (i + 1) + "</span></div>");
+            var viewer_obj = new VideoFrameViewer(vid_src_url, i, 10, container_id);
+            $control.append($toggle_btn);
+            $item.append(viewer_obj.getViewer());
+            $item.append($control);
+            $item.data("viewer_obj", viewer_obj);
             return $item;
         }
 
@@ -213,7 +201,7 @@
                 var v = img_data[i];
                 var $item;
                 if (typeof img_items[i] === "undefined") {
-                    $item = createSegmentation(i);
+                    $item = createSegmentation(i, v);
                     img_items.push($item);
                     $tool_videos.append($item);
                 } else {
@@ -222,16 +210,14 @@
                 }
                 $item.data("img_data", v);
                 $item.data("id", v["id"]);
-                var $img = $item.find("img").first();
 
                 // Need to wait untill all images are loaded
-                var deferred = $.Deferred();
-                $img.one("load", deferred.resolve);
-                $img.one("error", deferred.reject);
-                deferreds.push(deferred);
+                deferreds.push($item.data("viewer_obj").captureFrames());
 
-                var src_url = util.buildSegmentationURL(v);
-                $img.prop("src", src_url);
+                //var $img = $item.find("img").first();
+                //var src_url = util.buildSegmentationURL(v);
+                //$img.prop("src", src_url);
+
                 if ($item.hasClass("force-hidden")) {
                     $item.removeClass("force-hidden");
                 }
@@ -269,7 +255,7 @@
                     parent_element.find(".bbox").remove();
                     for (var i = 0; i < segment_data.length; i++) {
                         var v = segment_data[i];
-                        var $bbox = util.createBBox(v, $($element.get(i)));
+                        var $bbox = util.createBBox(v, $($element.get(i)), false, undefined, BORDER_SIZE);
                         $(parent_element[i]).append($bbox);
                     }
                 }
@@ -326,7 +312,7 @@
                     success: function () {
                         // Need to store the token and return it back to the server when finished
                         video_token = data["video_token"];
-                        updateBBox(data["data"], ".seg-img");
+                        updateBBox(data["data"], ".current-frame");
                         if (typeof callback["success"] === "function") callback["success"]();
                     },
                     error: function (xhr) {
@@ -335,7 +321,7 @@
                     abort: function (xhr) {
                         // Need to store the token and return it back to the server when finished
                         video_token = data["video_token"];
-                        updateBBox(data["data"], ".seg-img");
+                        updateBBox(data["data"], ".current-frame");
                         if (typeof callback["abort"] === "function") callback["abort"](xhr);
                     }
                 });
@@ -373,29 +359,6 @@
             user_raw_score = user_payload["user_raw_score"];
             is_admin = user_payload["client_type"] == 0 ? true : false;
             if (typeof on_user_score_update === "function") on_user_score_update(user_score, user_raw_score);
-        }
-
-        function initVideoPlaybackDialog() {
-            $video_playback_dialog = widgets.createCustomDialog({
-                class: "play-video-dialog",
-                selector: "#play-video-dialog",
-                action_text: "Close",
-                action_callback: function () {
-                    $("#smoke-video").get(0).pause();
-                },
-                show_cancel_btn: false,
-                no_body_scroll: true,
-                show_close_button: false
-            });
-
-            var title_html = 'Let op: <span class="custom-text-danger">De video kan afwijken van de afbeelding</span> vanwege bijsnijden bij het detecteren van rookemissies met behulp van AI.';
-            $("#play-video-dialog").parent().find(".ui-dialog-title").html(title_html);
-
-            // Handle window resize
-            $(window).resize(function () {
-                fitDialogToScreen($video_playback_dialog);
-            });
-            fitDialogToScreen($video_playback_dialog);
         }
 
         /**
