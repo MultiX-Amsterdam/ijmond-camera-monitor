@@ -185,7 +185,7 @@
             v["video"]["url_root"] = v["url_root"];
             var vid_src_url = util.buildVideoURL(v["video"]);
             var $control = $("<div class='control-group'><span>Beeld " + (i + 1) + "</span></div>");
-            var viewer_obj = new VideoFrameViewer(vid_src_url, i, 10, container_id);
+            var viewer_obj = new VideoFrameViewer(vid_src_url, i, v["frame_number"], container_id);
             $control.append($toggle_btn);
             $item.append(viewer_obj.getViewer());
             $item.append($control);
