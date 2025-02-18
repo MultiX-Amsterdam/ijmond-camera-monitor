@@ -182,10 +182,8 @@
                     $this.text("Verwijder kader");
                 }
             });
-            v["video"]["url_root"] = v["url_root"];
-            var vid_src_url = util.buildVideoURL(v["video"]);
             var $control = $("<div class='control-group'><span>Beeld " + (i + 1) + "</span></div>");
-            var viewer_obj = new VideoFrameViewer(vid_src_url, i, v["frame_number"], container_id);
+            var viewer_obj = new VideoFrameViewer(i);
             $control.append($toggle_btn);
             $item.append(viewer_obj.getViewer());
             $item.append($control);
@@ -212,7 +210,10 @@
                 $item.data("id", v["id"]);
 
                 // Need to wait untill all images are loaded
-                deferreds.push($item.data("viewer_obj").captureFrames());
+                v["video"]["url_root"] = v["url_root"];
+                var vid_src_url = util.buildVideoURL(v["video"]);
+                var viewer_obj = $item.data("viewer_obj");
+                deferreds.push(viewer_obj.captureFrames(vid_src_url, v["frame_number"]));
 
                 //var $img = $item.find("img").first();
                 //var src_url = util.buildSegmentationURL(v);

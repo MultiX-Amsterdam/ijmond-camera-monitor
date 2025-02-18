@@ -1,11 +1,9 @@
 class VideoFrameViewer {
-    constructor(videoUrl, viewerId, initialFrame) {
-        this.videoUrl = videoUrl;
+    constructor(viewerId) {
         this.frames = [];
         this.playing = false;
         this.playInterval = null;
         this.viewerId = viewerId;
-        this.initialFrame = initialFrame;
         this.actualFrame = 0;
         this.viewer = this.createViewer();
         this.setupControls();
@@ -39,7 +37,6 @@ class VideoFrameViewer {
         this.canvas = this.viewer.querySelector('.current-frame');
         this.frameCounter = this.viewer.querySelector('.frame-counter');
         this.playPauseBtn = this.viewer.querySelector('.play-pause');
-
         this.slider.addEventListener('input', (e) => this.updateCurrentFrame(parseInt(e.target.value)));
         this.playPauseBtn.addEventListener('click', () => this.playPause());
     }
@@ -69,10 +66,21 @@ class VideoFrameViewer {
         }
     }
 
-    async captureFrames() {
+    pause() {
+        if (this.playing) {
+            this.playPause();
+        }
+    }
+
+    async captureFrames(videoUrl, initialFrame) {
+        this.pause();
+        this.frames = [];
+        this.initialFrame = initialFrame;
+        this.videoUrl = videoUrl;
+
         const video = document.createElement('video');
         video.crossOrigin = "anonymous";
-        video.src = this.videoUrl;
+        video.src = videoUrl;
         video.preload = "auto";
 
         await new Promise(resolve => {
@@ -80,7 +88,7 @@ class VideoFrameViewer {
         });
 
         const totalFrames = 36; // TODO: this number should come from the server metadata
-        this.actualFrame = this.initialFrame >= totalFrames ? totalFrames - 1 : this.initialFrame;
+        this.actualFrame = initialFrame >= totalFrames ? totalFrames - 1 : initialFrame;
         const timeStep = video.duration / totalFrames;
 
         this.canvas.width = video.videoWidth;
