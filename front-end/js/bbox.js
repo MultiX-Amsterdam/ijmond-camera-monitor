@@ -6,6 +6,7 @@
   var bbox_labeling_tool;
   var google_account_dialog;
   var tutorial_prompt_dialog;
+  var submit_confirm_dialog;
   var $next;
   var counter = 0;
   var max_counter = 10;
@@ -44,6 +45,8 @@
 
   function nextBatch(ignore_labels) {
     $next.prop("disabled", true);
+    $("#page-next").prop("disabled", true);
+    $("#page-back").prop("disabled", true);
     resetCountDown();
     $(window).scrollTop(0);
     bbox_labeling_tool.next({
@@ -73,7 +76,7 @@
       is_first_time = false;
       $next = $("#next");
       $next.on("click", function () {
-        nextBatch();
+        submit_confirm_dialog.dialog("open");
       });
       nextBatch();
       google_account_dialog.isAuthenticatedWithGoogle();
@@ -104,8 +107,23 @@
       class: "tutorial-prompt-dialog",
       selector: "#tutorial-prompt-dialog",
       action_text: "Volg de tutorial",
+      cancel_text: "Niet nu",
       action_callback: function () {
         window.location.replace("learn-bbox.html");
+      },
+      no_body_scroll: true,
+      full_width_button: true
+    });
+  }
+
+  function createSubmitConfirmDialog() {
+    submit_confirm_dialog = widgets.createCustomDialog({
+      class: "submit-confirm-dialog",
+      selector: "#submit-confirm-dialog",
+      action_text: "Verzenden",
+      cancel_text: "Niet nu",
+      action_callback: function () {
+        nextBatch();
       },
       no_body_scroll: true,
       full_width_button: true
@@ -185,6 +203,7 @@
     });
     $user_score_container = $("#user-score-container");
     createTutorialPromptDialog();
+    createSubmitConfirmDialog();
     ga_tracker = new edaplotjs.GoogleAnalyticsTracker({
       consent: true, // we only run this function after the user gives consent
       ready: function (ga_obj) {

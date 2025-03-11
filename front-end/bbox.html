@@ -79,8 +79,10 @@
         <div class="flex-row">
           <div class="flex-item flex-column full-width">
             <div class="control-group">
-              <button id="next" class="custom-button-flat large stretch-on-mobile" disabled>
-                <img src="img/play.png"><span>Verzenden en verder gaan</span>
+              <button id="page-back" class="custom-button-flat large stretch-on-mobile" disabled><img src="img/back.png"><span>Vorige</span></button>
+              <button id="page-next" class="custom-button-flat large stretch-on-mobile" disabled><img src="img/next.png"><span>Volgende</span></button>
+              <button id="next" style="display: none;" class="custom-button-flat large stretch-on-mobile" disabled>
+                <span>Verzenden en verder gaan</span>
               </button>
             </div>
           </div>
@@ -93,6 +95,11 @@
       Uw antwoorden zijn te vaak niet door de kwaliteitscontrole gekomen.
       Vond je de taak moeilijk?
       Probeer onze tutorial!
+    </p>
+  </div>
+  <div id="submit-confirm-dialog" title="Verzenden" data-role="none">
+    <p>
+      Weet u zeker dat u deze antwoorden wilt verzenden?
     </p>
   </div>
 </body>

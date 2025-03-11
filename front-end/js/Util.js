@@ -149,21 +149,38 @@
         const client_x = e.clientX || e.touches[0].clientX;
         const client_y = e.clientY || e.touches[0].clientY;
 
-        // Determine the new dimensions based on the initial state
-        const new_width = start_width - (client_x - start_x);
-        const new_height = start_height - (client_y - start_y);
-        const new_left = start_left + (client_x - start_x);
-        const new_top = start_top + (client_y - start_y);
+        // Get container boundaries in client coordinates
+        const container_rect = $container[0].getBoundingClientRect();
+        const container_left = container_rect.left;
+        const container_right = container_rect.right;
+        const container_top = container_rect.top;
+        const container_bottom = container_rect.bottom;
 
-        // Prevent moving out of boundaries
-        const magic_max_width = start_width + start_left - border_size;
-        const magic_max_height = start_height + start_top - border_size;
-        current_width = Math.max(Math.min(new_width, magic_max_width), MIN_WIDTH);
-        current_height = Math.max(Math.min(new_height, magic_max_height), MIN_HEIGHT);
-        current_left = Math.max(Math.min(new_left, magic_max_width), border_size);
-        current_top = Math.max(Math.min(new_top, magic_max_height), border_size);
+        // Constrain client coordinates to container boundaries
+        const constrained_client_x = Math.max(container_left, Math.min(client_x, container_right));
+        const constrained_client_y = Math.max(container_top, Math.min(client_y, container_bottom));
 
-        // Update the width and height of the box without exceeding the image size
+        // Calculate movement deltas
+        const delta_x = constrained_client_x - start_x;
+        const delta_y = constrained_client_y - start_y;
+
+        // Calculate new dimensions while keeping the right and bottom edges fixed
+        const right_edge = start_left + start_width;
+        const bottom_edge = start_top + start_height;
+
+        // Calculate new left position, ensuring it doesn't go beyond the right edge minus minimum width
+        const max_left = right_edge - MIN_WIDTH;
+        current_left = Math.min(Math.max(start_left + delta_x, border_size), max_left);
+
+        // Calculate new top position, ensuring it doesn't go beyond the bottom edge minus minimum height
+        const max_top = bottom_edge - MIN_HEIGHT;
+        current_top = Math.min(Math.max(start_top + delta_y, border_size), max_top);
+
+        // Calculate width and height based on fixed right/bottom edges
+        current_width = right_edge - current_left;
+        current_height = bottom_edge - current_top;
+
+        // Update the box position and dimensions
         $bbox[0].style.width = current_width + 'px';
         $bbox[0].style.height = current_height + 'px';
         $bbox[0].style.left = current_left + 'px';
