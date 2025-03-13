@@ -71,7 +71,6 @@
   }
 
   function onUserIdChangeSuccess(new_user_id) {
-    $("#review-user").prop("href", "bbox-gallery.html" + "?user_id=" + new_user_id);
     if (is_first_time) {
       is_first_time = false;
       $next = $("#next");

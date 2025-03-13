@@ -46,29 +46,23 @@
         <div class="flex-row">
           <div class="flex-item flex-column">
             <p class="text" id="label-statistics">
-              Op dit moment zijn al <span class="num-fully-labeled-text">[...]</span> van de <span class="num-all-masks-text">[...]</span> afbeeldingen volledig gelabeld.
-              Hierbij zijn er <span class="num-partially-labeled-text">[...]</span> maar voor een deel gelabeld (<a href="faq.html#q6">meer informatie</a>).
+              Van de <span class="num-all-masks-text">[...]</span> afbeeldingen zijn er <span class="num-fully-labeled-text">[...]</span> <a href="faq.html#q6" target="_blank">volledig gelabeld</a> en <span class="num-partially-labeled-text">[...]</span> gedeeltelijk.
               <span id="user-score-container">
-                U heeft <span class="custom-text-info-dark-theme"><span class="user-raw-score-text">[...]</span> pagina's gereviewed</span>, hiervan zijn er <span class="custom-text-info-dark-theme"><span class="user-score-text">[...]</span> door de kwaliteit test gekomen</span> (<a href="faq.html#q5">lees meer</a>).
+                U heeft <span class="user-raw-score-text">[...]</span> pagina's gereviewd,
+                waarvan <span class="user-score-text">[...]</span> de <a href="faq.html#q5" target="_blank">kwaliteitstest</a> hebben gehaald.
               </span>
+              Elk beeld krijgt een <span class="custom-text-primary-dark-theme">groen kader</span>, dat de AI plaatst op basis van verwachte rookuitstoot.
             </p>
-            <div class="control-group">
-              <a id="review-user" class="custom-button-flat stretch-on-mobile large" href="javascript:void(0)">Mijn Bijdrage</a>
-              <a class="custom-button-flat large stretch-on-mobile" href="learn-bbox.html"><img src="img/book.png"><span>Leren</span></a>
-            </div>
+            <ul>
+              <li>✅ Past het kader goed? Niets doen.</li>
+              <li>🔧 Past het niet? <span class="custom-text-info2-dark-theme">Versleep de oranje hoeken</span>.</li>
+              <li>❌ Geen rook? Klik op "Verwijder kader" of gebruik de schuifregelaar om andere frames te controleren.</li>
+              <li>🔍 Twijfel? Klik op het afspeelpictogram om de video te bekijken, of bekijk de <a href="learn-bbox.html" target="_blank">tutorial</a>.</li>
+            </ul>
             <p class="text" id="quality-check-passed-text">
               <span class="custom-text-info-dark-theme dimgray-background">&#127881;&#127882;&#10024;&#129395;&#10084; Goed gedaan! Uw vorige review is door de test heen gekomen! &#10084;&#129395;&#10024;&#127882;&#127881;</span>
               <!-- <span class="custom-text-primary-dark-theme">(Good job! Your previous batch passed the system's quality check!)</span> -->
             </p>
-            <p class="text">
-              Elk beeld krijgt een <span class="custom-text-primary-dark-theme">groen kader van het AI-model</span>. Dit markeert waar de AI rookuitstoot verwacht.
-            </p>
-            <ul>
-              <li>✅ Ziet het kader er goed uit? Dan hoeft u niets te doen.</li>
-              <li>🔧 Past het niet? <span class="custom-text-info2-dark-theme">Klik en versleep de oranje hoeken om het aan te passen</span>.</li>
-              <li>❌ Geen rook zichtbaar? Klik op "Verwijder kader" om het te verwijderen, of gebruik de schuifregelaar om andere videoframes te bekijken en rookuitstoot te vinden.</li>
-              <li>🔍 Niet zeker? Klik op het afspeelpictogram om de video te bekijken.</li>
-            </ul>
           </div>
         </div>
         <div id="labeling-tool-container"></div>
