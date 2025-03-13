@@ -218,8 +218,21 @@
       for (var i = 0; i < img_items.length; i++) {
         if (i !== current_index) {
           img_items[i].css("visibility", "hidden");
+          // Pause any playing videos in hidden containers
+          const viewer_obj = img_items[i].data("viewer_obj");
+          if (viewer_obj) {
+            viewer_obj.pause();
+          }
         } else {
           img_items[i].css("visibility", "visible");
+          // Auto-play the frames in the visible container
+          const viewer_obj = img_items[i].data("viewer_obj");
+          if (viewer_obj) {
+            // Update actualFrame to match the current slider value (converting from 1-based to 0-based)
+            // The reason for doing this is to remember the frame number in which the user thinks has smoke emissions
+            viewer_obj.actualFrame = parseInt(viewer_obj.slider.value) - 1;
+            viewer_obj.playPause();
+          }
         }
       }
 
@@ -260,6 +273,8 @@
         v["video"]["url_root"] = v["url_root"];
         var vid_src_url = util.buildVideoURL(v["video"]);
         var viewer_obj = $item.data("viewer_obj");
+
+        // Notice that the frame number is 1-based (i.e., starts from 1)
         deferreds.push(viewer_obj.captureFrames(vid_src_url, v["frame_number"]));
       }
 

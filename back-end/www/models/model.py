@@ -407,7 +407,8 @@ class SegmentationMask(db.Model):
         The most recent epochtime (in seconds) that the label state is updated.
         Notice that this is only for the normal users (label_state, not label_state_admin).
     frame_number : int
-        The frame number in the video (can be null if no video is linked to this mask)
+        The frame number in the video (can be null if no video is linked to this mask).
+        Note that this is 1-based (i.e., the first frame is 1, not 0).
     frame_timestamp : int
         If there is no video ID, this field will have the information of the timestamp.
         The format should be epoch time in seconds.

@@ -30,7 +30,7 @@ def main(argv):
                 print("------------------------------------------------")
                 mask_fn = data[i]["mask_file_name"] # file name of the segmentation mask
                 img_fn = data[i]["crop_file_name"] # file name of the segmentation image
-                f_nbr = data[i]["frame_number"] # the frame number in the original video
+                f_nbr = data[i]["frame_number"] # the frame number in the original video (1-based, i.e., the first frame is 1, not 0)
                 v_id = data[i]["video_id"] # ID of the video on IJmondCAM https://ijmondcam.multix.io/
                 relative_boxes = data[i]["relative_boxes"] # the bounding box location relative to the segmentation image
                 x_bbox = relative_boxes["x"] # x coordinate of the top left corner of the box relative to the segmentation image

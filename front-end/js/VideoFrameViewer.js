@@ -16,9 +16,9 @@ class VideoFrameViewer {
                     <canvas class="current-frame"></canvas>
                 </div>
                 <div class="slider-controls">
-                    <button class="play-pause">Play/Pause</button>
-                    <input type="range" class="slider" min="0" value="0" />
-                    <span class="frame-counter">0/0</span>
+                    <button class="play-pause custom-button-flat"><img src="img/play.png"></button>
+                    <input type="range" class="slider" min="1" value="1" />
+                    <span class="frame-counter">1/1</span>
                 </div>
             </div>
         `;
@@ -37,26 +37,38 @@ class VideoFrameViewer {
         this.canvas = this.viewer.querySelector('.current-frame');
         this.frameCounter = this.viewer.querySelector('.frame-counter');
         this.playPauseBtn = this.viewer.querySelector('.play-pause');
-        this.slider.addEventListener('input', (e) => this.updateCurrentFrame(parseInt(e.target.value)));
+        this.slider.addEventListener('input', (e) => this.updateCurrentFrame(parseInt(e.target.value) - 1));
         this.playPauseBtn.addEventListener('click', () => this.playPause());
     }
 
-    updateCurrentFrame(index) {
+    updateCurrentFrame(frameIndex) {
+        // Note that frameIndex is 0-based, but the slider is 1-based
         if (this.frames.length === 0) return;
-        this.slider.value = index;
+        this.slider.value = frameIndex + 1;
         const ctx = this.canvas.getContext('2d');
         ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-        ctx.drawImage(this.frames[index], 0, 0);
-        this.frameCounter.textContent = `${index}/${this.frames.length - 1}`;
+        ctx.drawImage(this.frames[frameIndex], 0, 0);
+        this.frameCounter.textContent = `${frameIndex + 1}/${this.frames.length}`;
     }
 
     playPause() {
         this.playing = !this.playing;
         if (this.playing) {
+            // Reset to the first frame when starting playback
+            this.updateCurrentFrame(0);
             // Start looping the frames
             this.playInterval = setInterval(() => {
-                let nextFrame = (parseInt(this.slider.value) + 1) % this.frames.length;
-                this.updateCurrentFrame(nextFrame);
+                // Note that the slider is 1-based, but the nextFrame is 0-based
+                // So we do not need to subtract 1 when computing the next frame index
+                let nextFrame = parseInt(this.slider.value);
+                if (nextFrame > this.frames.length - 1) {
+                    // When reaching the end, stop playing and return to the frame that needs labeling
+                    clearInterval(this.playInterval);
+                    this.playing = false;
+                    this.updateCurrentFrame(this.actualFrame);
+                } else {
+                    this.updateCurrentFrame(nextFrame);
+                }
             }, 1000 / 30);
         } else {
             // Stop looping the frames
@@ -88,7 +100,8 @@ class VideoFrameViewer {
         });
 
         const totalFrames = 36; // TODO: this number should come from the server metadata
-        this.actualFrame = initialFrame >= totalFrames ? totalFrames - 1 : initialFrame;
+        // Since initialFrame is 1-based, subtract 1 when storing in actualFrame (which is 0-based)
+        this.actualFrame = initialFrame > totalFrames ? totalFrames - 1 : initialFrame - 1;
         const timeStep = video.duration / totalFrames;
 
         this.canvas.width = video.videoWidth;
@@ -99,8 +112,9 @@ class VideoFrameViewer {
         tempCanvas.height = video.videoHeight;
         const tempCtx = tempCanvas.getContext('2d');
 
-        this.slider.max = totalFrames - 1;
-        this.slider.value = this.actualFrame;
+        this.slider.max = totalFrames;
+
+        this.slider.value = this.actualFrame + 1;
 
         for (let frameCount = 0; frameCount < totalFrames; frameCount++) {
             await new Promise((resolve) => {
