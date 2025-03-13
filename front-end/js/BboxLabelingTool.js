@@ -186,7 +186,7 @@
     }
 
     // Create a segmentation label element
-    function createSegmentation(i, v, total_images) {
+    function createSegmentation(i, total_images) {
       var container_id = "segmentation-container-" + i;
       var $item = $(`<div class="segmentation-container" id="${container_id}"></div>`);
       var $toggle_btn = $("<button class='box-toggle custom-button-flat'>Verwijder kader</button>");
@@ -259,7 +259,7 @@
         var v = img_data[i];
         var $item;
         if (typeof img_items[i] === "undefined") {
-          $item = createSegmentation(i, v, img_data.length);
+          $item = createSegmentation(i, img_data.length);
           img_items.push($item);
           $tool_videos.append($item);
         } else {
@@ -273,9 +273,10 @@
         v["video"]["url_root"] = v["url_root"];
         var vid_src_url = util.buildVideoURL(v["video"]);
         var viewer_obj = $item.data("viewer_obj");
+        var seg_src_url = util.buildSegmentationURL(v);
 
         // Notice that the frame number is 1-based (i.e., starts from 1)
-        deferreds.push(viewer_obj.captureFrames(vid_src_url, v["frame_number"]));
+        deferreds.push(viewer_obj.captureFrames(vid_src_url, v["frame_number"], seg_src_url));
       }
 
       // Load and show images

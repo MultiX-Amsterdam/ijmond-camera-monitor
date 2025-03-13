@@ -84,11 +84,12 @@ class VideoFrameViewer {
         }
     }
 
-    async captureFrames(videoUrl, initialFrame) {
+    async captureFrames(videoUrl, initialFrame, segUrl) {
         this.pause();
         this.frames = [];
         this.initialFrame = initialFrame;
         this.videoUrl = videoUrl;
+        this.segUrl = segUrl;
 
         const video = document.createElement('video');
         video.crossOrigin = "anonymous";
@@ -107,36 +108,51 @@ class VideoFrameViewer {
         this.canvas.width = video.videoWidth;
         this.canvas.height = video.videoHeight;
 
-        const tempCanvas = document.createElement('canvas');
-        tempCanvas.width = video.videoWidth;
-        tempCanvas.height = video.videoHeight;
-        const tempCtx = tempCanvas.getContext('2d');
-
         this.slider.max = totalFrames;
-
         this.slider.value = this.actualFrame + 1;
 
-        for (let frameCount = 0; frameCount < totalFrames; frameCount++) {
+        // Preload segmentation image if we have a URL
+        let segImg;
+        if (this.segUrl) {
+            segImg = new Image();
+            segImg.crossOrigin = "anonymous";
             await new Promise((resolve) => {
-                function seeked() {
-                    video.removeEventListener('seeked', seeked);
-                    setTimeout(resolve, 10);
-                }
-                video.addEventListener('seeked', seeked);
-                video.currentTime = frameCount * timeStep;
+                segImg.onload = resolve;
+                segImg.onerror = () => {
+                    console.error('Failed to load segmentation image:', this.segUrl);
+                    resolve(); // Continue even if seg image fails to load
+                };
+                segImg.src = this.segUrl;
             });
+        }
 
-            tempCtx.drawImage(video, 0, 0);
-
+        for (let frameCount = 0; frameCount < totalFrames; frameCount++) {
             const frameCanvas = document.createElement('canvas');
             frameCanvas.width = video.videoWidth;
             frameCanvas.height = video.videoHeight;
             const frameCtx = frameCanvas.getContext('2d');
-            frameCtx.drawImage(tempCanvas, 0, 0);
+
+            if (frameCount === this.actualFrame && segImg && segImg.complete && segImg.naturalWidth !== 0) {
+                // Draw segmentation image if it loaded successfully
+                frameCtx.drawImage(segImg, 0, 0);
+            } else {
+                // Draw video frame
+                await new Promise((resolve) => {
+                    function seeked() {
+                        video.removeEventListener('seeked', seeked);
+                        setTimeout(resolve, 10);
+                    }
+                    video.addEventListener('seeked', seeked);
+                    video.currentTime = frameCount * timeStep;
+                });
+                frameCtx.drawImage(video, 0, 0);
+            }
+
             this.frames.push(frameCanvas);
 
             if (frameCount % 10 === 0) {
-                await new Promise(resolve => setTimeout(resolve, 0));
+                // Yield to browser to prevent UI freezing
+                await new Promise(resolve => setTimeout(resolve, 4));
             }
         }
 
