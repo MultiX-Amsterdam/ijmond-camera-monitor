@@ -91,6 +91,89 @@
       let current_left, current_top;
       let current_width, current_height;
       let div_size, previous_div_size;
+      let isDragging = false;
+
+      // Add cursor style for dragging
+      $bbox.css('cursor', 'move');
+
+      function startDragging(e) {
+        e.preventDefault();
+        isDragging = true;
+
+        // Get initial positions
+        start_x = e.clientX || e.touches[0].clientX;
+        start_y = e.clientY || e.touches[0].clientY;
+
+        var position = $bbox.position();
+        start_left = position.left;
+        start_top = position.top;
+        current_left = position.left;
+        current_top = position.top;
+
+        // Add event listeners for dragging
+        document.addEventListener('mousemove', handleDrag);
+        document.addEventListener('touchmove', handleDrag);
+        document.addEventListener('mouseup', stopDragging);
+        document.addEventListener('touchend', stopDragging);
+
+        // Indicate that the user has interacted with the bounding box
+        $bbox.data("interacted", true);
+      }
+
+      function handleDrag(e) {
+        if (!isDragging) return;
+
+        const client_x = e.clientX || e.touches[0].clientX;
+        const client_y = e.clientY || e.touches[0].clientY;
+
+        // Calculate the movement deltas
+        const delta_x = client_x - start_x;
+        const delta_y = client_y - start_y;
+
+        // Calculate new position
+        let new_left = start_left + delta_x;
+        let new_top = start_top + delta_y;
+
+        // Get container boundaries
+        const container_width = $container.width();
+        const container_height = $container.height();
+
+        // Constrain to container boundaries
+        new_left = Math.max(border_size, Math.min(new_left, container_width - $bbox.width() + border_size));
+        new_top = Math.max(border_size, Math.min(new_top, container_height - $bbox.height() + border_size));
+
+        // Update position
+        $bbox.css({
+          left: new_left + 'px',
+          top: new_top + 'px'
+        });
+
+        current_left = new_left;90
+        current_top = new_top;
+      }
+
+      function stopDragging() {
+        isDragging = false;
+        document.removeEventListener('mousemove', handleDrag);
+        document.removeEventListener('touchmove', handleDrag);
+        document.removeEventListener('mouseup', stopDragging);
+        document.removeEventListener('touchend', stopDragging);
+      }
+
+      // Add drag event listeners to the bbox (but not to resizer corners)
+      $bbox.on('mousedown', function(e) {
+        // Only start dragging if the click is on the box itself, not on a resizer
+        if (!$(e.target).hasClass('resizer')) {
+          startDragging(e);
+        }
+      });
+
+      $bbox.on('touchstart', function(e) {
+        // Only start dragging if the touch is on the box itself, not on a resizer
+        if (!$(e.target).hasClass('resizer')) {
+          startDragging(e);
+        }
+      });
 
       function updateContainerSize() {
         previous_div_size = div_size;
