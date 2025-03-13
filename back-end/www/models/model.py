@@ -473,6 +473,9 @@ class SegmentationFeedback(db.Model):
     h_bbox : int
         Height of the bounding box, relative to the image.
         This is the feedback from the user.
+    frame_number : int
+        The frame number in the video that the user thinks there should be a bounding box.
+        Note that this is 1-based (i.e., the first frame is 1, not 0).
     time : int
         The epochtime (in seconds) when the user created the label record.
     user_id : int
@@ -489,6 +492,7 @@ class SegmentationFeedback(db.Model):
     y_bbox = db.Column(db.Integer, nullable=True)
     w_bbox = db.Column(db.Integer, nullable=True)
     h_bbox = db.Column(db.Integer, nullable=True)
+    frame_number = db.Column(db.Integer, nullable=True)
     time = db.Column(db.Integer, nullable=False, default=get_current_time)
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
     batch_id = db.Column(db.Integer, db.ForeignKey("segmentation_batch.id"))

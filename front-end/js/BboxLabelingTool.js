@@ -177,9 +177,16 @@
           // This means the user said that there should be no bounding box
           bbox_original = false;
         }
+        // Get the viewer object from the container to access the current frame number
+        const $container = $bbox.closest('.segmentation-container');
+        const viewer_obj = $container.data("viewer_obj");
+        // Use the slider value which is already 1-based
+        const current_frame = viewer_obj ? parseInt(viewer_obj.slider.value) : meta_data["frame_number"];
+
         labels.push({
           id: meta_data["id"],
-          relative_boxes: bbox_original
+          relative_boxes: bbox_original,
+          frame_number: current_frame
         });
       }
       return labels;

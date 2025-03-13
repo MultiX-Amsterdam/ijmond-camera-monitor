@@ -10,7 +10,7 @@ from util.util import get_current_time
 from config.config import config
 
 
-def create_feedback_label(sid, fc, x_bbox, y_bbox, w_bbox, h_bbox, user_id, batch_id):
+def create_feedback_label(sid, fc, x_bbox, y_bbox, w_bbox, h_bbox, user_id, batch_id, frame_number):
     """Create a segmentation feedback."""
     feedback = SegmentationFeedback(
         segmentation_id = sid,
@@ -21,6 +21,7 @@ def create_feedback_label(sid, fc, x_bbox, y_bbox, w_bbox, h_bbox, user_id, batc
         h_bbox = h_bbox,
         user_id = user_id,
         batch_id = batch_id,
+        frame_number = frame_number
     )
     db.session.add(feedback)
     db.session.commit()
@@ -55,15 +56,18 @@ def update_segmentation_labels(labels, user_id, connection_id, batch_id, client_
         >             "y_bbox": 122,
         >             "w_bbox": 101,
         >             "h_bbox": 254
-        >         }
+        >         },
+        >         "frame_number": 1
         >     },
         >     {
         >         "id": 2,
-        >         "relative_boxes": null
+        >         "relative_boxes": null,
+        >         "frame_number": 12
         >     },
         >     {
         >         "id": 3,
-        >         "relative_boxes": false
+        >         "relative_boxes": false,
+        >         "frame_number": 9
         >     }
         > ]
         If relative_boxes is null, it means no change to the bounding box.
@@ -80,6 +84,7 @@ def update_segmentation_labels(labels, user_id, connection_id, batch_id, client_
         >             "w_bbox": 101,
         >             "h_bbox": 254
         >         },
+        >         "frame_number": 1,
         >         "is_gold_standard": true
         >     }
         > ]
@@ -135,6 +140,7 @@ def update_segmentation_labels(labels, user_id, connection_id, batch_id, client_
         # Update labels
         for s in labels:
             bbox = s["relative_boxes"]
+            frame_number = s["frame_number"]
             is_gold_standard = s.get("is_gold_standard", False)
             fc = bbox_to_feedback_code(bbox, is_researcher=is_admin_researcher, is_gold_standard=is_gold_standard)
             if bbox == None:
@@ -145,7 +151,7 @@ def update_segmentation_labels(labels, user_id, connection_id, batch_id, client_
                 x_bbox, y_bbox, h_bbox, w_bbox = -1, -1, -1, -1
             else:
                 x_bbox, y_bbox, h_bbox, w_bbox = bbox["x_bbox"], bbox["y_bbox"], bbox["h_bbox"], bbox["w_bbox"]
-            feedback = create_feedback_label(s["id"], fc, x_bbox, y_bbox, w_bbox, h_bbox, user_id, batch_id)
+            feedback = create_feedback_label(s["id"], fc, x_bbox, y_bbox, w_bbox, h_bbox, user_id, batch_id, frame_number)
             segmentation = segmentation_batch_hashed[s["id"]]
             segmentation.label_update_time = feedback.time
             if is_admin_researcher: # admin researcher

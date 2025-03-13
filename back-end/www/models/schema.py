@@ -49,7 +49,7 @@ class SegmentationFeedbackSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = SegmentationFeedback # the class for the model
         load_instance = True
-        fields = ("x_bbox", "y_bbox", "w_bbox", "h_bbox", "feedback_code", "time")
+        fields = ("x_bbox", "y_bbox", "w_bbox", "h_bbox", "feedback_code", "time", "frame_number")
 
 
 class SegmentationSchema(ma.SQLAlchemyAutoSchema):
