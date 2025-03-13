@@ -77,8 +77,10 @@
     // Touch is used for phone
     // Mouse is used for desktop
     function createResizer($bbox, $container, border_size) {
-      const $leftBox = $('<div class="resizer top-left"></div>');
-      const $rightBox = $('<div class="resizer bottom-right"></div>');
+      const $topLeftBox = $('<div class="resizer top-left"></div>');
+      const $topRightBox = $('<div class="resizer top-right"></div>');
+      const $bottomLeftBox = $('<div class="resizer bottom-left"></div>');
+      const $bottomRightBox = $('<div class="resizer bottom-right"></div>');
 
       const MIN_WIDTH = 20;
       const MIN_HEIGHT = 20;
@@ -124,7 +126,79 @@
         });
       }
 
-      function handlerRightMovement(e) {
+      function handlerTopRightMovement(e) {
+        const client_x = e.clientX || e.touches[0].clientX;
+        const client_y = e.clientY || e.touches[0].clientY;
+
+        // Get container boundaries
+        const container_rect = $container[0].getBoundingClientRect();
+        const container_left = container_rect.left;
+        const container_right = container_rect.right;
+        const container_top = container_rect.top;
+        const container_bottom = container_rect.bottom;
+
+        // Constrain client coordinates
+        const constrained_client_x = Math.max(container_left, Math.min(client_x, container_right));
+        const constrained_client_y = Math.max(container_top, Math.min(client_y, container_bottom));
+
+        // Calculate movement deltas
+        const delta_x = constrained_client_x - start_x;
+        const delta_y = constrained_client_y - start_y;
+
+        // Calculate new dimensions while keeping the left edge fixed
+        const new_width = start_width + delta_x;
+        current_width = Math.max(Math.min(new_width, $container.width() - current_left + border_size), MIN_WIDTH);
+
+        // Calculate new top position and height while keeping bottom edge fixed
+        const bottom_edge = start_top + start_height;
+        current_top = Math.min(Math.max(start_top + delta_y, border_size), bottom_edge - MIN_HEIGHT);
+        current_height = bottom_edge - current_top;
+
+        // Update the box dimensions
+        $bbox.css({
+          width: current_width + 'px',
+          height: current_height + 'px',
+          top: current_top + 'px'
+        });
+      }
+
+      function handlerBottomLeftMovement(e) {
+        const client_x = e.clientX || e.touches[0].clientX;
+        const client_y = e.clientY || e.touches[0].clientY;
+
+        // Get container boundaries
+        const container_rect = $container[0].getBoundingClientRect();
+        const container_left = container_rect.left;
+        const container_right = container_rect.right;
+        const container_top = container_rect.top;
+        const container_bottom = container_rect.bottom;
+
+        // Constrain client coordinates
+        const constrained_client_x = Math.max(container_left, Math.min(client_x, container_right));
+        const constrained_client_y = Math.max(container_top, Math.min(client_y, container_bottom));
+
+        // Calculate movement deltas
+        const delta_x = constrained_client_x - start_x;
+        const delta_y = constrained_client_y - start_y;
+
+        // Calculate new left position and width while keeping right edge fixed
+        const right_edge = start_left + start_width;
+        current_left = Math.min(Math.max(start_left + delta_x, border_size), right_edge - MIN_WIDTH);
+        current_width = right_edge - current_left;
+
+        // Calculate new height while keeping top edge fixed
+        const new_height = start_height + delta_y;
+        current_height = Math.max(Math.min(new_height, $container.height() - current_top + border_size), MIN_HEIGHT);
+
+        // Update the box dimensions
+        $bbox.css({
+          width: current_width + 'px',
+          height: current_height + 'px',
+          left: current_left + 'px'
+        });
+      }
+
+      function handlerBottomRightMovement(e) {
         // Calculates the new width and height of the box based on the movement
         const client_x = e.clientX || e.touches[0].clientX;
         const client_y = e.clientY || e.touches[0].clientY;
@@ -140,11 +214,13 @@
         current_height = Math.max(Math.min(new_height, magic_max_height), MIN_HEIGHT);
 
         // Update the width and height of the box without exceeding the image size
-        $bbox[0].style.width = current_width + 'px';
-        $bbox[0].style.height = current_height + 'px';
+        $bbox.css({
+          width: current_width + 'px',
+          height: current_height + 'px'
+        });
       }
 
-      function handlerLeftMovement(e) {
+      function handlerTopLeftMovement(e) {
         // Calculates the new width and height of the box based on the movement
         const client_x = e.clientX || e.touches[0].clientX;
         const client_y = e.clientY || e.touches[0].clientY;
@@ -181,10 +257,12 @@
         current_height = bottom_edge - current_top;
 
         // Update the box position and dimensions
-        $bbox[0].style.width = current_width + 'px';
-        $bbox[0].style.height = current_height + 'px';
-        $bbox[0].style.left = current_left + 'px';
-        $bbox[0].style.top = current_top + 'px';
+        $bbox.css({
+          width: current_width + 'px',
+          height: current_height + 'px',
+          left: current_left + 'px',
+          top: current_top + 'px'
+        });
       }
 
       // Add event listeners when the user interacts with the bbox (resizing starts)
@@ -197,10 +275,14 @@
 
       // Remove event listeners to stop resizing
       function removeListener() {
-        document.removeEventListener('mousemove', handlerRightMovement);
-        document.removeEventListener('touchmove', handlerRightMovement);
-        document.removeEventListener('mousemove', handlerLeftMovement);
-        document.removeEventListener('touchmove', handlerLeftMovement);
+        document.removeEventListener('mousemove', handlerTopLeftMovement);
+        document.removeEventListener('mousemove', handlerTopRightMovement);
+        document.removeEventListener('mousemove', handlerBottomLeftMovement);
+        document.removeEventListener('mousemove', handlerBottomRightMovement);
+        document.removeEventListener('touchmove', handlerTopLeftMovement);
+        document.removeEventListener('touchmove', handlerTopRightMovement);
+        document.removeEventListener('touchmove', handlerBottomLeftMovement);
+        document.removeEventListener('touchmove', handlerBottomRightMovement);
         document.removeEventListener('mouseup', removeListener);
         document.removeEventListener('touchend', removeListener);
       }
@@ -211,12 +293,12 @@
 
         start_x = e.clientX || e.touches[0].clientX;
         start_y = e.clientY || e.touches[0].clientY;
-        start_width = $bbox[0].offsetWidth;
-        start_height = $bbox[0].offsetHeight;
-        start_left = $bbox[0].offsetLeft;
-        start_top = $bbox[0].offsetTop;
 
         var position = $bbox.position();
+        start_width = $bbox.width();
+        start_height = $bbox.height();
+        start_left = position.left;
+        start_top = position.top;
         current_left = position.left;
         current_top = position.top;
 
@@ -227,11 +309,17 @@
       }
 
       // Attach the event listeners
-      $rightBox[0].addEventListener('mousedown', (e) => startResizing(e, handlerRightMovement));
-      $rightBox[0].addEventListener('touchstart', (e) => startResizing(e, handlerRightMovement));
+      $topLeftBox[0].addEventListener('mousedown', (e) => startResizing(e, handlerTopLeftMovement));
+      $topLeftBox[0].addEventListener('touchstart', (e) => startResizing(e, handlerTopLeftMovement));
 
-      $leftBox[0].addEventListener('mousedown', (e) => startResizing(e, handlerLeftMovement));
-      $leftBox[0].addEventListener('touchstart', (e) => startResizing(e, handlerLeftMovement));
+      $topRightBox[0].addEventListener('mousedown', (e) => startResizing(e, handlerTopRightMovement));
+      $topRightBox[0].addEventListener('touchstart', (e) => startResizing(e, handlerTopRightMovement));
+
+      $bottomLeftBox[0].addEventListener('mousedown', (e) => startResizing(e, handlerBottomLeftMovement));
+      $bottomLeftBox[0].addEventListener('touchstart', (e) => startResizing(e, handlerBottomLeftMovement));
+
+      $bottomRightBox[0].addEventListener('mousedown', (e) => startResizing(e, handlerBottomRightMovement));
+      $bottomRightBox[0].addEventListener('touchstart', (e) => startResizing(e, handlerBottomRightMovement));
 
       // Add window resize event listener to recalculate div_size
       window.addEventListener('resize', updateContainerSize);
@@ -239,7 +327,7 @@
       // Call it once initially to set div_size
       updateContainerSize();
 
-      return [$rightBox, $leftBox];
+      return [$topLeftBox, $topRightBox, $bottomLeftBox, $bottomRightBox];
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -360,9 +448,13 @@
       const resize_boxes = createResizer($bbox, $container, border_size);
       $bbox.append(resize_boxes[0]);
       $bbox.append(resize_boxes[1]);
+      $bbox.append(resize_boxes[2]);
+      $bbox.append(resize_boxes[3]);
       if (hide_resizer == true) {
         resize_boxes[0].hide();
         resize_boxes[1].hide();
+        resize_boxes[2].hide();
+        resize_boxes[3].hide();
       }
 
       return $bbox;

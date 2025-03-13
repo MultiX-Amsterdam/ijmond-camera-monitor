@@ -61,11 +61,25 @@
 .box-labeling-tool .box-labeling-tool-videos .segmentation-container .resizer.top-left {
     top: -8px;
     left: -8px;
+    cursor: nw-resize;
+}
+
+.box-labeling-tool .box-labeling-tool-videos .segmentation-container .resizer.top-right {
+    top: -8px;
+    right: -8px;
+    cursor: ne-resize;
+}
+
+.box-labeling-tool .box-labeling-tool-videos .segmentation-container .resizer.bottom-left {
+    bottom: -8px;
+    left: -8px;
+    cursor: sw-resize;
 }
 
 .box-labeling-tool .box-labeling-tool-videos .segmentation-container .resizer.bottom-right {
     bottom: -8px;
     right: -8px;
+    cursor: se-resize;
 }
 
 .box-labeling-tool .error-text,
@@ -167,6 +181,16 @@
 
     .box-labeling-tool .box-labeling-tool-videos .segmentation-container .bbox .resizer.top-left {
         top: -13px;
+        left: -13px;
+    }
+
+    .box-labeling-tool .box-labeling-tool-videos .segmentation-container .bbox .resizer.top-right {
+        top: -13px;
+        right: -13px;
+    }
+
+    .box-labeling-tool .box-labeling-tool-videos .segmentation-container .bbox .resizer.bottom-left {
+        bottom: -13px;
         left: -13px;
     }
 
