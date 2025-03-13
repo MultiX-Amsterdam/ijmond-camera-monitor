@@ -440,25 +440,25 @@ body,
 .gallery .gallery-images .segmentation-container .resizer.top-left {
   top: -8px;
   left: -8px;
-  cursor: nw-resize;
+  cursor: nwse-resize;
 }
 
 .gallery .gallery-images .segmentation-container .resizer.top-right {
   top: -8px;
   right: -8px;
-  cursor: ne-resize;
+  cursor: nesw-resize;
 }
 
 .gallery .gallery-images .segmentation-container .resizer.bottom-left {
   bottom: -8px;
   left: -8px;
-  cursor: sw-resize;
+  cursor: nesw-resize;
 }
 
 .gallery .gallery-images .segmentation-container .resizer.bottom-right {
   bottom: -8px;
   right: -8px;
-  cursor: se-resize;
+  cursor: nwse-resize;
 }
 
 .gallery .gallery-events {

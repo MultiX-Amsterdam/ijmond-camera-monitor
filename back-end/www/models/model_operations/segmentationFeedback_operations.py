@@ -140,7 +140,7 @@ def update_segmentation_labels(labels, user_id, connection_id, batch_id, client_
         # Update labels
         for s in labels:
             bbox = s["relative_boxes"]
-            frame_number = s["frame_number"]
+            frame_number = s.get("frame_number", None)
             is_gold_standard = s.get("is_gold_standard", False)
             fc = bbox_to_feedback_code(bbox, is_researcher=is_admin_researcher, is_gold_standard=is_gold_standard)
             if bbox == None:
