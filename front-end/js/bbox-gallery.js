@@ -57,12 +57,14 @@
     // Add the date and time information
     var $dt = $("<p class='text-small-margin'><i></i></p>");
     $control.append($dt);
+    var $link_to_video = $("<p class='text-small-margin'><i></i></p>");
+    $control.append($link_to_video);
+    var $message = $("<p class='text-small-margin'><i></i></p>");
+    $control.append($message);
     if (typeof user_id === "undefined") {
       if (is_admin) {
         var $seg_id = $("<p class='text-small-margin'><i></i></p>");
         $control.append($seg_id);
-        var $link_to_video = $("<p class='text-small-margin'><i></i></p>");
-        $control.append($link_to_video);
         if (is_researcher) {
           var $label_control = $('<div class="control-group"></div>');
           var $edit_btn = $('<button class="custom-button-flat stretch-on-mobile">Edit box</button>');
@@ -130,10 +132,10 @@
     });
     seg_mask["video"]["url_root"] = seg_mask["url_root"];
     $($i.get(0)).html("<a target='_blank' href='" + util.segmentationFeedbackToVideoPanoramaURL(seg_mask) + "'>" + date_str + "</a>");
+    $($i.get(1)).html("<a target='_blank' href='" + util.buildVideoURL(seg_mask["video"]) + "'>Link naar video</a>");
     if (typeof user_id === "undefined") {
       if (is_admin) {
-        $($i.get(1)).text("ID: " + seg_mask["id"]).addClass("custom-text-info-dark-theme");
-        $($i.get(2)).html("<a target='_blank' href='" + util.buildVideoURL(seg_mask["video"]) + "'>Link to Video</a>");
+        $($i.get(3)).text("ID: " + seg_mask["id"]).addClass("custom-text-info-dark-theme");
         // Save data to DOM
         $item.find("button").data("seg_mask", seg_mask);
       }
@@ -149,6 +151,13 @@
     util.resolvePromises(deferreds, {
       success: function () {
         resetAndOverlayAllBBox($item, seg_mask);
+        if (seg_mask["some_box_indicate_smoke_in_another_frame"] == true) {
+          $($i.get(2)).text("Rook staat in de video, maar mogelijk niet in het beeld.");
+        } else if (seg_mask["some_box_indicate_smoke_in_another_frame"] == false) {
+          $($i.get(2)).html("&nbsp;");
+        } else {
+          $($($i.get(2)).parent()).hide();
+        }
       }
     });
 
@@ -158,11 +167,20 @@
   function resetAndOverlayAllBBox($item, seg_mask) {
     $item.find(".bbox").remove();
     var bbox_list = seg_mask["feedback_filtered"];
+    seg_mask["some_box_indicate_smoke_in_another_frame"] = null;
     for (var i = 0; i < bbox_list.length; i++) {
       var is_orignal_box_null = false;
       var b = bbox_list[i];
       if (b["x_bbox"] == -1 && b["y_bbox"] == -1 && b["w_bbox"] == -1 && b["h_bbox"] == -1) {
         continue;
+      }
+      if (b["frame_number"] != null) {
+        if (seg_mask["some_box_indicate_smoke_in_another_frame"] != true) {
+          seg_mask["some_box_indicate_smoke_in_another_frame"] = false;
+        }
+        if (b["frame_number"] != seg_mask["frame_number"]) {
+          seg_mask["some_box_indicate_smoke_in_another_frame"] = true;
+        }
       }
       var meta_data = {
         w_image: seg_mask["w_image"],
