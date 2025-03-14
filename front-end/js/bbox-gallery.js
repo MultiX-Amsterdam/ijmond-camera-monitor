@@ -93,6 +93,21 @@
               $this.text("Confirm editing");
               $researcher_resizer.show();
               $toggle_btn.show();
+              // Enable the box dragging feature for researcher box
+              var $bbox_researcher = $seg_container.find(".bbox.researcher");
+              $bbox_researcher.css('cursor', 'move');
+              $bbox_researcher.on('mousedown', function (e) {
+                if (!$(e.target).hasClass('resizer')) {
+                  var startDragging = $bbox_researcher.data('startDragging');
+                  if (startDragging) startDragging(e);
+                }
+              });
+              $bbox_researcher.on('touchstart', function (e) {
+                if (!$(e.target).hasClass('resizer')) {
+                  var startDragging = $bbox_researcher.data('startDragging');
+                  if (startDragging) startDragging(e);
+                }
+              });
             }
           });
           $toggle_btn.on("click", function () {
@@ -359,6 +374,9 @@
             $toggle_btn.hide();
             var $researcher_resizer = $seg_container.find(".bbox.researcher .resizer");
             $researcher_resizer.hide();
+            // Disable the box dragging feature for researcher box
+            var $bbox_researcher = $seg_container.find(".bbox.researcher");
+            $bbox_researcher.css('cursor', 'default').off('mousedown').off('touchstart');
             $set_label_confirm_dialog.removeData("edit_btn");
           },
           error: function () {

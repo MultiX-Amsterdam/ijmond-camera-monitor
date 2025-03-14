@@ -120,6 +120,8 @@
         $bbox.data("interacted", true);
       }
 
+      $bbox.data("startDragging", startDragging);
+
       function handleDrag(e) {
         if (!isDragging) return;
 
@@ -148,7 +150,7 @@
           top: new_top + 'px'
         });
 
-        current_left = new_left;90
+        current_left = new_left; 90
         current_top = new_top;
       }
 
@@ -161,14 +163,14 @@
       }
 
       // Add drag event listeners to the bbox (but not to resizer corners)
-      $bbox.on('mousedown', function(e) {
+      $bbox.on('mousedown', function (e) {
         // Only start dragging if the click is on the box itself, not on a resizer
         if (!$(e.target).hasClass('resizer')) {
           startDragging(e);
         }
       });
 
-      $bbox.on('touchstart', function(e) {
+      $bbox.on('touchstart', function (e) {
         // Only start dragging if the touch is on the box itself, not on a resizer
         if (!$(e.target).hasClass('resizer')) {
           startDragging(e);
@@ -538,6 +540,8 @@
         resize_boxes[1].hide();
         resize_boxes[2].hide();
         resize_boxes[3].hide();
+        // Disable the box dragging feature
+        $bbox.css('cursor', 'default').off('mousedown').off('touchstart');
       }
 
       return $bbox;
