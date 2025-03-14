@@ -136,6 +136,9 @@ class Video(db.Model):
         Note that this is not the key for the View table.
     camera_id : int
         ID of the camera.
+        - 0 is hoogovens (hoogovens 7)
+        - 1 is kooksfabriek_1 (kooksgasfabriek 1)
+        - 2 is kooksfabriek_2 (kooksgasfabriek 2)
     priority : int
         The priority of the video.
         Higher priority indicates that the mask should get feedback faster.
@@ -404,7 +407,8 @@ class SegmentationMask(db.Model):
         The most recent epochtime (in seconds) that the label state is updated.
         Notice that this is only for the normal users (label_state, not label_state_admin).
     frame_number : int
-        The frame number in the video (can be null if no video is linked to this mask)
+        The frame number in the video (can be null if no video is linked to this mask).
+        Note that this is 1-based (i.e., the first frame is 1, not 0).
     frame_timestamp : int
         If there is no video ID, this field will have the information of the timestamp.
         The format should be epoch time in seconds.
@@ -469,6 +473,9 @@ class SegmentationFeedback(db.Model):
     h_bbox : int
         Height of the bounding box, relative to the image.
         This is the feedback from the user.
+    frame_number : int
+        The frame number in the video that the user thinks there should be a bounding box.
+        Note that this is 1-based (i.e., the first frame is 1, not 0).
     time : int
         The epochtime (in seconds) when the user created the label record.
     user_id : int
@@ -485,6 +492,7 @@ class SegmentationFeedback(db.Model):
     y_bbox = db.Column(db.Integer, nullable=True)
     w_bbox = db.Column(db.Integer, nullable=True)
     h_bbox = db.Column(db.Integer, nullable=True)
+    frame_number = db.Column(db.Integer, nullable=True)
     time = db.Column(db.Integer, nullable=False, default=get_current_time)
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
     batch_id = db.Column(db.Integer, db.ForeignKey("segmentation_batch.id"))

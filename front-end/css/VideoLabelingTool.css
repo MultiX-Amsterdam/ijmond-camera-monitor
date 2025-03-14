@@ -23,55 +23,6 @@
     padding: 0;
 }
 
-.video-labeling-tool .video-labeling-tool-videos .segmentation-container {
-    cursor: default;
-}
-
-.video-labeling-tool .video-labeling-tool-videos .segmentation-container img.seg-img {
-    pointer-events: none;
-}
-
-.video-labeling-tool .video-labeling-tool-videos .segmentation-container .control-group {
-    justify-content: center;
-}
-
-.video-labeling-tool .video-labeling-tool-videos .segmentation-container .control-group span {
-    color: white;
-    font-size: 24px;
-}
-
-.video-labeling-tool .video-labeling-tool-videos .segmentation-container .control-group span:first-of-type {
-    margin-right: 15px;
-}
-
-.video-labeling-tool .video-labeling-tool-videos .segmentation-container .bbox {
-    position: absolute;
-    display: flex;
-    border: 0;
-    outline: 3px solid rgba(255, 180, 96, 0.8);
-}
-
-.video-labeling-tool .video-labeling-tool-videos .segmentation-container .bbox .resizer {
-    width: 16px;
-    height: 16px;
-    background: rgb(255, 180, 96);
-    position: absolute;
-    z-index: 1;
-    border-radius: 50%;
-    cursor: nwse-resize;
-    border: 0;
-}
-
-.video-labeling-tool .video-labeling-tool-videos .segmentation-container .resizer.top-left {
-    top: -8px;
-    left: -8px;
-}
-
-.video-labeling-tool .video-labeling-tool-videos .segmentation-container .resizer.bottom-right {
-    bottom: -8px;
-    right: -8px;
-}
-
 .video-labeling-tool .error-text,
 .video-labeling-tool .not-supported-text {
     color: #ff5e5e;
@@ -129,8 +80,7 @@
     user-select: none;
 }
 
-.video-labeling-tool a video,
-.video-labeling-tool a img.seg-img {
+.video-labeling-tool a video {
     border-radius: 2px;
     width: 100%;
     box-sizing: border-box;
@@ -142,8 +92,7 @@
     min-height: 100px;
 }
 
-.video-labeling-tool a.selected video,
-.video-labeling-tool a.selected img.seg-img {
+.video-labeling-tool a.selected video {
     border: 10px solid #ff5e5e;
 }
 
@@ -159,23 +108,6 @@
     color: #ff5e5e;
 }
 
-.play-video-dialog {
-    max-width: 700px;
-}
-
-.play-video-dialog .ui-dialog-title {
-    white-space: normal !important;
-    font-size: 16px !important;
-    text-align: left !important;
-}
-
-#smoke-video {
-    width: 100%;
-    height: 98%;
-    margin: 0;
-    padding: 0;
-}
-
 @media screen and (min-width: 500px) {
     .video-labeling-tool a {
         flex: 1 0 50%;
@@ -187,21 +119,5 @@
     .video-labeling-tool a {
         flex: 1 0 100%;
         max-width: 100%;
-    }
-
-    .video-labeling-tool .video-labeling-tool-videos .segmentation-container .resizer {
-        width: 26px;
-        height: 26px;
-        border: 0;
-    }
-
-    .video-labeling-tool .video-labeling-tool-videos .segmentation-container .resizer.top-left {
-        top: -13px;
-        left: -13px;
-    }
-
-    .video-labeling-tool .video-labeling-tool-videos .segmentation-container .resizer.bottom-right {
-        bottom: -13px;
-        right: -13px;
     }
 }

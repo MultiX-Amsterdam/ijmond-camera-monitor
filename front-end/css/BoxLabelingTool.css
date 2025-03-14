@@ -1,0 +1,200 @@
+.box-labeling-tool {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    align-items: center;
+    align-content: stretch;
+    box-sizing: border-box;
+    width: 100%;
+    padding: 0;
+    min-height: 200px;
+}
+
+.box-labeling-tool .box-labeling-tool-videos {
+    width: 100%;
+    min-height: 200px;
+    display: grid;
+}
+
+.box-labeling-tool .box-labeling-tool-videos .segmentation-container {
+    cursor: default;
+    color: black;
+    text-decoration: none;
+    padding: 10px;
+    margin: 0 auto;
+    grid-row: 1;
+    grid-column: 1;
+}
+
+.box-labeling-tool .box-labeling-tool-videos .segmentation-container .control-group {
+    justify-content: center;
+}
+
+.box-labeling-tool .box-labeling-tool-videos .segmentation-container .control-group span {
+    color: white;
+    font-size: 24px;
+}
+
+.box-labeling-tool .box-labeling-tool-videos .segmentation-container .control-group span:first-of-type {
+    margin-right: 15px;
+}
+
+.box-labeling-tool .box-labeling-tool-videos .segmentation-container .bbox {
+    position: absolute;
+    display: flex;
+    border: 0;
+    outline: 3px solid rgba(255, 180, 96, 0.8);
+}
+
+.box-labeling-tool .box-labeling-tool-videos .segmentation-container .bbox .resizer {
+    width: 16px;
+    height: 16px;
+    background: rgb(255, 180, 96);
+    position: absolute;
+    z-index: 1;
+    border-radius: 50%;
+    border: 0;
+}
+
+.box-labeling-tool .box-labeling-tool-videos .segmentation-container .resizer.top-left {
+    top: -8px;
+    left: -8px;
+    cursor: nwse-resize;
+}
+
+.box-labeling-tool .box-labeling-tool-videos .segmentation-container .resizer.top-right {
+    top: -8px;
+    right: -8px;
+    cursor: nesw-resize;
+}
+
+.box-labeling-tool .box-labeling-tool-videos .segmentation-container .resizer.bottom-left {
+    bottom: -8px;
+    left: -8px;
+    cursor: nesw-resize;
+}
+
+.box-labeling-tool .box-labeling-tool-videos .segmentation-container .resizer.bottom-right {
+    bottom: -8px;
+    right: -8px;
+    cursor: nwse-resize;
+}
+
+.box-labeling-tool .error-text,
+.box-labeling-tool .not-supported-text {
+    color: #ff5e5e;
+    text-align: center;
+    flex: 1 0 100%;
+    max-width: 100%;
+    font-size: 18px;
+    padding: 10px 0;
+}
+
+.box-labeling-tool .no-data-text {
+    color: #63ff5e;
+    text-align: center;
+    flex: 1 0 100%;
+    max-width: 100%;
+    font-size: 18px;
+    padding: 10px 0;
+}
+
+.box-labeling-tool .bad-video-text {
+    color: #3be4ff;
+    text-align: center;
+    flex: 1 0 100%;
+    max-width: 100%;
+    font-size: 18px;
+    padding: 10px 0;
+}
+
+.box-labeling-tool .loading-text {
+    color: #3be4ff;
+    text-align: center;
+    flex: 1 0 100%;
+    max-width: 100%;
+    font-size: 18px;
+    padding: 10px 0;
+    min-height: 100px;
+    background-image: url(../img/loading.gif);
+    background-repeat: no-repeat;
+    background-size: 50px 50px;
+    background-position: center;
+}
+
+.box-labeling-tool .box-labeling-tool-videos .segmentation-container .frames-view {
+    border-radius: 2px;
+    width: 100%;
+    padding: 0;
+    box-sizing: border-box;
+    border: 10px solid #212121;
+    background: transparent;
+    min-height: 100px;
+    color: white;
+    position: relative;
+}
+
+.box-labeling-tool .box-labeling-tool-videos .segmentation-container.selected .frames-view {
+    border: 10px solid #ff5e5e;
+}
+
+.box-labeling-tool .box-labeling-tool-videos .segmentation-container.selected>div:first-of-type {
+    color: #ff5e5e;
+}
+
+.box-labeling-tool .navigation-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-top: 20px;
+    width: 100%;
+}
+
+.box-labeling-tool .navigation-buttons .nav-button {
+    min-width: 120px;
+    padding: 10px 20px;
+}
+
+.box-labeling-tool .navigation-buttons .nav-button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+@media screen and (min-width: 500px) {
+    .box-labeling-tool .box-labeling-tool-videos .segmentation-container {
+        max-width: 60%;
+    }
+}
+
+@media screen and (max-width: 500px) {
+    .box-labeling-tool .box-labeling-tool-videos .segmentation-container {
+        max-width: 100%;
+    }
+
+    .box-labeling-tool .box-labeling-tool-videos .segmentation-container .bbox .resizer {
+        width: 26px;
+        height: 26px;
+        border: 0;
+    }
+
+    .box-labeling-tool .box-labeling-tool-videos .segmentation-container .bbox .resizer.top-left {
+        top: -13px;
+        left: -13px;
+    }
+
+    .box-labeling-tool .box-labeling-tool-videos .segmentation-container .bbox .resizer.top-right {
+        top: -13px;
+        right: -13px;
+    }
+
+    .box-labeling-tool .box-labeling-tool-videos .segmentation-container .bbox .resizer.bottom-left {
+        bottom: -13px;
+        left: -13px;
+    }
+
+    .box-labeling-tool .box-labeling-tool-videos .segmentation-container .bbox .resizer.bottom-right {
+        bottom: -13px;
+        right: -13px;
+    }
+}

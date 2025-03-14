@@ -24,6 +24,10 @@
   var user_token_for_other_app;
   var $set_label_confirm_dialog;
 
+  // The html page creates a padding of 10px on both sides.
+  // The bounding box coordinates will be adjusted based on the padding.
+  var BORDER_SIZE = 20;
+
   function updateGallery($new_content) {
     $gallery_images.detach(); // detatch prevents the click event from being removed
     $gallery.empty().append($new_content);
@@ -53,12 +57,14 @@
     // Add the date and time information
     var $dt = $("<p class='text-small-margin'><i></i></p>");
     $control.append($dt);
+    var $link_to_video = $("<p class='text-small-margin'><i></i></p>");
+    $control.append($link_to_video);
+    var $message = $("<p class='text-small-margin'><i></i></p>");
+    $control.append($message);
     if (typeof user_id === "undefined") {
       if (is_admin) {
         var $seg_id = $("<p class='text-small-margin'><i></i></p>");
         $control.append($seg_id);
-        var $link_to_video = $("<p class='text-small-margin'><i></i></p>");
-        $control.append($link_to_video);
         if (is_researcher) {
           var $label_control = $('<div class="control-group"></div>');
           var $edit_btn = $('<button class="custom-button-flat stretch-on-mobile">Edit box</button>');
@@ -75,7 +81,7 @@
               // This means there is no researcher label, so we need to create a bounding box.
               var $img = $seg_container.find("img.seg-img");
               var feedback_code = 3; // this means that the model output looks good
-              var $bbox = util.createBBox($this.data("seg_mask"), $img, false, feedback_code);
+              var $bbox = util.createBBox($this.data("seg_mask"), $img, false, feedback_code, BORDER_SIZE);
               $seg_container.append($bbox);
             }
             if ($this.hasClass("edit-mode")) {
@@ -87,6 +93,21 @@
               $this.text("Confirm editing");
               $researcher_resizer.show();
               $toggle_btn.show();
+              // Enable the box dragging feature for researcher box
+              var $bbox_researcher = $seg_container.find(".bbox.researcher");
+              $bbox_researcher.css('cursor', 'move');
+              $bbox_researcher.on('mousedown', function (e) {
+                if (!$(e.target).hasClass('resizer')) {
+                  var startDragging = $bbox_researcher.data('startDragging');
+                  if (startDragging) startDragging(e);
+                }
+              });
+              $bbox_researcher.on('touchstart', function (e) {
+                if (!$(e.target).hasClass('resizer')) {
+                  var startDragging = $bbox_researcher.data('startDragging');
+                  if (startDragging) startDragging(e);
+                }
+              });
             }
           });
           $toggle_btn.on("click", function () {
@@ -126,10 +147,10 @@
     });
     seg_mask["video"]["url_root"] = seg_mask["url_root"];
     $($i.get(0)).html("<a target='_blank' href='" + util.segmentationFeedbackToVideoPanoramaURL(seg_mask) + "'>" + date_str + "</a>");
+    $($i.get(1)).html("<a target='_blank' href='" + util.buildVideoURL(seg_mask["video"]) + "'>Link naar video</a>");
     if (typeof user_id === "undefined") {
       if (is_admin) {
-        $($i.get(1)).text("ID: " + seg_mask["id"]).addClass("custom-text-info-dark-theme");
-        $($i.get(2)).html("<a target='_blank' href='" + util.buildVideoURL(seg_mask["video"]) + "'>Link to Video</a>");
+        $($i.get(3)).text("ID: " + seg_mask["id"]).addClass("custom-text-info-dark-theme");
         // Save data to DOM
         $item.find("button").data("seg_mask", seg_mask);
       }
@@ -145,6 +166,13 @@
     util.resolvePromises(deferreds, {
       success: function () {
         resetAndOverlayAllBBox($item, seg_mask);
+        if (seg_mask["some_box_indicate_smoke_in_another_frame"] == true) {
+          $($i.get(2)).text("Rook staat in de video, maar mogelijk niet in het beeld.");
+        } else if (seg_mask["some_box_indicate_smoke_in_another_frame"] == false) {
+          $($i.get(2)).html("&nbsp;");
+        } else {
+          $($($i.get(2)).parent()).hide();
+        }
       }
     });
 
@@ -154,11 +182,20 @@
   function resetAndOverlayAllBBox($item, seg_mask) {
     $item.find(".bbox").remove();
     var bbox_list = seg_mask["feedback_filtered"];
+    seg_mask["some_box_indicate_smoke_in_another_frame"] = null;
     for (var i = 0; i < bbox_list.length; i++) {
       var is_orignal_box_null = false;
       var b = bbox_list[i];
       if (b["x_bbox"] == -1 && b["y_bbox"] == -1 && b["w_bbox"] == -1 && b["h_bbox"] == -1) {
         continue;
+      }
+      if (b["frame_number"] != null) {
+        if (seg_mask["some_box_indicate_smoke_in_another_frame"] != true) {
+          seg_mask["some_box_indicate_smoke_in_another_frame"] = false;
+        }
+        if (b["frame_number"] != seg_mask["frame_number"]) {
+          seg_mask["some_box_indicate_smoke_in_another_frame"] = true;
+        }
       }
       var meta_data = {
         w_image: seg_mask["w_image"],
@@ -176,7 +213,7 @@
         meta_data["w_bbox"] = b["w_bbox"];
         meta_data["h_bbox"] = b["h_bbox"];
       }
-      var $bbox = util.createBBox(meta_data, $item.find(".seg-img"), true, b["feedback_code"]);
+      var $bbox = util.createBBox(meta_data, $item.find(".seg-img"), true, b["feedback_code"], BORDER_SIZE);
       // The is_orignal_box_null flag is used when we need to return the edited box the the back-end
       $bbox.data("is_orignal_box_null", is_orignal_box_null);
       $item.append($bbox);
@@ -300,7 +337,7 @@
           // This means there should be a bounding box
           if ($bbox.data("interacted")) {
             // This means the user edited the bounding box
-            bbox_original = util.reverseBBox($bbox);
+            bbox_original = util.reverseBBox($bbox, BORDER_SIZE);
           } else {
             // The reason of using safeGet() here is because if the box is created by pressing the edit button,
             // The value of is_orignal_box_null would be undefined.
@@ -314,7 +351,7 @@
               // But if the original box is not null,
               // This means that the box was edited before,
               // So we need to respect this by returning the box.
-              bbox_original = util.reverseBBox($bbox);
+              bbox_original = util.reverseBBox($bbox, BORDER_SIZE);
             }
           }
         } else {
@@ -337,6 +374,9 @@
             $toggle_btn.hide();
             var $researcher_resizer = $seg_container.find(".bbox.researcher .resizer");
             $researcher_resizer.hide();
+            // Disable the box dragging feature for researcher box
+            var $bbox_researcher = $seg_container.find(".bbox.researcher");
+            $bbox_researcher.css('cursor', 'default').off('mousedown').off('touchstart');
             $set_label_confirm_dialog.removeData("edit_btn");
           },
           error: function () {

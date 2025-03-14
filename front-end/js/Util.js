@@ -48,7 +48,7 @@
     }
 
     // Calculate the bounding box based on the given meta data
-    function calculateBBox(meta_data, $container) {
+    function calculateBBox(meta_data, $container, border_size) {
       const img_width = meta_data["w_image"];
       const img_height = meta_data["h_image"];
 
@@ -56,10 +56,6 @@
       const y = meta_data['y_bbox'];
       const w = meta_data['w_bbox'];
       const h = meta_data['h_bbox'];
-
-      // The html page creates a padding of 10px on both sides.
-      // The bounding box coordinates will be adjusted based on the padding.
-      const BORDER_SIZE = $container.outerWidth() - $container.width();
 
       const container_w = $container.width();
       const container_h = $container.height();
@@ -70,8 +66,8 @@
       const box_h = (h / img_height) * container_h
 
       return {
-        left: BORDER_SIZE + box_x,
-        top: BORDER_SIZE + box_y,
+        left: border_size + box_x,
+        top: border_size + box_y,
         width: box_w,
         height: box_h
       };
@@ -80,16 +76,14 @@
     // Create resizers for the boundary box
     // Touch is used for phone
     // Mouse is used for desktop
-    function createResizer($bbox, $container) {
-      const $leftBox = $('<div class="resizer top-left"></div>');
-      const $rightBox = $('<div class="resizer bottom-right"></div>');
+    function createResizer($bbox, $container, border_size) {
+      const $topLeftBox = $('<div class="resizer top-left"></div>');
+      const $topRightBox = $('<div class="resizer top-right"></div>');
+      const $bottomLeftBox = $('<div class="resizer bottom-left"></div>');
+      const $bottomRightBox = $('<div class="resizer bottom-right"></div>');
 
       const MIN_WIDTH = 20;
       const MIN_HEIGHT = 20;
-
-      // The html page creates a padding of 10px on both sides.
-      // The bounding box coordinates will be adjusted based on the padding.
-      const BORDER_SIZE = $container.outerWidth() - $container.width();
 
       let start_width, start_height;
       let start_x, start_y;
@@ -97,6 +91,91 @@
       let current_left, current_top;
       let current_width, current_height;
       let div_size, previous_div_size;
+      let isDragging = false;
+
+      // Add cursor style for dragging
+      $bbox.css('cursor', 'move');
+
+      function startDragging(e) {
+        e.preventDefault();
+        isDragging = true;
+
+        // Get initial positions
+        start_x = e.clientX || e.touches[0].clientX;
+        start_y = e.clientY || e.touches[0].clientY;
+
+        var position = $bbox.position();
+        start_left = position.left;
+        start_top = position.top;
+        current_left = position.left;
+        current_top = position.top;
+
+        // Add event listeners for dragging
+        document.addEventListener('mousemove', handleDrag);
+        document.addEventListener('touchmove', handleDrag);
+        document.addEventListener('mouseup', stopDragging);
+        document.addEventListener('touchend', stopDragging);
+
+        // Indicate that the user has interacted with the bounding box
+        $bbox.data("interacted", true);
+      }
+
+      $bbox.data("startDragging", startDragging);
+
+      function handleDrag(e) {
+        if (!isDragging) return;
+
+        const client_x = e.clientX || e.touches[0].clientX;
+        const client_y = e.clientY || e.touches[0].clientY;
+
+        // Calculate the movement deltas
+        const delta_x = client_x - start_x;
+        const delta_y = client_y - start_y;
+
+        // Calculate new position
+        let new_left = start_left + delta_x;
+        let new_top = start_top + delta_y;
+
+        // Get container boundaries
+        const container_width = $container.width();
+        const container_height = $container.height();
+
+        // Constrain to container boundaries
+        new_left = Math.max(border_size, Math.min(new_left, container_width - $bbox.width() + border_size));
+        new_top = Math.max(border_size, Math.min(new_top, container_height - $bbox.height() + border_size));
+
+        // Update position
+        $bbox.css({
+          left: new_left + 'px',
+          top: new_top + 'px'
+        });
+
+        current_left = new_left; 90
+        current_top = new_top;
+      }
+
+      function stopDragging() {
+        isDragging = false;
+        document.removeEventListener('mousemove', handleDrag);
+        document.removeEventListener('touchmove', handleDrag);
+        document.removeEventListener('mouseup', stopDragging);
+        document.removeEventListener('touchend', stopDragging);
+      }
+
+      // Add drag event listeners to the bbox (but not to resizer corners)
+      $bbox.on('mousedown', function (e) {
+        // Only start dragging if the click is on the box itself, not on a resizer
+        if (!$(e.target).hasClass('resizer')) {
+          startDragging(e);
+        }
+      });
+
+      $bbox.on('touchstart', function (e) {
+        // Only start dragging if the touch is on the box itself, not on a resizer
+        if (!$(e.target).hasClass('resizer')) {
+          startDragging(e);
+        }
+      });
 
       function updateContainerSize() {
         previous_div_size = div_size;
@@ -114,14 +193,14 @@
         if (!previous_div_size) return; // No need to adjust on the first load
 
         // Calculate scale factors based on the change in container size
-        const widthScale = (div_size.width - BORDER_SIZE) / (previous_div_size.width - BORDER_SIZE);
-        const heightScale = (div_size.height - BORDER_SIZE) / (previous_div_size.height - BORDER_SIZE);
+        const widthScale = (div_size.width - border_size) / (previous_div_size.width - border_size);
+        const heightScale = (div_size.height - border_size) / (previous_div_size.height - border_size);
 
         // Recalculate new width, height, top, and left positions for the box
-        current_width = ($bbox.width() - BORDER_SIZE) * widthScale + BORDER_SIZE;
-        current_height = ($bbox.height() - BORDER_SIZE) * heightScale + BORDER_SIZE;
-        current_left = ($bbox.position().left - BORDER_SIZE) * widthScale + BORDER_SIZE;
-        current_top = ($bbox.position().top - BORDER_SIZE) * heightScale + BORDER_SIZE;
+        current_width = ($bbox.width() - border_size) * widthScale + border_size;
+        current_height = ($bbox.height() - border_size) * heightScale + border_size;
+        current_left = ($bbox.position().left - border_size) * widthScale + border_size;
+        current_top = ($bbox.position().top - border_size) * heightScale + border_size;
 
         // Apply the new dimensions and positions to the box
         $bbox.css({
@@ -132,7 +211,79 @@
         });
       }
 
-      function handlerRightMovement(e) {
+      function handlerTopRightMovement(e) {
+        const client_x = e.clientX || e.touches[0].clientX;
+        const client_y = e.clientY || e.touches[0].clientY;
+
+        // Get container boundaries
+        const container_rect = $container[0].getBoundingClientRect();
+        const container_left = container_rect.left;
+        const container_right = container_rect.right;
+        const container_top = container_rect.top;
+        const container_bottom = container_rect.bottom;
+
+        // Constrain client coordinates
+        const constrained_client_x = Math.max(container_left, Math.min(client_x, container_right));
+        const constrained_client_y = Math.max(container_top, Math.min(client_y, container_bottom));
+
+        // Calculate movement deltas
+        const delta_x = constrained_client_x - start_x;
+        const delta_y = constrained_client_y - start_y;
+
+        // Calculate new dimensions while keeping the left edge fixed
+        const new_width = start_width + delta_x;
+        current_width = Math.max(Math.min(new_width, $container.width() - current_left + border_size), MIN_WIDTH);
+
+        // Calculate new top position and height while keeping bottom edge fixed
+        const bottom_edge = start_top + start_height;
+        current_top = Math.min(Math.max(start_top + delta_y, border_size), bottom_edge - MIN_HEIGHT);
+        current_height = bottom_edge - current_top;
+
+        // Update the box dimensions
+        $bbox.css({
+          width: current_width + 'px',
+          height: current_height + 'px',
+          top: current_top + 'px'
+        });
+      }
+
+      function handlerBottomLeftMovement(e) {
+        const client_x = e.clientX || e.touches[0].clientX;
+        const client_y = e.clientY || e.touches[0].clientY;
+
+        // Get container boundaries
+        const container_rect = $container[0].getBoundingClientRect();
+        const container_left = container_rect.left;
+        const container_right = container_rect.right;
+        const container_top = container_rect.top;
+        const container_bottom = container_rect.bottom;
+
+        // Constrain client coordinates
+        const constrained_client_x = Math.max(container_left, Math.min(client_x, container_right));
+        const constrained_client_y = Math.max(container_top, Math.min(client_y, container_bottom));
+
+        // Calculate movement deltas
+        const delta_x = constrained_client_x - start_x;
+        const delta_y = constrained_client_y - start_y;
+
+        // Calculate new left position and width while keeping right edge fixed
+        const right_edge = start_left + start_width;
+        current_left = Math.min(Math.max(start_left + delta_x, border_size), right_edge - MIN_WIDTH);
+        current_width = right_edge - current_left;
+
+        // Calculate new height while keeping top edge fixed
+        const new_height = start_height + delta_y;
+        current_height = Math.max(Math.min(new_height, $container.height() - current_top + border_size), MIN_HEIGHT);
+
+        // Update the box dimensions
+        $bbox.css({
+          width: current_width + 'px',
+          height: current_height + 'px',
+          left: current_left + 'px'
+        });
+      }
+
+      function handlerBottomRightMovement(e) {
         // Calculates the new width and height of the box based on the movement
         const client_x = e.clientX || e.touches[0].clientX;
         const client_y = e.clientY || e.touches[0].clientY;
@@ -142,40 +293,61 @@
         const new_height = start_height + (client_y - start_y);
 
         // Prevent moving out of boundaries
-        const magic_max_width = $container.width() - current_left + BORDER_SIZE;
-        const magic_max_height = $container.height() - current_top + BORDER_SIZE;
+        const magic_max_width = $container.width() - current_left + border_size;
+        const magic_max_height = $container.height() - current_top + border_size;
         current_width = Math.max(Math.min(new_width, magic_max_width), MIN_WIDTH);
         current_height = Math.max(Math.min(new_height, magic_max_height), MIN_HEIGHT);
 
         // Update the width and height of the box without exceeding the image size
-        $bbox[0].style.width = current_width + 'px';
-        $bbox[0].style.height = current_height + 'px';
+        $bbox.css({
+          width: current_width + 'px',
+          height: current_height + 'px'
+        });
       }
 
-      function handlerLeftMovement(e) {
+      function handlerTopLeftMovement(e) {
         // Calculates the new width and height of the box based on the movement
         const client_x = e.clientX || e.touches[0].clientX;
         const client_y = e.clientY || e.touches[0].clientY;
 
-        // Determine the new dimensions based on the initial state
-        const new_width = start_width - (client_x - start_x);
-        const new_height = start_height - (client_y - start_y);
-        const new_left = start_left + (client_x - start_x);
-        const new_top = start_top + (client_y - start_y);
+        // Get container boundaries in client coordinates
+        const container_rect = $container[0].getBoundingClientRect();
+        const container_left = container_rect.left;
+        const container_right = container_rect.right;
+        const container_top = container_rect.top;
+        const container_bottom = container_rect.bottom;
 
-        // Prevent moving out of boundaries
-        const magic_max_width = start_width + start_left - BORDER_SIZE;
-        const magic_max_height = start_height + start_top - BORDER_SIZE;
-        current_width = Math.max(Math.min(new_width, magic_max_width), MIN_WIDTH);
-        current_height = Math.max(Math.min(new_height, magic_max_height), MIN_HEIGHT);
-        current_left = Math.max(Math.min(new_left, magic_max_width), BORDER_SIZE);
-        current_top = Math.max(Math.min(new_top, magic_max_height), BORDER_SIZE);
+        // Constrain client coordinates to container boundaries
+        const constrained_client_x = Math.max(container_left, Math.min(client_x, container_right));
+        const constrained_client_y = Math.max(container_top, Math.min(client_y, container_bottom));
 
-        // Update the width and height of the box without exceeding the image size
-        $bbox[0].style.width = current_width + 'px';
-        $bbox[0].style.height = current_height + 'px';
-        $bbox[0].style.left = current_left + 'px';
-        $bbox[0].style.top = current_top + 'px';
+        // Calculate movement deltas
+        const delta_x = constrained_client_x - start_x;
+        const delta_y = constrained_client_y - start_y;
+
+        // Calculate new dimensions while keeping the right and bottom edges fixed
+        const right_edge = start_left + start_width;
+        const bottom_edge = start_top + start_height;
+
+        // Calculate new left position, ensuring it doesn't go beyond the right edge minus minimum width
+        const max_left = right_edge - MIN_WIDTH;
+        current_left = Math.min(Math.max(start_left + delta_x, border_size), max_left);
+
+        // Calculate new top position, ensuring it doesn't go beyond the bottom edge minus minimum height
+        const max_top = bottom_edge - MIN_HEIGHT;
+        current_top = Math.min(Math.max(start_top + delta_y, border_size), max_top);
+
+        // Calculate width and height based on fixed right/bottom edges
+        current_width = right_edge - current_left;
+        current_height = bottom_edge - current_top;
+
+        // Update the box position and dimensions
+        $bbox.css({
+          width: current_width + 'px',
+          height: current_height + 'px',
+          left: current_left + 'px',
+          top: current_top + 'px'
+        });
       }
 
       // Add event listeners when the user interacts with the bbox (resizing starts)
@@ -188,10 +360,14 @@
 
       // Remove event listeners to stop resizing
       function removeListener() {
-        document.removeEventListener('mousemove', handlerRightMovement);
-        document.removeEventListener('touchmove', handlerRightMovement);
-        document.removeEventListener('mousemove', handlerLeftMovement);
-        document.removeEventListener('touchmove', handlerLeftMovement);
+        document.removeEventListener('mousemove', handlerTopLeftMovement);
+        document.removeEventListener('mousemove', handlerTopRightMovement);
+        document.removeEventListener('mousemove', handlerBottomLeftMovement);
+        document.removeEventListener('mousemove', handlerBottomRightMovement);
+        document.removeEventListener('touchmove', handlerTopLeftMovement);
+        document.removeEventListener('touchmove', handlerTopRightMovement);
+        document.removeEventListener('touchmove', handlerBottomLeftMovement);
+        document.removeEventListener('touchmove', handlerBottomRightMovement);
         document.removeEventListener('mouseup', removeListener);
         document.removeEventListener('touchend', removeListener);
       }
@@ -202,12 +378,12 @@
 
         start_x = e.clientX || e.touches[0].clientX;
         start_y = e.clientY || e.touches[0].clientY;
-        start_width = $bbox[0].offsetWidth;
-        start_height = $bbox[0].offsetHeight;
-        start_left = $bbox[0].offsetLeft;
-        start_top = $bbox[0].offsetTop;
 
         var position = $bbox.position();
+        start_width = $bbox.width();
+        start_height = $bbox.height();
+        start_left = position.left;
+        start_top = position.top;
         current_left = position.left;
         current_top = position.top;
 
@@ -218,11 +394,17 @@
       }
 
       // Attach the event listeners
-      $rightBox[0].addEventListener('mousedown', (e) => startResizing(e, handlerRightMovement));
-      $rightBox[0].addEventListener('touchstart', (e) => startResizing(e, handlerRightMovement));
+      $topLeftBox[0].addEventListener('mousedown', (e) => startResizing(e, handlerTopLeftMovement));
+      $topLeftBox[0].addEventListener('touchstart', (e) => startResizing(e, handlerTopLeftMovement));
 
-      $leftBox[0].addEventListener('mousedown', (e) => startResizing(e, handlerLeftMovement));
-      $leftBox[0].addEventListener('touchstart', (e) => startResizing(e, handlerLeftMovement));
+      $topRightBox[0].addEventListener('mousedown', (e) => startResizing(e, handlerTopRightMovement));
+      $topRightBox[0].addEventListener('touchstart', (e) => startResizing(e, handlerTopRightMovement));
+
+      $bottomLeftBox[0].addEventListener('mousedown', (e) => startResizing(e, handlerBottomLeftMovement));
+      $bottomLeftBox[0].addEventListener('touchstart', (e) => startResizing(e, handlerBottomLeftMovement));
+
+      $bottomRightBox[0].addEventListener('mousedown', (e) => startResizing(e, handlerBottomRightMovement));
+      $bottomRightBox[0].addEventListener('touchstart', (e) => startResizing(e, handlerBottomRightMovement));
 
       // Add window resize event listener to recalculate div_size
       window.addEventListener('resize', updateContainerSize);
@@ -230,7 +412,7 @@
       // Call it once initially to set div_size
       updateContainerSize();
 
-      return [$rightBox, $leftBox];
+      return [$topLeftBox, $topRightBox, $bottomLeftBox, $bottomRightBox];
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -318,15 +500,18 @@
     this.handleVideoPromise = handleVideoPromise;
 
     // Create a bounding box element
-    var createBBox = function (meta_data, $container, hide_resizer, feedback_code) {
+    var createBBox = function (meta_data, $container, hide_resizer, feedback_code, border_size) {
       const $bbox = $('<div class="bbox"></div>');
-      const adjusted_data = calculateBBox(meta_data, $container);
+      const adjusted_data = calculateBBox(meta_data, $container, border_size);
 
       // Save the metadata to the data field
       $bbox.data("metadata", meta_data);
 
       // Indicate whether the user interacted with this bounding box or not
       $bbox.data("interacted", false);
+
+      // Save the container object
+      $bbox.data("container", $container);
 
       // Update the bounding box style based on the bbox object
       $bbox.css({
@@ -345,12 +530,18 @@
       }
 
       // Add the resizer
-      const resize_boxes = createResizer($bbox, $container);
+      const resize_boxes = createResizer($bbox, $container, border_size);
       $bbox.append(resize_boxes[0]);
       $bbox.append(resize_boxes[1]);
+      $bbox.append(resize_boxes[2]);
+      $bbox.append(resize_boxes[3]);
       if (hide_resizer == true) {
         resize_boxes[0].hide();
         resize_boxes[1].hide();
+        resize_boxes[2].hide();
+        resize_boxes[3].hide();
+        // Disable the box dragging feature
+        $bbox.css('cursor', 'default').off('mousedown').off('touchstart');
       }
 
       return $bbox;
@@ -358,21 +549,19 @@
     this.createBBox = createBBox;
 
     // Revert the bounding box calculation
-    var reverseBBox = function ($bbox) {
+    var reverseBBox = function ($bbox, border_size) {
       const meta_data = $bbox.data("metadata");
       const img_width = meta_data["w_image"];
       const img_height = meta_data["h_image"];
       const position = $bbox.position();
 
-      const $container = $bbox.siblings(".seg-img").first();
+      const $container = $bbox.data("container");
       const container_w = $container.width();
       const container_h = $container.height();
 
-      const BORDER_SIZE = $container.outerWidth() - $container.width();
-
       // Reverse calculations to get back the original image's coordinates
-      var x_bbox = Math.round(((position.left - BORDER_SIZE) / container_w) * img_width);
-      var y_bbox = Math.round(((position.top - BORDER_SIZE) / container_h) * img_height);
+      var x_bbox = Math.round(((position.left - border_size) / container_w) * img_width);
+      var y_bbox = Math.round(((position.top - border_size) / container_h) * img_height);
       var w_bbox = Math.round(($bbox.width() / container_w) * img_width);
       var h_bbox = Math.round(($bbox.height() / container_h) * img_height);
 
