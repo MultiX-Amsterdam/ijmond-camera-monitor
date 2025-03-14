@@ -441,6 +441,9 @@ sudo -u postgres psql -d ijmond_camera_monitor_staging < /tmp/ijmond_camera_moni
 # For Mac OS
 psql -d ijmond_camera_monitor_staging < /tmp/ijmond_camera_monitor_production.out
 
+# Upgrade the database to the newest migration
+sh db.sh upgrade
+
 # For Ubuntu, start the service
 # No need for doing this on Mac OS
 sudo systemctl start ijmond-camera-monitor-staging
