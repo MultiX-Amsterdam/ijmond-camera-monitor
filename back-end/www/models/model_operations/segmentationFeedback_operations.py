@@ -230,7 +230,7 @@ def compute_segmentation_batch_score(segmentation_batch_hashed, labels, threshol
     segmentation_batch_hashed : dict
         SegmentationMask objects in a dictionary (the keys are the segmentation ID).
     labels : list of dict
-        Labels that were returned by the front-end.
+        Labels that were returned by the front-end (i.e., the user's feedback).
         Same data structure as the bbox object in the `bbox_to_feedback_code` function.
     threshold : int
         The threshold to determine if the feedback is close to the segmentation.
@@ -248,7 +248,9 @@ def compute_segmentation_batch_score(segmentation_batch_hashed, labels, threshol
         label_state_admin = seg.label_state_admin
         b = v["relative_boxes"]
         if label_state_admin == 16: # Gold standard; the box is good
-            if b == False: continue
+            if b == False:
+                # This means that the user removed the box, which is wrong.
+                continue
             if b == None:
                 # This means that the user also thinks that the model output is good.
                 correct_labeled_gold_standards += 1
