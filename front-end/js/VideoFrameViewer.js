@@ -93,11 +93,37 @@ class VideoFrameViewer {
 
         const video = document.createElement('video');
         video.crossOrigin = "anonymous";
-        video.src = videoUrl;
-        video.preload = "auto";
+        video.preload = "metadata";  // Changed from "auto" to "metadata" for better mobile support
+        video.playsInline = true;    // Required for iOS
+        video.muted = true;          // Required for autoplay on mobile
 
-        await new Promise(resolve => {
-            video.addEventListener('canplay', resolve);
+        // Wait for both metadata and enough data to play
+        await new Promise((resolve, reject) => {
+            let metadataLoaded = false;
+            let canPlay = false;
+
+            const checkReady = () => {
+                if (metadataLoaded && canPlay) {
+                    resolve();
+                }
+            };
+
+            video.addEventListener('loadedmetadata', () => {
+                metadataLoaded = true;
+                checkReady();
+            });
+
+            video.addEventListener('canplaythrough', () => {
+                canPlay = true;
+                checkReady();
+            });
+
+            video.addEventListener('error', (e) => {
+                reject(new Error(`Video loading failed: ${video.error.message}`));
+            });
+
+            video.src = videoUrl;
+            video.load();  // Explicitly call load
         });
 
         const totalFrames = 36; // TODO: this number should come from the server metadata
@@ -126,35 +152,59 @@ class VideoFrameViewer {
             });
         }
 
-        for (let frameCount = 0; frameCount < totalFrames; frameCount++) {
+        // Helper function to seek and capture a frame
+        const captureFrame = async (frameCount) => {
             const frameCanvas = document.createElement('canvas');
             frameCanvas.width = video.videoWidth;
             frameCanvas.height = video.videoHeight;
             const frameCtx = frameCanvas.getContext('2d');
 
             if (frameCount === this.actualFrame && segImg && segImg.complete && segImg.naturalWidth !== 0) {
-                // Draw segmentation image if it loaded successfully
                 frameCtx.drawImage(segImg, 0, 0);
-            } else {
-                // Draw video frame
-                await new Promise((resolve) => {
-                    function seeked() {
-                        video.removeEventListener('seeked', seeked);
-                        setTimeout(resolve, 10);
-                    }
-                    video.addEventListener('seeked', seeked);
-                    video.currentTime = frameCount * timeStep;
-                });
-                frameCtx.drawImage(video, 0, 0);
+                return frameCanvas;
             }
 
-            this.frames.push(frameCanvas);
+            // More robust seeking for mobile Safari
+            await new Promise((resolve) => {
+                const handleSeeked = () => {
+                    video.removeEventListener('seeked', handleSeeked);
+                    // Add a small delay for mobile Safari to ensure frame is ready
+                    setTimeout(resolve, 50);
+                };
 
-            if (frameCount % 10 === 0) {
-                // Yield to browser to prevent UI freezing
-                await new Promise(resolve => setTimeout(resolve, 4));
+                video.addEventListener('seeked', handleSeeked);
+
+                // Ensure currentTime is set after event listeners
+                video.currentTime = frameCount * timeStep;
+            });
+
+            frameCtx.drawImage(video, 0, 0);
+            return frameCanvas;
+        };
+
+        // Capture frames with error handling
+        for (let frameCount = 0; frameCount < totalFrames; frameCount++) {
+            try {
+                const frameCanvas = await captureFrame(frameCount);
+                this.frames.push(frameCanvas);
+
+                if (frameCount % 10 === 0) {
+                    // Yield to browser to prevent UI freezing
+                    await new Promise(resolve => setTimeout(resolve, 10));
+                }
+            } catch (error) {
+                console.error(`Error capturing frame ${frameCount}:`, error);
+                // Create an error frame
+                const errorCanvas = document.createElement('canvas');
+                errorCanvas.width = video.videoWidth;
+                errorCanvas.height = video.videoHeight;
+                this.frames.push(errorCanvas);
             }
         }
+
+        // Clean up
+        video.src = '';
+        video.load();
 
         this.updateCurrentFrame(this.actualFrame);
         this.viewer.classList.add('loaded');
