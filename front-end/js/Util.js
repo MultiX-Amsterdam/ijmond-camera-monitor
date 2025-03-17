@@ -890,7 +890,7 @@
             after_action();
           }
         },
-        cancel_text: "Nee, ga naar homepage",
+        cancel_text: "Nee, verlaten",
         cancel_callback: function () {
           window.location.href = "index.html";
         }
@@ -920,7 +920,7 @@
       if (consentTime) {
         $dialog_consent_manage = widgets.createCustomDialog({
           selector: "#dialog-consent-manage",
-          action_text: "Toestemming intrekken",
+          action_text: "Intrekken",
           full_width_button: true,
           action_callback: function () {
             localStorage.removeItem("userConsentTime");

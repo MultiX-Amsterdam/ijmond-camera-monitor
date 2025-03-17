@@ -115,7 +115,7 @@
       google.accounts.id.renderButton(document.getElementById("google-sign-in-button"), {
         theme: "filled_blue",
         width: 211,
-        height: 46
+        size: "large"
       })
     }
 

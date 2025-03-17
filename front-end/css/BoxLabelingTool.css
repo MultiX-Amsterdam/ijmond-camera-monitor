@@ -173,28 +173,28 @@
     }
 
     .box-labeling-tool .box-labeling-tool-videos .segmentation-container .bbox .resizer {
-        width: 26px;
-        height: 26px;
+        width: 20px;
+        height: 20px;
         border: 0;
     }
 
     .box-labeling-tool .box-labeling-tool-videos .segmentation-container .bbox .resizer.top-left {
-        top: -13px;
-        left: -13px;
+        top: -10px;
+        left: -10px;
     }
 
     .box-labeling-tool .box-labeling-tool-videos .segmentation-container .bbox .resizer.top-right {
-        top: -13px;
-        right: -13px;
+        top: -10px;
+        right: -10px;
     }
 
     .box-labeling-tool .box-labeling-tool-videos .segmentation-container .bbox .resizer.bottom-left {
-        bottom: -13px;
-        left: -13px;
+        bottom: -10px;
+        left: -10px;
     }
 
     .box-labeling-tool .box-labeling-tool-videos .segmentation-container .bbox .resizer.bottom-right {
-        bottom: -13px;
-        right: -13px;
+        bottom: -10px;
+        right: -10px;
     }
 }
