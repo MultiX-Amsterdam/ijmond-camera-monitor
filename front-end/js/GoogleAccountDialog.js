@@ -67,24 +67,32 @@
         callback: handleCredentialResponse
       });
       renderGoogleSignInButton();
-      isAuthenticatedWithGoogle();
+      setInitialUI();
     }
 
     function handleCredentialResponse(googleUser) {
+      // This function is only called when users click the sign-in button to sign in.
       var google_id_token = googleUser["credential"];
       window.localStorage.setItem("google_id_token", google_id_token);
-      onGoogleSignInSuccess(google_id_token);
+      signInUpdateUI();
+      if (typeof sign_in_success === "function") {
+        sign_in_success(google_id_token);
+      }
     }
 
     function googleSignOut() {
+      // This function is only called when users click the sign-out button to sign out.
       window.localStorage.removeItem("google_id_token");
-      onGoogleSignOutSuccess();
-    }
-
-    function onGoogleSignOutSuccess() {
       // If something was stored in the "user_data" field, it will be removed.
       // This is designed for storing anonymous user data across pages.
       window.localStorage.removeItem("user_data");
+      signOutUpdateUI();
+      if (typeof sign_out_success === "function") {
+        sign_out_success();
+      }
+    }
+
+    function signOutUpdateUI() {
       $google_sign_out_button.hide();
       $google_sign_in_button.show();
       $guest_button.show();
@@ -101,9 +109,6 @@
           $sign_in_prompt.addClass("pulse-white")
         }
       }
-      if (typeof sign_out_success === "function") {
-        sign_out_success();
-      }
     }
 
     function renderGoogleSignInButton() {
@@ -114,7 +119,7 @@
       })
     }
 
-    function onGoogleSignInSuccess(google_id_token) {
+    function signInUpdateUI() {
       if (typeof $guest_button !== "undefined") {
         $guest_button.hide();
       }
@@ -139,13 +144,24 @@
           $sign_in_prompt.removeClass("pulse-white")
         }
       }
-      if (typeof sign_in_success === "function") {
-        sign_in_success(google_id_token);
-      }
     }
 
     function safeGet(v, default_val) {
       return util.safeGet(v, default_val);
+    }
+
+    function setInitialUI() {
+      var is_signed_in = isSignedIn();
+      if (is_signed_in) {
+        signInUpdateUI();
+      } else {
+        signOutUpdateUI();
+      }
+    }
+
+    function isSignedIn() {
+      var google_id_token = window.localStorage.getItem("google_id_token");
+      return google_id_token == null ? false : true;
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -154,11 +170,10 @@
     //
     var isAuthenticatedWithGoogle = function (callback) {
       callback = safeGet(callback, {});
-      var google_id_token = window.localStorage.getItem("google_id_token");
-      var is_signed_in = google_id_token == null ? false : true;
+      var is_signed_in = isSignedIn();
       if (is_signed_in) {
-        onGoogleSignInSuccess(google_id_token);
         if (typeof callback["success"] === "function") {
+          var google_id_token = window.localStorage.getItem("google_id_token");
           callback["success"](is_signed_in, google_id_token);
         }
       } else {

@@ -78,25 +78,37 @@
         submit_confirm_dialog.dialog("open");
       });
       nextBatch();
-      google_account_dialog.isAuthenticatedWithGoogle();
-      console.log("User ID:", new_user_id);
     } else {
       // Each video batch is signed with the user id
       // So we need to load a new batch after the user id changes
       // Otherwise the server will return an invalid signature error
       nextBatch(true);
     }
+    console.log("User ID:", new_user_id);
+  }
+
+  function onUserSignedIn(google_id_token) {
+    bbox_labeling_tool.updateUserIdByGoogleIdToken(google_id_token, {
+      success: function (obj) {
+        onUserIdChangeSuccess(obj.userId());
+        $user_score_container.show();
+      },
+      error: function (xhr) {
+        console.error("Error when updating user id by using google token!");
+        printServerErrorMsg(xhr);
+      }
+    });
   }
 
   function onUserNotSignedIn(client_id) {
     bbox_labeling_tool.updateUserIdByClientId(client_id, {
       success: function (obj) {
         onUserIdChangeSuccess(obj.userId());
+        $user_score_container.hide();
       },
       error: function (xhr) {
-        console.error("Error when updating user id when updating user id by client id!");
+        console.error("Error when updating user id by using client id!");
         printServerErrorMsg(xhr);
-        $("#start").prop("disabled", true).find("span").text("Error when connecting to server");
       }
     });
   }
@@ -128,6 +140,44 @@
       full_width_button: true
     });
   }
+  
+  function onUserScoreUpdate(score, raw_score, batch_score) {
+    // Update the number of batches that did not pass the quality check
+    // batch_score == null means that the user is a reseacher client
+    if (typeof batch_score !== "undefined" && batch_score !== null) {
+      if (batch_score == 0) {
+        // Fail the quality check
+        $quality_check_passed_text.hide();
+        consecutive_failed_batches += 1;
+        if (consecutive_failed_batches >= 3) {
+          console.log("You failed the data quality check more than 3 times.");
+          tutorial_prompt_dialog.dialog("open");
+        }
+      } else {
+        // Pass the quality check
+        $quality_check_passed_text.show();
+        consecutive_failed_batches = 0;
+      }
+    }
+    // Update user score (number of batches that passed the quality check)
+    if (typeof $user_score_text !== "undefined") {
+      if (bbox_labeling_tool.isAdmin()) {
+        $user_score_text.text("(researcher)");
+      } else {
+        if (typeof score !== "undefined" && score !== null) {
+          $user_score_text.text(score / 8);
+        }
+      }
+    }
+    // Update user raw score (number of totally reviewed batches)
+    if (typeof $user_raw_score_text !== "undefined" && typeof raw_score !== "undefined" && raw_score !== null) {
+      if (bbox_labeling_tool.isAdmin()) {
+        $user_raw_score_text.text(raw_score / 8);
+      } else {
+        $user_raw_score_text.text(raw_score / 6);
+      }
+    }
+  }
 
   function init() {
     $(".content-container").css("visibility", "visible");
@@ -135,87 +185,32 @@
     $quality_check_passed_text = $("#quality-check-passed-text");
     $user_score_text = $(".user-score-text");
     $user_raw_score_text = $(".user-raw-score-text");
+    $user_score_container = $("#user-score-container");
     bbox_labeling_tool = new edaplotjs.BboxLabelingTool("#labeling-tool-container", {
       on_user_score_update: function (score, raw_score, batch_score) {
-        // Update the number of batches that did not pass the quality check
-        // batch_score == null means that the user is a reseacher client
-        if (typeof batch_score !== "undefined" && batch_score !== null) {
-          if (batch_score == 0) {
-            // Fail the quality check
-            $quality_check_passed_text.hide();
-            consecutive_failed_batches += 1;
-            if (consecutive_failed_batches >= 3) {
-              console.log("You failed the data quality check more than 3 times.");
-              tutorial_prompt_dialog.dialog("open");
-            }
-          } else {
-            // Pass the quality check
-            $quality_check_passed_text.show();
-            consecutive_failed_batches = 0;
-          }
-        }
-        // Update user score (number of batches that passed the quality check)
-        if (typeof $user_score_text !== "undefined") {
-          if (bbox_labeling_tool.isAdmin()) {
-            $user_score_text.text("(researcher)");
-          } else {
-            if (typeof score !== "undefined" && score !== null) {
-              $user_score_text.text(score / 12);
-            }
-          }
-        }
-        // Update user raw score (number of totally reviewed batches)
-        if (typeof $user_raw_score_text !== "undefined" && typeof raw_score !== "undefined" && raw_score !== null) {
-          if (bbox_labeling_tool.isAdmin()) {
-            $user_raw_score_text.text(raw_score / 16);
-          } else {
-            $user_raw_score_text.text(raw_score / 12);
-          }
-        }
+        onUserScoreUpdate(score, raw_score, batch_score);
       }
     });
     google_account_dialog = new edaplotjs.GoogleAccountDialog({
       sign_in_success: function (google_id_token) {
-        bbox_labeling_tool.updateUserIdByGoogleIdToken(google_id_token, {
-          success: function (obj) {
-            onUserIdChangeSuccess(obj.userId());
-            $user_score_container.show();
-          },
-          error: function (xhr) {
-            console.error("Error when updating user id by using google token!");
-            printServerErrorMsg(xhr);
-          }
-        });
+        onUserSignedIn(google_id_token);
       },
       sign_out_success: function () {
-        bbox_labeling_tool.updateUserIdByClientId(ga_tracker.getClientId(), {
-          success: function (obj) {
-            onUserIdChangeSuccess(obj.userId());
-            $user_score_container.hide();
-          },
-          error: function (xhr) {
-            console.error("Error when updating user id when signing out from google!");
-            printServerErrorMsg(xhr);
-          }
-        });
+        onUserNotSignedIn(ga_tracker.getClientId());
       }
     });
-    $user_score_container = $("#user-score-container");
     createTutorialPromptDialog();
     createSubmitConfirmDialog();
     ga_tracker = new edaplotjs.GoogleAnalyticsTracker({
       consent: true, // we only run this function after the user gives consent
       ready: function (ga_obj) {
         google_account_dialog.isAuthenticatedWithGoogle({
-          success: function (is_signed_in) {
-            // If signed in, will be handled by the callback function of initGoogleSignIn() in the GoogleAccountDialog object
-            if (!is_signed_in) {
+          success: function (is_signed_in, google_id_token) {
+            if (is_signed_in) {
+              onUserSignedIn(google_id_token)
+            } else {
               onUserNotSignedIn(ga_obj.getClientId());
             }
-          },
-          error: function (error) {
-            console.error("Error with Google sign-in: ", error);
-            onUserNotSignedIn(ga_obj.getClientId());
           }
         });
       }
