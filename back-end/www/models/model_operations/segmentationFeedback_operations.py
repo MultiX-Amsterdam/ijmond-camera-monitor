@@ -246,57 +246,49 @@ def compute_segmentation_batch_score(segmentation_batch_hashed, labels, threshol
     for v in labels:
         seg = segmentation_batch_hashed[v["id"]]
         label_state_admin = seg.label_state_admin
+        frame_number = seg.frame_number
         b = v["relative_boxes"]
+        frame_number_feedback = v["frame_number"] if v["frame_number"] is not None else frame_number
         if label_state_admin == 16: # Gold standard; the box is good
             if b == False:
                 # This means that the user removed the box, which is wrong.
                 continue
             if b == None:
                 # This means that the user also thinks that the model output is good.
-                correct_labeled_gold_standards += 1
+                if frame_number_feedback == frame_number:
+                    correct_labeled_gold_standards += 1
             else:
                 if "x_bbox" in b and "y_bbox" in b and "w_bbox" in b and "h_bbox" in b:
                     # This means that the user edited the box.
-                    # First, we need to get the gold standard feedback, which is the model output.
+                    if frame_number_feedback == frame_number:
+                        # First, we need to get the gold standard feedback, which is the model output.
+                        model_output_b = {
+                            "x_bbox": seg.x_bbox,
+                            "y_bbox": seg.y_bbox,
+                            "w_bbox": seg.w_bbox,
+                            "h_bbox": seg.h_bbox
+                        }
+                        # Then, compute the IoU metric and check if it meets the threshold
+                        iou = compute_iou(model_output_b, b)
+                        if iou >= threshold:
+                            correct_labeled_gold_standards += 1
+        elif label_state_admin == 17: # Gold standard; the box needs editing
+            if b == False:
+                # This means that the user removed the box, which is wrong.
+                continue
+            if b == None:
+                # This means that the user thinks that the model output is good.
+                if frame_number_feedback == frame_number:
+                    # Be careful that sometimes the model ouptut is close to the edited gold standard.
+                    # If this happens, users can pass the data quality check without doing anything.
+                    # First, get the model ouptut bounding box.
                     model_output_b = {
                         "x_bbox": seg.x_bbox,
                         "y_bbox": seg.y_bbox,
                         "w_bbox": seg.w_bbox,
                         "h_bbox": seg.h_bbox
                     }
-                    # Then, compute the IoU metric and check if it meets the threshold
-                    iou = compute_iou(model_output_b, b)
-                    if iou >= threshold:
-                        correct_labeled_gold_standards += 1
-        elif label_state_admin == 17: # Gold standard; the box needs editing
-            if b == False: continue
-            if b == None:
-                # This means that the user thinks that the model output is good.
-                # Be careful that sometimes the model ouptut is close to the edited gold standard.
-                # If this happens, users can pass the data quality check without doing anything.
-                # First, get the model ouptut bounding box.
-                model_output_b = {
-                    "x_bbox": seg.x_bbox,
-                    "y_bbox": seg.y_bbox,
-                    "w_bbox": seg.w_bbox,
-                    "h_bbox": seg.h_bbox
-                }
-                # Next, get the gold standard feedback.
-                f = get_latest_feedback_by_code(seg.feedback, label_state_admin)
-                gold_standard_b = {
-                    "x_bbox": f.x_bbox,
-                    "y_bbox": f.y_bbox,
-                    "w_bbox": f.w_bbox,
-                    "h_bbox": f.h_bbox
-                }
-                # Then, compute the IoU metric and check if it meets the threshold.
-                iou = compute_iou(gold_standard_b, model_output_b)
-                if iou >= threshold:
-                    correct_labeled_gold_standards += 1
-            else:
-                if "x_bbox" in b and "y_bbox" in b and "w_bbox" in b and "h_bbox" in b:
-                    # This means that the user edited the box.
-                    # First, we need to get the gold standard feedback.
+                    # Next, get the gold standard feedback.
                     f = get_latest_feedback_by_code(seg.feedback, label_state_admin)
                     gold_standard_b = {
                         "x_bbox": f.x_bbox,
@@ -305,15 +297,32 @@ def compute_segmentation_batch_score(segmentation_batch_hashed, labels, threshol
                         "h_bbox": f.h_bbox
                     }
                     # Then, compute the IoU metric and check if it meets the threshold.
-                    iou = compute_iou(gold_standard_b, b)
+                    iou = compute_iou(gold_standard_b, model_output_b)
                     if iou >= threshold:
                         correct_labeled_gold_standards += 1
+            else:
+                if "x_bbox" in b and "y_bbox" in b and "w_bbox" in b and "h_bbox" in b:
+                    # This means that the user edited the box.
+                    if frame_number_feedback == frame_number:
+                        # First, we need to get the gold standard feedback.
+                        f = get_latest_feedback_by_code(seg.feedback, label_state_admin)
+                        gold_standard_b = {
+                            "x_bbox": f.x_bbox,
+                            "y_bbox": f.y_bbox,
+                            "w_bbox": f.w_bbox,
+                            "h_bbox": f.h_bbox
+                        }
+                        # Then, compute the IoU metric and check if it meets the threshold.
+                        iou = compute_iou(gold_standard_b, b)
+                        if iou >= threshold:
+                            correct_labeled_gold_standards += 1
         elif label_state_admin == 18: # Gold standard; the box should be removed
             if b == False:
                 # This means that the user also thinks that the box should be removed.
                 correct_labeled_gold_standards += 1
         else:
             score += 1
+
     if correct_labeled_gold_standards < config.GOLD_STANDARD_IN_BATCH_SEG:
         return 0
     else:
