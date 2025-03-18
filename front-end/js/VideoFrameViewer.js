@@ -7,6 +7,7 @@ class VideoFrameViewer {
         this.actualFrame = 0;
         this.viewer = this.createViewer();
         this.setupControls();
+        this.abortController = null;  // Add abort controller
     }
 
     createViewer() {
@@ -85,6 +86,21 @@ class VideoFrameViewer {
     }
 
     async captureFrames(videoUrl, initialFrame, segUrl) {
+        // Abort any existing capture process
+        if (this.abortController) {
+            this.abortController.abort();
+        }
+        // Create new abort controller for this capture process
+        this.abortController = new AbortController();
+        const signal = this.abortController.signal;
+
+        // Clean up any existing video
+        if (this.currentVideo) {
+            this.currentVideo.src = '';
+            this.currentVideo.load();
+            this.currentVideo = null;
+        }
+
         this.pause();
         this.frames = [];
         this.initialFrame = initialFrame;
@@ -92,121 +108,161 @@ class VideoFrameViewer {
         this.segUrl = segUrl;
 
         const video = document.createElement('video');
+        this.currentVideo = video;
         video.crossOrigin = "anonymous";
-        video.preload = "metadata";  // Changed from "auto" to "metadata" for better mobile support
-        video.playsInline = true;    // Required for iOS
-        video.muted = true;          // Required for autoplay on mobile
+        video.preload = "metadata";
+        video.playsInline = true; // Required for iOS
+        video.muted = true; // Required for autoplay on mobile
 
-        // Wait for both metadata and enough data to play
-        await new Promise((resolve, reject) => {
-            let metadataLoaded = false;
-            let canPlay = false;
+        try {
+            // Check if aborted
+            if (signal.aborted) return;
 
-            const checkReady = () => {
-                if (metadataLoaded && canPlay) {
-                    resolve();
+            // Wait for both metadata and enough data to play
+            await new Promise((resolve, reject) => {
+                if (signal.aborted) {
+                    reject(new Error('Capture aborted'));
+                    return;
                 }
+
+                let metadataLoaded = false;
+                let canPlay = false;
+
+                const checkReady = () => {
+                    if (signal.aborted) {
+                        reject(new Error('Capture aborted'));
+                        return;
+                    }
+                    if (metadataLoaded && canPlay) {
+                        resolve();
+                    }
+                };
+
+                video.addEventListener('loadedmetadata', () => {
+                    metadataLoaded = true;
+                    checkReady();
+                });
+
+                video.addEventListener('canplaythrough', () => {
+                    canPlay = true;
+                    checkReady();
+                });
+
+                video.addEventListener('error', (e) => {
+                    reject(new Error(`Video loading failed: ${video.error.message}`));
+                });
+
+                video.src = videoUrl;
+                video.load();
+            });
+
+            if (signal.aborted) return;
+
+            const totalFrames = 36; // TODO: this number should come from the server metadata
+            // Since initialFrame is 1-based, subtract 1 when storing in actualFrame (which is 0-based)
+            this.actualFrame = initialFrame > totalFrames ? totalFrames - 1 : initialFrame - 1;
+            const timeStep = video.duration / totalFrames;
+
+            this.canvas.width = video.videoWidth;
+            this.canvas.height = video.videoHeight;
+
+            this.slider.max = totalFrames;
+            this.slider.value = this.actualFrame + 1;
+
+            // Preload segmentation image if we have a URL
+            let segImg;
+            if (this.segUrl) {
+                segImg = new Image();
+                segImg.crossOrigin = "anonymous";
+                await new Promise((resolve) => {
+                    segImg.onload = resolve;
+                    segImg.onerror = () => {
+                        console.error('Failed to load segmentation image:', this.segUrl);
+                        resolve(); // Continue even if seg image fails to load
+                    };
+                    segImg.src = this.segUrl;
+                });
+            }
+
+            // Helper function to seek and capture a frame
+            const captureFrame = async (frameCount) => {
+                if (signal.aborted) throw new Error('Capture aborted');
+
+                const frameCanvas = document.createElement('canvas');
+                frameCanvas.width = video.videoWidth;
+                frameCanvas.height = video.videoHeight;
+                const frameCtx = frameCanvas.getContext('2d');
+
+                if (frameCount === this.actualFrame && segImg && segImg.complete && segImg.naturalWidth !== 0) {
+                    frameCtx.drawImage(segImg, 0, 0);
+                    return frameCanvas;
+                }
+
+                await new Promise((resolve, reject) => {
+                    if (signal.aborted) {
+                        reject(new Error('Capture aborted'));
+                        return;
+                    }
+
+                    const handleSeeked = () => {
+                        video.removeEventListener('seeked', handleSeeked);
+                        // Add a small delay for mobile Safari to ensure frame is ready
+                        setTimeout(resolve, 50);
+                    };
+
+                    video.addEventListener('seeked', handleSeeked);
+                    video.currentTime = frameCount * timeStep;
+                });
+
+                if (signal.aborted) throw new Error('Capture aborted');
+
+                frameCtx.drawImage(video, 0, 0);
+                return frameCanvas;
             };
 
-            video.addEventListener('loadedmetadata', () => {
-                metadataLoaded = true;
-                checkReady();
-            });
+            // Capture frames with error handling
+            for (let frameCount = 0; frameCount < totalFrames; frameCount++) {
+                if (signal.aborted) break;
 
-            video.addEventListener('canplaythrough', () => {
-                canPlay = true;
-                checkReady();
-            });
+                try {
+                    const frameCanvas = await captureFrame(frameCount);
+                    this.frames.push(frameCanvas);
 
-            video.addEventListener('error', (e) => {
-                reject(new Error(`Video loading failed: ${video.error.message}`));
-            });
-
-            video.src = videoUrl;
-            video.load();  // Explicitly call load
-        });
-
-        const totalFrames = 36; // TODO: this number should come from the server metadata
-        // Since initialFrame is 1-based, subtract 1 when storing in actualFrame (which is 0-based)
-        this.actualFrame = initialFrame > totalFrames ? totalFrames - 1 : initialFrame - 1;
-        const timeStep = video.duration / totalFrames;
-
-        this.canvas.width = video.videoWidth;
-        this.canvas.height = video.videoHeight;
-
-        this.slider.max = totalFrames;
-        this.slider.value = this.actualFrame + 1;
-
-        // Preload segmentation image if we have a URL
-        let segImg;
-        if (this.segUrl) {
-            segImg = new Image();
-            segImg.crossOrigin = "anonymous";
-            await new Promise((resolve) => {
-                segImg.onload = resolve;
-                segImg.onerror = () => {
-                    console.error('Failed to load segmentation image:', this.segUrl);
-                    resolve(); // Continue even if seg image fails to load
-                };
-                segImg.src = this.segUrl;
-            });
-        }
-
-        // Helper function to seek and capture a frame
-        const captureFrame = async (frameCount) => {
-            const frameCanvas = document.createElement('canvas');
-            frameCanvas.width = video.videoWidth;
-            frameCanvas.height = video.videoHeight;
-            const frameCtx = frameCanvas.getContext('2d');
-
-            if (frameCount === this.actualFrame && segImg && segImg.complete && segImg.naturalWidth !== 0) {
-                frameCtx.drawImage(segImg, 0, 0);
-                return frameCanvas;
-            }
-
-            // More robust seeking for mobile Safari
-            await new Promise((resolve) => {
-                const handleSeeked = () => {
-                    video.removeEventListener('seeked', handleSeeked);
-                    // Add a small delay for mobile Safari to ensure frame is ready
-                    setTimeout(resolve, 50);
-                };
-
-                video.addEventListener('seeked', handleSeeked);
-
-                // Ensure currentTime is set after event listeners
-                video.currentTime = frameCount * timeStep;
-            });
-
-            frameCtx.drawImage(video, 0, 0);
-            return frameCanvas;
-        };
-
-        // Capture frames with error handling
-        for (let frameCount = 0; frameCount < totalFrames; frameCount++) {
-            try {
-                const frameCanvas = await captureFrame(frameCount);
-                this.frames.push(frameCanvas);
-
-                if (frameCount % 10 === 0) {
-                    // Yield to browser to prevent UI freezing
-                    await new Promise(resolve => setTimeout(resolve, 10));
+                    if (frameCount % 10 === 0) {
+                        await new Promise((resolve, reject) => {
+                            if (signal.aborted) {
+                                reject(new Error('Capture aborted'));
+                                return;
+                            }
+                            setTimeout(resolve, 10);
+                        });
+                    }
+                } catch (error) {
+                    if (error.message === 'Capture aborted') break;
+                    console.error(`Error capturing frame ${frameCount}:`, error);
+                    reject(error);
                 }
-            } catch (error) {
-                console.error(`Error capturing frame ${frameCount}:`, error);
-                // Create an error frame
-                const errorCanvas = document.createElement('canvas');
-                errorCanvas.width = video.videoWidth;
-                errorCanvas.height = video.videoHeight;
-                this.frames.push(errorCanvas);
+            }
+
+            if (!signal.aborted) {
+                // Clean up
+                video.src = '';
+                video.load();
+                this.currentVideo = null;
+
+                this.updateCurrentFrame(this.actualFrame);
+                this.viewer.classList.add('loaded');
+            }
+        } catch (error) {
+            if (error.message !== 'Capture aborted') {
+                console.error('Capture process failed:', error);
+            }
+            // Clean up if error occurs
+            if (this.currentVideo === video) {
+                video.src = '';
+                video.load();
+                this.currentVideo = null;
             }
         }
-
-        // Clean up
-        video.src = '';
-        video.load();
-
-        this.updateCurrentFrame(this.actualFrame);
-        this.viewer.classList.add('loaded');
     }
 }
