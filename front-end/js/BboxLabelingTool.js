@@ -75,9 +75,9 @@
         show_cancel_btn: false,
         show_close_button: false,
         action_callback: function () {
-          // Get the current viewer object and play the frames for one loop
+          // Get the current viewer object and go to the frame with the green box
           const viewer_obj = img_items[current_index].data("viewer_obj");
-          viewer_obj.playPause();
+          viewer_obj.updateCurrentFrame(viewer_obj.actualFrame);
         }
       });
 
