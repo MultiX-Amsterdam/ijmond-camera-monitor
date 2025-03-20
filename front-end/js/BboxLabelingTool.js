@@ -39,6 +39,7 @@
     var user_raw_score;
     var on_user_score_update = settings["on_user_score_update"];
     var is_admin;
+    var $reminder_dialog;
 
     // Not sure why the border size is 0, but it works.
     // The bounding box coordinates will be adjusted based on the padding.
@@ -58,6 +59,28 @@
       $submit_button = $("#next");
       showLoadingMsg();
 
+      // Create a dialog box to remind the user that they should only give feedback on the frame with the green box
+      var dialogHTML = "<p>U heeft de frame nummer veranderd, wat niet de bedoeling is. Geef alstublieft feedback op het beeld met het groene kader, niet op de hele video.</p>";
+      $("#dialog-reminder").remove();
+      $("<div>", {
+        "id": "dialog-reminder",
+        "title": "Let op",
+        "data-role": "none",
+        "html": dialogHTML
+      }).appendTo("body");
+      $reminder_dialog = widgets.createCustomDialog({
+        selector: "#dialog-reminder",
+        action_text: "Ga naar het groene kader",
+        full_width_button: true,
+        show_cancel_btn: false,
+        show_close_button: false,
+        action_callback: function () {
+          // Get the current viewer object and play the frames for one loop
+          const viewer_obj = img_items[current_index].data("viewer_obj");
+          viewer_obj.playPause();
+        }
+      });
+
       // Add click handlers for navigation buttons
       $prev_button.on("click", function () {
         if (current_index > 0) {
@@ -67,8 +90,15 @@
       });
       $next_button.on("click", function () {
         if (current_index < img_items.length - 1) {
-          current_index++;
-          updateVisibleContainer();
+          const viewer_obj = img_items[current_index].data("viewer_obj");
+          var user_feedback_frame = parseInt(viewer_obj.slider.value) - 1;
+          if (viewer_obj.actualFrame !== user_feedback_frame) {
+            // The user has changed the frame number, which is an undesired action
+            $reminder_dialog.dialog("open");
+          } else {
+            current_index++;
+            updateVisibleContainer();
+          }
         }
       });
     }
@@ -211,10 +241,12 @@
           $this.text("Verwijder kader");
         }
       });
+      var $reminder = $("<div class='text-small-margin custom-text-info-dark-theme'>Let op: geef alleen feedback op de afbeelding met het groene kader, niet op de hele video.</div>");
       var $control = $("<div class='control-group'><span>Beeld " + (i + 1) + "/" + total_images + "</span></div>");
       var viewer_obj = new VideoFrameViewer(i);
       $control.append($toggle_btn);
       $item.append(viewer_obj.getViewer());
+      $item.append($reminder);
       $item.append($control);
       $item.data("viewer_obj", viewer_obj);
       return $item;
@@ -235,9 +267,6 @@
           // Auto-play the frames in the visible container
           const viewer_obj = img_items[i].data("viewer_obj");
           if (viewer_obj) {
-            // Update actualFrame to match the current slider value (converting from 1-based to 0-based)
-            // The reason for doing this is to remember the frame number in which the user thinks has smoke emissions
-            viewer_obj.actualFrame = parseInt(viewer_obj.slider.value) - 1;
             viewer_obj.playPause();
           }
         }
