@@ -70,7 +70,7 @@ class VideoFrameViewer {
                 } else {
                     this.updateCurrentFrame(nextFrame);
                 }
-            }, 1000 / 30);
+            }, 1500 / 36);
         } else {
             // Stop looping the frames
             clearInterval(this.playInterval);

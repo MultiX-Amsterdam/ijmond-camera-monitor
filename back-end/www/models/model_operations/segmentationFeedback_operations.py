@@ -320,6 +320,11 @@ def compute_segmentation_batch_score(segmentation_batch_hashed, labels, threshol
             if b == False:
                 # This means that the user also thinks that the box should be removed.
                 correct_labeled_gold_standards += 1
+            else:
+                if frame_number_feedback != frame_number:
+                    # This means that the user gave feedback for the other video frame.
+                    # We allow this to happen since the user thinks that the original box should not be there.
+                    correct_labeled_gold_standards += 1
         else:
             score += 1
 
