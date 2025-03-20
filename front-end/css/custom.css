@@ -226,6 +226,7 @@ body,
 
 #google-sign-out-button {
   display: none;
+  margin-bottom: 10px;
 }
 
 #label-statistics {
