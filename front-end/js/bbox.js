@@ -140,7 +140,7 @@
       full_width_button: true
     });
   }
-  
+
   function onUserScoreUpdate(score, raw_score, batch_score) {
     // Update the number of batches that did not pass the quality check
     // batch_score == null means that the user is a reseacher client
@@ -165,7 +165,7 @@
         $user_score_text.text("(researcher)");
       } else {
         if (typeof score !== "undefined" && score !== null) {
-          $user_score_text.text(score / 8);
+          $user_score_text.text(score / 6);
         }
       }
     }
