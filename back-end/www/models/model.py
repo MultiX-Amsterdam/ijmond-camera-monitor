@@ -560,3 +560,36 @@ class SegmentationBatch(db.Model):
             self.score, self.num_unlabeled, self.num_gold_standard,
             self.user_score, self.user_raw_score
         )
+
+
+class SegmentationView(db.Model):
+    """
+    Class representing a view of a segmentation mask (for tracking viewed segmentation masks).
+
+    Attributes
+    ----------
+    id : int
+        Unique identifier (primary key).
+    connection_id : int
+        The connection ID in the Connection table (foreign key).
+    segmentation_id : int
+        The segmentation mask ID in the SegmentationMask table (foreign key).
+    query_type : int
+        The query type about how the client requested the segmentation mask.
+        0 => query by label state.
+        1 => query by user id.
+    time : int
+        The epochtime (in seconds) when the view is added.
+    """
+    id = db.Column(db.Integer, primary_key=True)
+    connection_id = db.Column(db.Integer, db.ForeignKey("connection.id"), nullable=False)
+    segmentation_id = db.Column(db.Integer, db.ForeignKey("segmentation_mask.id"), nullable=False)
+    query_type = db.Column(db.Integer, nullable=False)
+    time = db.Column(db.Integer, default=get_current_time)
+
+    def __repr__(self):
+        return (
+            "<SegmentationView id=%r connection_id=%r segmentation_id=%r query_type=%r time=%r>"
+        ) % (
+            self.id, self.connection_id, self.segmentation_id, self.query_type, self.time
+        )
