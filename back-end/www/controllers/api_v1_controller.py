@@ -44,6 +44,7 @@ from models.model_operations.segmentationMask_operations import get_all_segmenta
 from models.model_operations.segmentationMask_operations import get_pos_segmentation_query_by_user_id
 from models.model_operations.segmentationMask_operations import segmentatio_mask_join_video_table
 from models.model_operations.segmentationMask_operations import only_latest_researcher_feedback
+from models.model_operations.segmentationMask_operations import filter_feedback_by_user_id
 from models.model_operations.segmentationMask_operations import get_statistics_seg
 from models.model_operations.segmentationFeedback_operations import update_segmentation_labels
 
@@ -863,7 +864,7 @@ def get_segmentation_masks(labels, allow_user_id=False, only_admin=False, use_ad
     else:
         q = get_pos_segmentation_query_by_user_id(user_id, page_number, page_size, is_researcher)
         joined_q = segmentatio_mask_join_video_table(q.items)
-        filtered_q = only_latest_researcher_feedback(joined_q)
+        filtered_q = filter_feedback_by_user_id(joined_q, user_id)
         # TODO: implement the SegmentationView table and the operations
         #if not is_researcher: # ignore researcher
         #    create_views_from_video_batch(q.items, user_jwt, query_type=1)

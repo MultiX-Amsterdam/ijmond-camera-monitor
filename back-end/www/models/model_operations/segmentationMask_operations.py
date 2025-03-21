@@ -153,6 +153,27 @@ def segmentatio_mask_join_video_table(segmentations):
     return seg_with_video
 
 
+def filter_feedback_by_user_id(segmentations, user_id):
+    """
+    Filter the segmentation feedback by the user id.
+
+    Parameters
+    ----------
+    segmentations : list of SegmentationMask
+        The SegmentationMask records.
+    user_id : int
+        The user id.
+
+    Returns
+    -------
+    list of SegmentationMask
+        SegmentationMask records with the filtered feedback.
+    """
+    for s in segmentations:
+        s.feedback_filtered = [f for f in s.feedback if f.user_id == user_id]
+    return segmentations
+
+
 def only_latest_researcher_feedback(segmentations):
     """
     Only gives the latest researcher feedback.
