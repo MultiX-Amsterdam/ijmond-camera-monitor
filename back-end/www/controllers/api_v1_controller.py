@@ -116,14 +116,14 @@ def login():
         raise InvalidUsage("Missing field: google_id_token or client_id", status_code=400)
 
 
-def get_user_token_by_client_id(client_id):
+def create_user_token(user):
     """
-    Get the encoded user token by using client id.
+    Create user tokens based on the User object.
 
     Parameters
     ----------
-    client_id : str
-        The ID provided by the front-end client.
+    user : User
+        The User object.
 
     Returns
     -------
@@ -134,9 +134,6 @@ def get_user_token_by_client_id(client_id):
         This token is used for the deep-smoke-machine repository to download data.
         (https://github.com/CMU-CREATE-Lab/deep-smoke-machine)
     """
-    user = get_user_by_client_id(client_id)
-    if user is None:
-        user = create_user(client_id) # create a new user if not found
     user_id = user.id
     client_type = user.client_type
     user_score = user.score
@@ -165,6 +162,65 @@ def get_user_token_by_client_id(client_id):
             iat=ct
         )
         return (user_token, user_token_for_other_app)
+
+
+@bp.route("/refresh_user_token", methods=["POST"])
+def refresh_user_token():
+    """
+    Refresh the user token by using the user id.
+
+    Parameters
+    ----------
+    user_token : str
+        The encoded JWT that stores user information.
+
+    Returns
+    -------
+    str
+        The updated JWT that stores user information.
+    """
+    request_json = request.get_json()
+    if request_json is None:
+        raise InvalidUsage("Missing json", status_code=400)
+    if "user_token" not in request_json:
+        raise InvalidUsage("Missing field: user_token", status_code=400)
+    user_token = request_json["user_token"]
+    try:
+        user_jwt = decode_jwt(user_token, config.JWT_PRIVATE_KEY)
+        user_id = user_jwt["user_id"]
+        user = get_user_by_id(user_id)
+        user_token, user_token_for_other_app = create_user_token(user)
+        if user_token is None:
+            raise InvalidUsage("Permission denied", status_code=403)
+        else:
+            return_json = {"user_token": user_token, "user_token_for_other_app": user_token_for_other_app}
+            return jsonify(return_json)
+    except Exception as ex:
+        raise InvalidUsage(ex.args[0], status_code=400)
+
+
+def get_user_token_by_client_id(client_id):
+    """
+    Get the encoded user token by using client id.
+
+    Parameters
+    ----------
+    client_id : str
+        The ID provided by the front-end client.
+
+    Returns
+    -------
+    user_token : str
+        The JWT (JSON Web Token) of the corresponding user.
+        This token is used for the front-end client.
+    user_token_for_other_app : str
+        This token is used for the deep-smoke-machine repository to download data.
+        (https://github.com/CMU-CREATE-Lab/deep-smoke-machine)
+    """
+    user = get_user_by_client_id(client_id)
+    if user is None:
+        user = create_user(client_id) # create a new user if not found
+    return create_user_token(user)
 
 
 def encode_user_token(**kwargs):

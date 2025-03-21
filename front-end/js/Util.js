@@ -680,27 +680,56 @@
     // Login to the smoke labeling tool
     this.login = function (post_json, callback) {
       callback = safeGet(callback, {});
-      $.ajax({
-        url: getRootApiUrl() + "login",
-        type: "POST",
-        data: JSON.stringify(post_json),
-        contentType: "application/json",
-        dataType: "json",
-        success: function (data) {
-          // We only want to add the user data when we know that the user has signed in with Google.
-          // Otherwise we store the Google Analytics user data and reuse it, which is wrong.
-          if (window.localStorage.getItem("google_id_token") != null) {
+      var user_data = window.localStorage.getItem("user_data");
+      if (user_data != null) {
+        // We do not want to login if the user has already signed in
+        // The reason is that the Google id token expires after an hour
+        // And the user token cache prevent the user from signing in again using their Google account
+        // We only use the authentication feature in the Google Identity API
+        // And we maintain the session by ourselves using the user token that our server issued
+        // So if we login again using the stored google id token, it will be rejected by the server
+        // And things will go wrong
+        // However, the fields in the user_data could be outdated, so we need to refresh the user token
+        $.ajax({
+          url: getRootApiUrl() + "refresh_user_token",
+          type: "POST",
+          data: JSON.stringify({"user_token": JSON.parse(user_data)["user_token"]}),
+          contentType: "application/json",
+          dataType: "json",
+          success: function (data) {
             window.localStorage.setItem("user_data", JSON.stringify(data));
+            if (typeof callback["success"] === "function") callback["success"](data);
+          },
+          error: function (xhr) {
+            if (typeof callback["error"] === "function") callback["error"](xhr);
+          },
+          complete: function () {
+            if (typeof callback["complete"] === "function") callback["complete"]();
           }
-          if (typeof callback["success"] === "function") callback["success"](data);
-        },
-        error: function (xhr) {
-          if (typeof callback["error"] === "function") callback["error"](xhr);
-        },
-        complete: function () {
-          if (typeof callback["complete"] === "function") callback["complete"]();
-        }
-      });
+        });
+      } else {
+        $.ajax({
+          url: getRootApiUrl() + "login",
+          type: "POST",
+          data: JSON.stringify(post_json),
+          contentType: "application/json",
+          dataType: "json",
+          success: function (data) {
+            // We only want to add the user data when we know that the user has signed in with Google.
+            // Otherwise we store the Google Analytics user data and reuse it, which is wrong.
+            if (window.localStorage.getItem("google_id_token") != null) {
+              window.localStorage.setItem("user_data", JSON.stringify(data));
+            }
+            if (typeof callback["success"] === "function") callback["success"](data);
+          },
+          error: function (xhr) {
+            if (typeof callback["error"] === "function") callback["error"](xhr);
+          },
+          complete: function () {
+            if (typeof callback["complete"] === "function") callback["complete"]();
+          }
+        });
+      }
     };
 
     // Check if a string contains a substring
