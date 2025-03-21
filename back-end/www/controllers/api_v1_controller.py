@@ -822,7 +822,7 @@ def get_segmentation_masks(labels, allow_user_id=False, only_admin=False, use_ad
     flask.Response (with the application/json mimetype)
         A list of SegmentationMask objects in JSON.
     """
-    user_id = request.args.get("user_id") if allow_user_id else None
+    user_id = request.args.get("user_id", None, type=int) if allow_user_id else None
     page_number = request.args.get("pageNumber", 1, type=int)
     page_size = request.args.get("pageSize", 16, type=int)
     user_jwt = None

@@ -170,7 +170,9 @@ def filter_feedback_by_user_id(segmentations, user_id):
         SegmentationMask records with the filtered feedback.
     """
     for s in segmentations:
-        s.feedback_filtered = [f for f in s.feedback if f.user_id == user_id]
+        for f in s.feedback:
+        feedback_filtered = [f for f in s.feedback if f.user_id == user_id]
+        s.feedback_filtered = feedback_filtered
     return segmentations
 
 
