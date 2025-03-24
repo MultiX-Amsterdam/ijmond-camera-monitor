@@ -149,6 +149,12 @@ def update_segmentation_labels(labels, user_id, connection_id, batch_id, client_
             elif bbox == False:
                 # This means the box should be removed
                 x_bbox, y_bbox, h_bbox, w_bbox = -1, -1, -1, -1
+            elif bbox == -1:
+                # This means we want to reset the data
+                x_bbox, y_bbox, h_bbox, w_bbox = -2, -2, -2, -2
+            elif bbox == -2:
+                # This means we want to discard the data
+                x_bbox, y_bbox, h_bbox, w_bbox = -3, -3, -3, -3
             else:
                 x_bbox, y_bbox, h_bbox, w_bbox = bbox["x_bbox"], bbox["y_bbox"], bbox["h_bbox"], bbox["w_bbox"]
             feedback = create_feedback_label(s["id"], fc, x_bbox, y_bbox, w_bbox, h_bbox, user_id, batch_id, frame_number)
@@ -425,6 +431,8 @@ def bbox_to_feedback_code(bbox, is_researcher=False, is_gold_standard=False):
         16 : Gold standard; the box is good
         17 : Gold standard; the box needs editing
         18 : Gold standard; the box should be removed
+        -1 : no data; no feedback from people
+        -2 : discarded data, by researchers
     """
     if bbox == None:
         if is_researcher:
@@ -450,6 +458,10 @@ def bbox_to_feedback_code(bbox, is_researcher=False, is_gold_standard=False):
                 return 4
         else:
             return 1
+    elif bbox == -1:
+        return -1
+    elif bbox == -2:
+        return -2
     else:
         return None
 

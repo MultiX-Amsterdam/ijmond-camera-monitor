@@ -341,11 +341,27 @@
           bbox_original = false;
         }
         const is_gold_standard = $("#gold-standard-toggle").is(":checked");
+        const is_no_data = $("#is-no-data").is(":checked");
+        const is_bad_data = $("#is-bad-data").is(":checked");
         var labels = [{
           id: seg_mask["id"],
           relative_boxes: bbox_original,
           is_gold_standard: is_gold_standard
         }];
+        if (is_no_data) {
+          labels = [{
+            id: seg_mask["id"],
+            relative_boxes: -1,
+            is_gold_standard: false
+          }];
+        }
+        if (is_bad_data) {
+          labels = [{
+            id: seg_mask["id"],
+            relative_boxes: -2,
+            is_gold_standard: false
+          }];
+        }
         setLabelState(labels, {
           success: function () {
             console.log("Set label state successfully");

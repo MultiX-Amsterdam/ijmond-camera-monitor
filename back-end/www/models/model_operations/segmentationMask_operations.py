@@ -202,7 +202,7 @@ def only_latest_researcher_feedback(segmentations):
         feedback_filtered = []
         latest_reseacher_feedback = None
         for f in s.feedback:
-            if f.feedback_code in [3, 4, 5, 16, 17, 18]:
+            if f.feedback_code in [3, 4, 5, 16, 17, 18, -1, -2]:
                 # This means the feedback is provided by researchers
                 if latest_reseacher_feedback is None:
                     latest_reseacher_feedback = f
@@ -211,7 +211,7 @@ def only_latest_researcher_feedback(segmentations):
                         latest_reseacher_feedback = f
             else:
                 feedback_filtered.append(f)
-        if latest_reseacher_feedback is not None:
+        if latest_reseacher_feedback is not None and latest_reseacher_feedback.feedback_code not in [-1, -2]:
             feedback_filtered.append(latest_reseacher_feedback)
         s.feedback_filtered = feedback_filtered
     return segmentations
