@@ -317,6 +317,9 @@ def compute_segmentation_batch_score(segmentation_batch_hashed, labels, threshol
                         if iou >= threshold:
                             correct_labeled_gold_standards += 1
         elif label_state_admin == 18: # Gold standard; the box should be removed
+            if b == None:
+                # This means that the user thinks that the box is good, which is wrong.
+                continue
             if b == False:
                 # This means that the user also thinks that the box should be removed.
                 correct_labeled_gold_standards += 1
@@ -325,6 +328,20 @@ def compute_segmentation_batch_score(segmentation_batch_hashed, labels, threshol
                     # This means that the user gave feedback for the other video frame.
                     # We allow this to happen since the user thinks that the original box should not be there.
                     correct_labeled_gold_standards += 1
+                else:
+                    if "x_bbox" in b and "y_bbox" in b and "w_bbox" in b and "h_bbox" in b:
+                        # This means that the user edited the box.
+                        # So we need to check if the model ouptut box overlaps with the user feedback
+                        model_output_b = {
+                            "x_bbox": seg.x_bbox,
+                            "y_bbox": seg.y_bbox,
+                            "w_bbox": seg.w_bbox,
+                            "h_bbox": seg.h_bbox
+                        }
+                        # Then, compute the IoU and check if they do not overlap
+                        iou = compute_iou(model_output_b, b)
+                        if iou == 0:
+                            correct_labeled_gold_standards += 1
         else:
             score += 1
 
