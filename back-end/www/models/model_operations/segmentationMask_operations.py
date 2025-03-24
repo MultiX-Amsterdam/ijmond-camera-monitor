@@ -5,8 +5,6 @@ from sqlalchemy import func
 from sqlalchemy import and_
 from sqlalchemy import or_
 from sqlalchemy import desc
-from sqlalchemy.orm import aliased
-from sqlalchemy.orm import contains_eager
 from random import shuffle
 from models.model import db
 from models.model import SegmentationMask
@@ -82,7 +80,6 @@ def query_segmentation_batch(user_id, use_admin_label_state=False):
     """
     # Get the segmentation IDs labeled by the user before
     labeled_segmentation_ids = get_segmentation_ids_labeled_by_user(user_id)
-    seg_ids = None
     if use_admin_label_state:
         # For admin researcher, do not add gold standards
         # Exclude the segmentations that were labeled by the same user
@@ -245,7 +242,7 @@ def get_segmentation_query(labels, page_number, page_size, use_admin_label_state
     The query object of the SegmentationMask table.
     """
     page_size = config.MAX_PAGE_SIZE if page_size > config.MAX_PAGE_SIZE else page_size
-    q = SegmentationMask.query
+    q = SegmentationMask.query.join(Video, SegmentationMask.video_id == Video.id)
 
     if type(labels) == list:
         if len(labels) > 1:
@@ -326,6 +323,7 @@ def get_pos_segmentation_query_by_user_id(user_id, page_number, page_size, is_re
     # Exclude gold standards
     q = (
         SegmentationMask.query
+        .join(Video, SegmentationMask.video_id == Video.id)
         .join(q, SegmentationMask.id == q.c.segmentation_id)
         .distinct()
         .filter(SegmentationMask.label_state_admin.notin_(m.gold_labels_seg))

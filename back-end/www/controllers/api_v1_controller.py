@@ -912,19 +912,17 @@ def get_segmentation_masks(labels, allow_user_id=False, only_admin=False, use_ad
             return jsonify_data(get_all_segmentations(), is_admin=True, is_video=False)
         else:
             q = get_segmentation_query(labels, page_number, page_size, use_admin_label_state=use_admin_label_state)
-            joined_q = segmentatio_mask_join_video_table(q.items)
-            filtered_q = only_latest_researcher_feedback(joined_q)
+            filtered_q = only_latest_researcher_feedback(q.items)
             if not is_researcher: # ignore researcher
                 create_segmentation_views_from_segmentation_batch(filtered_q, user_jwt, query_type=0)
-            return jsonify_data(filtered_q, total=len(filtered_q), is_admin=is_admin, with_detail=True, is_video=False)
+            return jsonify_data(filtered_q, total=q.total, is_admin=is_admin, with_detail=True, is_video=False)
     else:
         q = get_pos_segmentation_query_by_user_id(user_id, page_number, page_size, is_researcher)
-        joined_q = segmentatio_mask_join_video_table(q.items)
-        filtered_q = filter_feedback_by_user_id(joined_q, user_id)
+        filtered_q = filter_feedback_by_user_id(q.items, user_id)
         if not is_researcher: # ignore researcher
             create_segmentation_views_from_segmentation_batch(filtered_q, user_jwt, query_type=1)
         # We need to set is_admin to True here because we want to show user agreements in the data
-        return jsonify_data(filtered_q, total=len(filtered_q), is_admin=True, is_video=False)
+        return jsonify_data(filtered_q, total=q.total, is_admin=True, is_video=False)
 
 
 def ensure_cache_directory(file_path):

@@ -434,6 +434,7 @@ class SegmentationMask(db.Model):
     video_id = db.Column(db.Integer, db.ForeignKey("video.id"))
     # Relationships
     feedback = db.relationship("SegmentationFeedback", backref=db.backref("segmentation_mask", lazy=True), lazy=True)
+    video = db.relationship("Video", backref=db.backref("segmentation_mask", lazy=True), lazy=True)
 
     def __repr__(self):
         return (
