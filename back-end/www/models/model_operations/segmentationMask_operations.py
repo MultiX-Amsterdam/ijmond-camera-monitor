@@ -50,7 +50,10 @@ def remove_segmentation(segmentation_id):
 
 def get_all_segmentations():
     """Get all segmentations."""
-    return SegmentationMask.query.all()
+    s = SegmentationMask.query.all()
+    s_with_vid = segmentatio_mask_join_video_table(s)
+    s_add_feedback = only_latest_researcher_feedback(s_with_vid)
+    return s_add_feedback
 
 
 def get_segmentation_ids_labeled_by_user(user_id):
